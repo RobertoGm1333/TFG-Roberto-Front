@@ -28,7 +28,7 @@ export default defineConfig({
     emptyOutDir: true,     // Elimina archivos antiguos en dist/ antes de un nuevo build
   },
   server: {
-    port: 80,            // Para desarrollo, útil si usas Docker
+    port: 5173,            // Para desarrollo, útil si usas Docker
     host: '0.0.0.0',       // Asegura que el servidor sea accesible en Docker
     strictPort: true
   }

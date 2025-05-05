@@ -12,9 +12,7 @@ import GestionGatosView from '@/views/GestionGatosView.vue';
 import GestionProtectorasView from '../views/GestionProtectorasView.vue';
 import GestionUsuariosView from '../views/GestionUsuariosView.vue';
 import { useAutenticacion } from '@/stores/Autentificacion';
-import GestionPerrosView from '@/views/GestionPerrosView.vue';
-import PerroView from '@/views/PerroView.vue';
-import DetallesPerroView from '@/views/DetallesPerroView.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,20 +34,9 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/detalles-perro/:id',
-      name: 'DetallesPerro',
-      component: DetallesPerroView,
-      props: true
-    },
-    {
       path: '/gato',
       name: 'gato',
       component: GatoView,
-    },
-    {
-      path: '/perro',
-      name: 'perro',
-      component: PerroView,
     },
     {
       path: "/faq",
@@ -88,10 +75,6 @@ const router = createRouter({
         {
           path: 'gestion-gatos',
           component: GestionGatosView
-        },
-        {
-          path: 'gestion-perros',
-          component: GestionPerrosView
         },
         {
           path: 'gestion-protectoras',

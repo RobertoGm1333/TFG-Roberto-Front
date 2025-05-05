@@ -9,5 +9,6 @@ export default class GatoDto {
         public sexo: string,
         public descripcion_Gato: string,
         public imagen_Gato: string,
+        public visible: boolean
     ) { }
 }

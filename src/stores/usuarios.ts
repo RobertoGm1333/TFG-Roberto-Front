@@ -10,8 +10,8 @@ export const useusuariosStore = defineStore('usuarios', () => {
          //resizeBy.json()
          //data
          let data = [
-             { Id_Usuario: 0, Nombre_Usuario: 'test', Apellido: 'test', Contraseña: 'test', Email_Usuario: 'test', Fecha_Registro: new Date() },
-             { Id_Usuario: 1, Nombre_Usuario: 'test', Apellido: 'test', Contraseña: 'test', Email_Usuario: 'test', Fecha_Registro: new Date() },
+             { Id_Usuario: 0, Nombre_Usuario: 'test', Apellido: 'test', Contraseña: 'test', Email_Usuario: 'test', Fecha_Registro: new Date(), Rol: 'admin', Activo: true },
+             { Id_Usuario: 1, Nombre_Usuario: 'test', Apellido: 'test', Contraseña: 'test', Email_Usuario: 'test', Fecha_Registro: new Date(), Rol: 'protectora', Activo: false },
  
          ]
          usuarios.value.splice(0, usuarios.value.length, ...data)
@@ -26,7 +26,7 @@ export const useusuariosStore = defineStore('usuarios', () => {
 
     async function fetchUsuarios() {
         try {
-            const response = await fetch("https://localhost:7278/api/Usuario");
+            const response = await fetch("http://localhost:5167/api/Usuario");
             if (!response.ok) throw new Error("Error al obtener los usuarios");
 
             usuarios.value = await response.json();
@@ -40,7 +40,7 @@ export const useusuariosStore = defineStore('usuarios', () => {
         try {
             console.log("Enviando datos para actualizar:", usuario);
 
-            const response = await fetch(`https://localhost:7278/api/Usuario/${usuario.id_Usuario}`, {
+            const response = await fetch(`http://localhost:5167/api/Usuario/${usuario.id_Usuario}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(usuario),
@@ -65,7 +65,7 @@ export const useusuariosStore = defineStore('usuarios', () => {
         try {
             console.log("Eliminando usuario con ID:", id_Usuario);
 
-            const response = await fetch(`https://localhost:7278/api/Usuario/${id_Usuario}`, {
+            const response = await fetch(`http://localhost:5167/api/Usuario/${id_Usuario}`, {
                 method: "DELETE",
             });
 

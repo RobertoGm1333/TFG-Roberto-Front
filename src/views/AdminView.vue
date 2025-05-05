@@ -31,10 +31,6 @@ export default {
                 <v-icon>mdi-account-group</v-icon>
                 <span>Gestión de Usuarios</span>
             </router-link>
-            <router-link to="/admin/gestion-perros" class="admin-vista__boton">
-                <v-icon>mdi-dog</v-icon>
-                <span>Gestión de Perros</span>
-            </router-link>
         </div>
 
         <router-view></router-view>

@@ -41,15 +41,8 @@ import { RouterLink } from 'vue-router'
         Si estás pensando en adoptar o simplemente quieres conocer más sobre la labor de las protectoras, te invitamos a explorar nuestra web y ayudar a estos pequeños a encontrar un hogar.
       </p>
       <br>
-      <p>
-        ¡Ahora también las protectoras tienen <span class="highlight">perros</span> por un tiempo limitado! Aprovecha para <span class="highlight">adoptar</span> uno ahora junto a tu gatito
-      </p>
-
       <div class="cta-container">
         <RouterLink to="/gato"><button class="cta-button">Ver gatos en adopción</button></RouterLink>
-      </div>
-      <div class="cta-container">
-        <RouterLink to="/perro"><button class="cta-button">Ver perros en adopción</button></RouterLink>
       </div>
     </div>
   </div>

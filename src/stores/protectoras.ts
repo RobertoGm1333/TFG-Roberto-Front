@@ -8,7 +8,7 @@ export const useprotectorasStore = defineStore('protectoras', () => {
 
     async function fetchProtectora() {
         try {
-            const response = await fetch("https://localhost:7278/api/Protectora");
+            const response = await fetch("http://localhost:5167/api/Protectora");
 
             if (!response.ok) {
                 throw new Error('Error en la solicitud');
@@ -25,7 +25,7 @@ export const useprotectorasStore = defineStore('protectoras', () => {
     async function createProtectora(nuevaProtectora: ProtectoraDto) {
         console.log("Datos enviados a la API:", nuevaProtectora);
         try {
-            const response = await fetch("https://localhost:7278/api/Protectora", {
+            const response = await fetch("http://localhost:5167/api/Protectora", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -35,6 +35,7 @@ export const useprotectorasStore = defineStore('protectoras', () => {
                     telefono: nuevaProtectora.telefono,
                     horario_Atención: nuevaProtectora.horario_Atención,
                     imagen_Protectora: nuevaProtectora.imagen_Protectora,
+                    id_Usuario: nuevaProtectora.id_Usuario
                 }),
             });
 
@@ -57,7 +58,7 @@ export const useprotectorasStore = defineStore('protectoras', () => {
         if (!id_Protectora) return;
 
         try {
-            const response = await fetch(`https://localhost:7278/api/Protectora/${id_Protectora}`, {
+            const response = await fetch(`http://localhost:5167/api/Protectora/${id_Protectora}`, {
                 method: "DELETE",
             });
 
@@ -74,7 +75,7 @@ export const useprotectorasStore = defineStore('protectoras', () => {
         try {
             console.log("Enviando datos para actualizar:", protectora);
 
-            const response = await fetch(`https://localhost:7278/api/Protectora/${protectora.id_Protectora}`, {
+            const response = await fetch(`http://localhost:5167/api/Protectora/${protectora.id_Protectora}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(protectora),

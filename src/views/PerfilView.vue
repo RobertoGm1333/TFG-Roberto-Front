@@ -26,7 +26,7 @@ const cambiarContraseña = async () => {
     return;
   }
   try {
-    const response = await fetch(`https://localhost:7278/api/Usuario/${usuario.value?.userId}/cambiar-contraseña`, {
+    const response = await fetch(`http://localhost:5167/api/Usuario/${usuario.value?.userId}/cambiar-contraseña`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

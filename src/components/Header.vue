@@ -123,7 +123,6 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
       <div class="text">
         <nav>
           <RouterLink to="/gato">Gatos</RouterLink>
-          <RouterLink to="/perro">Perros</RouterLink>
           <RouterLink to="/protectoras">Protectoras</RouterLink>
         </nav>
         <div class="usuario">
@@ -238,7 +237,6 @@ canvas {
 
 @media (min-width: 788px) {
   header {
-    justify-content: flex-start;
     padding: 15px $espacio-extra-grande;
   }
 

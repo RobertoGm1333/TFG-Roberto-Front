@@ -5,6 +5,8 @@ export default class UserDto {
         public apellido: string,
         public contraseña: string,
         public email: string,
-        public fecha_Registro: Date
+        public fecha_Registro: Date,
+        public rol: string,
+        public activo: boolean
     ) { }
 }
