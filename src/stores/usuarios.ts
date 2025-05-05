@@ -5,6 +5,7 @@ import type UserDto from './dtos/user.dto'
 export const useusuariosStore = defineStore('usuarios', () => {
     const usuarios = ref(new Array<UserDto>())
 
+
     /* function findAll() {
          //fetch('https://jsonplaceholder.typicode.com/user')
          //resizeBy.json()
@@ -12,10 +13,11 @@ export const useusuariosStore = defineStore('usuarios', () => {
          let data = [
              { Id_Usuario: 0, Nombre_Usuario: 'test', Apellido: 'test', Contraseña: 'test', Email_Usuario: 'test', Fecha_Registro: new Date(), Rol: 'admin', Activo: true },
              { Id_Usuario: 1, Nombre_Usuario: 'test', Apellido: 'test', Contraseña: 'test', Email_Usuario: 'test', Fecha_Registro: new Date(), Rol: 'protectora', Activo: false },
- 
+     
          ]
          usuarios.value.splice(0, usuarios.value.length, ...data)
      }*/
+
     function createUsuario(usuario: UserDto) {
         //fetch(POST)
         //body: JSON.stringify()
@@ -78,6 +80,22 @@ export const useusuariosStore = defineStore('usuarios', () => {
         }
     }
 
+    function getUsuarioByEmail(email: string) {
+        return usuarios.value.find(u => u.email === email) || null;
+    }
+
+    function getUsuarioByEmailYContraseña(email: string, contraseña: string) {
+        const usuario = usuarios.value.find(u => u.email === email && u.contraseña === contraseña);
+        if (!usuario) return null;
+
+        // Mapeo Rol → rol (minúscula) para que funcione con el store de autenticacion
+        return {
+            ...usuario,
+            rol: (usuario as any).rol ?? (usuario as any).Rol
+        }
+    }
+
+
     // REST
     // create, delete, updated....
 
@@ -86,6 +104,8 @@ export const useusuariosStore = defineStore('usuarios', () => {
         createUsuario,
         deleteUsuario,
         updateUsuario,
-        fetchUsuarios
+        fetchUsuarios,
+        getUsuarioByEmail,
+        getUsuarioByEmailYContraseña
     }
 })

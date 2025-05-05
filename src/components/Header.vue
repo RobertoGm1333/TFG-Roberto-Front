@@ -4,7 +4,7 @@ import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useAutenticacion } from '@/stores/Autentificacion';
 
 const Autenticacion = useAutenticacion();
-const { usuario, esAdmin } = storeToRefs(Autenticacion);
+const { usuario } = storeToRefs(Autenticacion);
 const mostrarMenu = ref(false);
 const isHovering = ref(false);
 const offsets = ref([0, 0, 0]);
@@ -140,7 +140,7 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
                 <p>Hola {{ usuario.nombre }}</p>
                 <RouterLink to="/perfil" class="boton-1"><span>Mi Perfil</span></RouterLink>
                 <RouterLink to="/deseados" class="boton-2"><span>❤️ Deseados</span></RouterLink>
-                <RouterLink v-if="esAdmin" to="/admin" class="admin-boton">Panel de Admin</RouterLink>
+                <RouterLink v-if="usuario.rol === 'admin'" to="/admin" class="admin-boton">Panel de Admin</RouterLink>
                 <RouterLink to="/"><button class="logout-btn" @click="Autenticacion.cerrarSesion">Cerrar sesión</button></RouterLink>
               </div>
             </div>
@@ -228,10 +228,10 @@ canvas {
     color: black;
   }
   .usuario-menu circle {
-    stroke: #ddd; /* Hace que el contorno sea blanco en modo oscuro */
+    stroke: #ddd;
   }
   .usuario-menu path {
-    stroke: #ddd; /* Hace que el contorno sea blanco en modo oscuro */
+    stroke: #ddd;
   }
 }
 

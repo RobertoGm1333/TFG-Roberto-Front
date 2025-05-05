@@ -2,17 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import GatoView from '@/views/GatoView.vue'
 import DetallesGatoView from '@/views/DetallesGatoView.vue'
-import FAQ from '@/views/FAQView.vue';
+import FAQ from '@/views/FAQView.vue'
 import PerfilView from '@/views/PerfilView.vue'
 import DeseadosView from '@/views/DeseadosView.vue'
 import Iniciar_sesionView from '@/views/Iniciar_sesionView.vue'
 import RegistrarseView from '@/views/RegistrarseView.vue'
-import AdminView from '../views/AdminView.vue';
-import GestionGatosView from '@/views/GestionGatosView.vue';
-import GestionProtectorasView from '../views/GestionProtectorasView.vue';
-import GestionUsuariosView from '../views/GestionUsuariosView.vue';
-import { useAutenticacion } from '@/stores/Autentificacion';
-
+import AdminView from '../views/AdminView.vue'
+import GestionGatosView from '@/views/GestionGatosView.vue'
+import GestionProtectorasView from '../views/GestionProtectorasView.vue'
+import GestionUsuariosView from '../views/GestionUsuariosView.vue'
+import { useAutenticacion } from '@/stores/Autentificacion'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,23 +87,24 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    return { top: 0, behavior: 'smooth' }; // Desplazamiento suave al inicio de la página
+    return { top: 0, behavior: 'smooth' }
   }
 })
 
 router.beforeEach((to, from, next) => {
   const autenticacionStore = useAutenticacion()
 
+  // Redirección si necesita login
   if (to.meta.requiresAuth && !autenticacionStore.esAutenticado) {
-    next('/iniciar-sesion')
-  } else {
-    next()
+    return next('/iniciar-sesion')
   }
 
-  if (to.meta.requiereAdmin && (!autenticacionStore.usuario || autenticacionStore.usuario.userId !== 5)) {
-    return next('/');
+  // Redirección si requiere rol admin y no lo es
+  if (to.meta.requiereAdmin && (!autenticacionStore.usuario || autenticacionStore.usuario.rol !== 'admin')) {
+    return next('/')
   }
 
+  next()
 })
 
 export default router
