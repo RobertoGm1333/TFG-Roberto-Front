@@ -251,6 +251,28 @@ const cerrarModal = () => {
             background: darkred;
         }
     }
+    @media (prefers-color-scheme: dark){
+
+        h2 {
+            color: #ffffff;
+        }
+
+        h3 {
+            color: #ffffff;
+        }
+        
+        input{
+            color: whitesmoke
+        }
+
+        p {
+            color: grey;
+        }
+        
+        label {
+        color: whitesmoke; // o el color que tú prefieras
+    }
+    }
 }
 
 .v-card-text {

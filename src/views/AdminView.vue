@@ -94,5 +94,14 @@ export default {
             font-size: 1.5rem;
         }
     }
+    @media (prefers-color-scheme: dark) {
+        h1 {
+            color: #ffffff;
+        }
+        
+        p {
+            color: whitesmoke;
+        }
+    }
 }
 </style>
