@@ -57,10 +57,10 @@ export const usegatosStore = defineStore('gatos', () => {
         if (!id_Usuario || id_Usuario === undefined) {
             return;
         }
-
+    
         try {
             const response = await fetch(`http://localhost:5167/api/Deseado/usuario/${id_Usuario}`);
-
+    
             if (response.status === 404) {
                 console.log("Este usuario todavía no tiene favoritos.");
                 gatosDeseados.value = [];
@@ -71,28 +71,30 @@ export const usegatosStore = defineStore('gatos', () => {
             if (!response.ok) {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
-
+    
             const json = await response.json();
             console.log("Respuesta de deseados:", json);
-            
+    
             const data = Array.isArray(json) ? json : json.datos || [];
+    
             const gatosCompletos = await Promise.all(
                 data.map(async (deseado: any) => {
-            
                     const gatoResponse = await fetch(`http://localhost:5167/api/Gato/${deseado.id_Gato}`);
                     if (!gatoResponse.ok) throw new Error(`Error al obtener el gato con id ${deseado.id_Gato}`);
-
+    
                     const gato = await gatoResponse.json();
                     return { ...gato, id_Deseado: deseado.id_Deseado };
                 })
             );
-
+    
             gatosDeseados.value = gatosCompletos;
             guardarGatosDeseadosEnStorage();
+    
         } catch (error) {
             console.error('Error al obtener los gatos deseados:', error);
         }
     }
+    
 
     async function agregarGatoADeseados(id_Usuario: number, id_Gato: number) {
         try {
