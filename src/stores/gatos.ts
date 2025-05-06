@@ -54,13 +54,23 @@ export const usegatosStore = defineStore('gatos', () => {
     }
 
     async function obtenerGatosDeseados(id_Usuario: number) {
-        if (id_Usuario <= 0) {
-            console.error("ID de usuario no válido para obtener deseados");
+        if (!id_Usuario || id_Usuario === undefined) {
             return;
         }
 
         try {
             const response = await fetch(`http://localhost:5167/api/Deseado/usuario/${id_Usuario}`);
+
+            if (response.status === 404) {
+                console.log("Este usuario todavía no tiene favoritos.");
+                gatosDeseados.value = [];
+                guardarGatosDeseadosEnStorage();
+                return;
+            }
+    
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
 
             const json = await response.json();
             console.log("Respuesta de deseados:", json);

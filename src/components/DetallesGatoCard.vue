@@ -20,22 +20,18 @@ const idDeseado = ref<number | null>(null);
 const modal = ref(false);
 
 onMounted(async () => {
-  autenticacion.cargarUsuarioDesdeLocalStorage();
-  await new Promise(resolve => setTimeout(resolve, 100)); // más tiempo para que usuario se reactive
+  // Asegúrate de que el usuario esté cargado correctamente
+  await autenticacion.cargarUsuarioDesdeLocalStorage?.();
 
-  if (!autenticacion.usuario || !autenticacion.usuario.id_Usuario) {
-    console.warn("Usuario no encontrado al cargar gatos deseados.");
+  const id = autenticacion.usuario?.id_Usuario;
+  if (!id) {
+
     return;
   }
 
-  await gatosStore.obtenerGatosDeseados(autenticacion.usuario.id_Usuario);
-
-  const deseado = gatosStore.gatosDeseados.find(gato => Number(gato.id_Gato) === Number(props.gato.id_Gato));
-  if (deseado) {
-    esDeseado.value = true;
-    idDeseado.value = deseado.id_Deseado || null;
-  }
+  await gatosStore.obtenerGatosDeseados(id);
 });
+
 
 const abrirModal = () => {
   modal.value = true;
