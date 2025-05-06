@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAutenticacion } from '@/stores/Autentificacion';
+import { esContraseñaValida } from '@/stores/validaciones';
 
 const autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(autenticacion);
@@ -23,6 +24,10 @@ const cambiarContraseña = async () => {
   }
   if (nuevaContraseña.value !== repetirContraseña.value) {
     mensaje.value = 'Las contraseñas no coinciden';
+    return;
+  }
+  if (!esContraseñaValida(nuevaContraseña.value)) {
+    mensaje.value = 'La contraseña debe tener al menos 7 caracteres, incluyendo mayúsculas, minúsculas, números y un símbolo.';
     return;
   }
   try {

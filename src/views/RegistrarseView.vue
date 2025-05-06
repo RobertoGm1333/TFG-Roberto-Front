@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
+import { esContraseñaValida } from '@/stores/validaciones';
 
 const nombre = ref('');
 const apellido = ref('');
@@ -21,6 +22,11 @@ const handleRegister = async () => {
 
   if (contraseña.value !== confirmarContraseña.value) {
     errorMessage.value = 'Las contraseñas no coinciden';
+    return;
+  }
+
+  if (!esContraseñaValida(contraseña.value)) {
+    errorMessage.value = 'La contraseña debe tener al menos 7 caracteres, incluyendo mayúsculas, minúsculas, números y un símbolo.';
     return;
   }
 
