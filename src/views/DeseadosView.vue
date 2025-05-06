@@ -18,7 +18,7 @@ onMounted(async () => {
   Autenticacion.cargarUsuarioDesdeLocalStorage();
   
   if (Autenticacion.usuario) {
-    await gatosStore.obtenerGatosDeseados(Autenticacion.usuario.userId); // ✅ Ahora solo carga los gatos del usuario
+    await gatosStore.obtenerGatosDeseados(Autenticacion.usuario.id_Usuario); // ✅ Ahora solo carga los gatos del usuario
   }
 
   // Esperar 1 segundo antes de mostrar el mensaje si no hay gatos

@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { defineStore } from 'pinia'
 import type GatoDto from './dtos/gato.dto'
 import type DeseadoDto from './dtos/deseados.dto'
@@ -8,7 +8,6 @@ export const usegatosStore = defineStore('gatos', () => {
     let gatosFiltrados = ref<GatoDto[]>([])
     let gatosDeseados = ref<DeseadoDto[]>([]);
 
-    // Estados para los filtros
     const filtros = ref({
         edadMin: 1,
         edadMax: 15,
@@ -19,138 +18,109 @@ export const usegatosStore = defineStore('gatos', () => {
         const gatosDeseadosGuardados = JSON.parse(localStorage.getItem('gatosDeseados') || '[]');
         if (gatosDeseadosGuardados.length > 0) {
             gatosDeseados.value = gatosDeseadosGuardados;
-        } else {
-            obtenerGatosDeseados(); // Si no hay datos locales, carga desde API
         }
     }
 
-    // Almacenar gatosDeseados en LocalStorage
     function guardarGatosDeseadosEnStorage() {
         localStorage.setItem('gatosDeseados', JSON.stringify(gatosDeseados.value));
     }
-
-    /* function createGato(gato: GatoDto) {
-         //fetch(POST)
-         //body: JSON.stringify()
-         gatos.value.push(gato)
-     }*/
 
     async function fetchGato() {
         try {
             const response = await fetch("http://localhost:5167/api/Gato");
 
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
-            }
+            if (!response.ok) throw new Error('Error en la solicitud');
 
             const data: GatoDto[] = await response.json();
             gatos.value = data;
-            aplicarFiltros() // Aplicar filtros después de cargar los datos
+            aplicarFiltros();
             console.log('Gatos obtenidos:', data);
         } catch (error) {
             console.error('Error al obtener los gatos:', error);
         }
     }
 
-    // Función para actualizar los filtros
     function actualizarFiltros(nuevosFiltros) {
         filtros.value = { ...filtros.value, ...nuevosFiltros }
         aplicarFiltros()
     }
 
-    // Función para aplicar los filtros actuales a la lista de gatos
     function aplicarFiltros() {
         gatosFiltrados.value = gatos.value.filter(gato => {
-            // Filtrar por edad
-            const edadEnRango = gato.edad >= filtros.value.edadMin &&
-                gato.edad <= filtros.value.edadMax
-
-            // Filtrar por raza (si hay una seleccionada)
-            const razaCoincide = filtros.value.raza === '' ||
-                gato.raza === filtros.value.raza
-
+            const edadEnRango = gato.edad >= filtros.value.edadMin && gato.edad <= filtros.value.edadMax
+            const razaCoincide = filtros.value.raza === '' || gato.raza === filtros.value.raza
             return edadEnRango && razaCoincide
         })
     }
 
     async function obtenerGatosDeseados(id_Usuario: number) {
+        if (id_Usuario <= 0) {
+            console.error("ID de usuario no válido para obtener deseados");
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:5167/api/Deseado/usuario/${id_Usuario}`);
-            if (!response.ok) {
-                throw new Error('Error al obtener los gatos deseados');
-            }
-            const data = await response.json();
 
-            // Obtener la información completa de cada gato incluyendo `id_Deseado`
+            const json = await response.json();
+            console.log("Respuesta de deseados:", json);
+            
+            const data = Array.isArray(json) ? json : json.datos || [];
             const gatosCompletos = await Promise.all(
                 data.map(async (deseado: any) => {
+            
                     const gatoResponse = await fetch(`http://localhost:5167/api/Gato/${deseado.id_Gato}`);
-                    if (!gatoResponse.ok) {
-                        throw new Error(`Error al obtener el gato con id ${deseado.id_Gato}`);
-                    }
-                    const gato = await gatoResponse.json();
+                    if (!gatoResponse.ok) throw new Error(`Error al obtener el gato con id ${deseado.id_Gato}`);
 
-                    return { ...gato, id_Deseado: deseado.id_Deseado }; // ✅ Guardamos `id_Deseado`
+                    const gato = await gatoResponse.json();
+                    return { ...gato, id_Deseado: deseado.id_Deseado };
                 })
             );
 
-            gatosDeseados.value = gatosCompletos; // ✅ Ahora sí incluye `id_Deseado`
-            guardarGatosDeseadosEnStorage(); // Guarda en LocalStorage
+            gatosDeseados.value = gatosCompletos;
+            guardarGatosDeseadosEnStorage();
         } catch (error) {
             console.error('Error al obtener los gatos deseados:', error);
         }
     }
 
-
-    async function agregarGatoADeseados(idUsuario: number, id_Gato: number) {
+    async function agregarGatoADeseados(id_Usuario: number, id_Gato: number) {
         try {
             const response = await fetch('http://localhost:5167/api/Deseado', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    id_Usuario: idUsuario,
+                    id_Usuario: id_Usuario,
                     id_Gato: id_Gato,
                     fecha_Deseado: new Date().toISOString()
                 })
             });
-
-            if (!response.ok) {
-                throw new Error('Error al agregar el gato a deseados');
-            }
-
-            const nuevoDeseado = await response.json(); // Obtener el ID generado
-
-            if (!nuevoDeseado.id_Deseado) {
-                throw new Error("La API no devolvió un ID de deseado válido");
-            }
-
-            gatosDeseados.value.push({ ...nuevoDeseado, id_Deseado: nuevoDeseado.id_Deseado });
+    
+            if (!response.ok) throw new Error('Error al agregar el gato a deseados');
+    
+            const nuevoDeseado = await response.json(); // este sí tiene contenido
+            gatosDeseados.value.push({ ...nuevoDeseado });
+    
             guardarGatosDeseadosEnStorage();
             console.log('Gato agregado a deseados:', nuevoDeseado);
-
-            return nuevoDeseado; // Devolver el nuevo ID de deseado
-
+    
+            return nuevoDeseado;
+    
         } catch (error) {
             console.error('Error en agregarGatoADeseados:', error);
-            throw error; // Lanza el error para manejarlo en el componente
+            throw error;
         }
     }
+    
 
-
-    // Eliminar un gato de los deseados usando el idDeseado
     async function eliminarGatoDeDeseados(idDeseado: number) {
         try {
             const response = await fetch(`http://localhost:5167/api/Deseado/${idDeseado}`, {
                 method: 'DELETE'
             });
 
-            if (!response.ok) {
-                throw new Error('Error al eliminar el gato de deseados');
-            }
+            if (!response.ok) throw new Error('Error al eliminar el gato de deseados');
 
-            // Filtrar correctamente usando id_Deseado
             gatosDeseados.value = gatosDeseados.value.filter(gato => gato.id_Deseado !== idDeseado);
             guardarGatosDeseadosEnStorage();
             console.log(`Gato con ID deseado ${idDeseado} eliminado de deseados.`);
@@ -177,15 +147,12 @@ export const usegatosStore = defineStore('gatos', () => {
                 })
             });
 
-            if (!response.ok) {
-                throw new Error("Error al agregar el gato");
-            }
+            if (!response.ok) throw new Error("Error al agregar el gato");
 
             const gatoCreado = await response.json();
             gatos.value.push(gatoCreado);
+            aplicarFiltros();
             console.log("Gato agregado exitosamente:", gatoCreado);
-            aplicarFiltros() // Volver a aplicar los filtros cuando se agregue un gato
-
         } catch (error) {
             console.error("Error al agregar el gato:", error);
         }
@@ -197,9 +164,7 @@ export const usegatosStore = defineStore('gatos', () => {
                 method: "DELETE"
             });
 
-            if (!response.ok) {
-                throw new Error("Error al eliminar el gato");
-            }
+            if (!response.ok) throw new Error("Error al eliminar el gato");
 
             gatos.value = gatos.value.filter(g => g.id_Gato !== id_Gato);
             console.log(`Gato con ID ${id_Gato} eliminado correctamente.`);
@@ -225,8 +190,8 @@ export const usegatosStore = defineStore('gatos', () => {
             }
 
             gatos.value = gatos.value.map(g => (g.id_Gato === gato.id_Gato ? gato : g));
+            aplicarFiltros();
             console.log("Gato actualizado correctamente:", gato);
-            aplicarFiltros()
         } catch (error) {
             console.error("Error al actualizar el gato:", error);
         }

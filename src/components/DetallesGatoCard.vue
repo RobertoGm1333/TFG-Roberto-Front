@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useAutenticacion } from "@/stores/Autentificacion";
 import { usegatosStore } from "@/stores/gatos.ts"
+import { useusuariosStore } from "@/stores/usuarios.ts"
 import type GatoDto from "../stores/dtos/gato.dto";
 import type ProtectoraDto from "../stores/dtos/protectoras.dto";
 
@@ -12,6 +13,7 @@ const { usuario } = storeToRefs(autenticacion);
 const gatosStore = usegatosStore();
 const gatosDeseados = computed(() => gatosStore.gatosDeseados);
 
+
 const mensaje = ref("");
 const esDeseado = ref(false);
 const idDeseado = ref<number | null>(null);
@@ -19,17 +21,19 @@ const modal = ref(false);
 
 onMounted(async () => {
   autenticacion.cargarUsuarioDesdeLocalStorage();
-  await gatosStore.obtenerGatosDeseados(); // Asegurar que los gatos deseados están actualizados
+  await new Promise(resolve => setTimeout(resolve, 100)); // más tiempo para que usuario se reactive
 
-  console.log("Gatos deseados cargados:", gatosStore.gatosDeseados); // Verificar en consola
+  if (!autenticacion.usuario || !autenticacion.usuario.id_Usuario) {
+    console.warn("Usuario no encontrado al cargar gatos deseados.");
+    return;
+  }
+
+  await gatosStore.obtenerGatosDeseados(autenticacion.usuario.id_Usuario);
 
   const deseado = gatosStore.gatosDeseados.find(gato => Number(gato.id_Gato) === Number(props.gato.id_Gato));
-
   if (deseado) {
     esDeseado.value = true;
-    idDeseado.value = deseado.id_Deseado || null; // Asegurar que se guarda correctamente
-
-    console.log("ID de deseado asignado:", idDeseado.value); // Verifica si se asigna bien
+    idDeseado.value = deseado.id_Deseado || null;
   }
 });
 
@@ -54,15 +58,23 @@ const agregarADeseados = async () => {
   }
 
   try {
-    const nuevoDeseado = await gatosStore.agregarGatoADeseados(autenticacion.usuario.userId, props.gato.id_Gato,);
+    const nuevoDeseado = await gatosStore.agregarGatoADeseados(
+      autenticacion.usuario.id_Usuario,
+      props.gato.id_Gato
+    );
+
+    // Extraemos el ID pero no lo forzamos como obligatorio
+    const id = nuevoDeseado?.id_Deseado ?? nuevoDeseado?.Id_Deseado ?? null;
+    
     esDeseado.value = true;
-    idDeseado.value = nuevoDeseado.id_Deseado;
+    idDeseado.value = id;
     mensaje.value = "Gato agregado a deseados";
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error al agregar a deseados:", error);
     mensaje.value = "No se pudo agregar a deseados";
   }
 };
+
 
 const eliminarDeDeseados = async () => {
   if (!autenticacion.usuario) {

@@ -21,6 +21,7 @@ export const useAutenticacion = defineStore('Autenticacion', {
 
     actions: {
         iniciarSesion(datosUsuario: any) {
+            console.log("Usuario recibido al iniciar sesión:", datosUsuario);
             this.usuario = datosUsuario;
             localStorage.setItem('user', JSON.stringify(datosUsuario));
         },
