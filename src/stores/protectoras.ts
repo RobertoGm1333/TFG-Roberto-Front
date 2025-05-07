@@ -31,9 +31,9 @@ export const useprotectorasStore = defineStore('protectoras', () => {
                 body: JSON.stringify({
                     nombre_Protectora: nuevaProtectora.nombre_Protectora,
                     direccion: nuevaProtectora.direccion,
-                    email: nuevaProtectora.email,
-                    telefono: nuevaProtectora.telefono,
-                    horario_Atención: nuevaProtectora.horario_Atención,
+                    correo_Protectora: nuevaProtectora.correo_Protectora,
+                    telefono_Protectora: nuevaProtectora.telefono_Protectora,
+                    pagina_Web: nuevaProtectora.pagina_Web,
                     imagen_Protectora: nuevaProtectora.imagen_Protectora,
                     id_Usuario: nuevaProtectora.id_Usuario
                 }),

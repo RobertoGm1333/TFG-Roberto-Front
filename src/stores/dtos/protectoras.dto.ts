@@ -3,9 +3,9 @@ export default class ProtectoraDto {
         public id_Protectora: number,
         public nombre_Protectora: string,
         public direccion: string,
-        public email: string,
-        public telefono: number,
-        public horario_Atención: string,
+        public correo_Protectora: string,
+        public telefono_Protectora: string,
+        public pagina_Web: string,
         public imagen_Protectora: string,
         public id_Usuario: number
     ) { }

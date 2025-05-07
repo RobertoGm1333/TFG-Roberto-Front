@@ -17,7 +17,7 @@ const props = defineProps({
       <strong>Dirección:</strong> {{ protectora.direccion }}
     </v-card-subtitle>
     <v-card-text class="protectora-card__content">
-      <div class="protectora-card__email"><strong>Correo Electrónico:</strong> <br> {{ protectora.email }}</div>
+      <div class="protectora-card__correo_Protectora"><strong>Correo Electrónico:</strong> <br> {{ protectora.correo_Protectora }}</div>
       <div class="protectora-card__schedule">
         <strong>Página Web:</strong>
         <a :href="protectora.pagina_Web" target="_blank" rel="noopener noreferrer">

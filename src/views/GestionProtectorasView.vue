@@ -4,16 +4,17 @@ import { useprotectorasStore } from "@/stores/protectoras.ts";
 
 const protectorasStore = useprotectorasStore();
 const mostrarModal = ref(false);
-const protectoraEditada = ref({ id_Protectora: 0, nombre_Protectora: "", direccion: "", email: "", telefono: 0, horario_Atención: "", imagen_Protectora: "" });
+const protectoraEditada = ref({ id_Protectora: 0, nombre_Protectora: "", direccion: "", correo_Protectora: "", telefono_Protectora: "", pagina_Web: "", imagen_Protectora: "", id_Usuario: 0 });
 
 const nuevaProtectora = ref({
     id_Protectora: 0,
     nombre_Protectora: "",
     direccion: "",
-    email: "",
-    telefono: 0,
-    horario_Atención: "",
-    imagen_Protectora: ""
+    correo_Protectora: "",
+    telefono_Protectora: "",
+    pagina_Web: "",
+    imagen_Protectora: "",
+    id_Usuario: 0
 });
 
 onMounted(() => {
@@ -24,7 +25,7 @@ const crearProtectora = async () => {
     try {
         await protectorasStore.createProtectora(nuevaProtectora.value);
         alert("Protectora agregada exitosamente");
-        nuevaProtectora.value = { id_Protectora: 0, nombre_Protectora: "", direccion: "", email: "", horario_Atención: "", imagen_Protectora: "" };
+        nuevaProtectora.value = { id_Protectora: 0, nombre_Protectora: "", direccion: "", correo_Protectora: "", telefono_Protectora: "", pagina_Web: "", imagen_Protectora: "", id_Usuario: 0 };
     } catch (error) {
         console.error("Error al agregar la protectora:", error);
     }
@@ -63,10 +64,11 @@ const cerrarModal = () => {
             <form @submit.prevent="crearProtectora" class="admin-protectoras__form">
                 <input v-model="nuevaProtectora.nombre_Protectora" placeholder="Nombre de la protectora" required>
                 <input v-model="nuevaProtectora.direccion" placeholder="Dirección" required>
-                <input v-model="nuevaProtectora.email" type="email" placeholder="Email" required>
-                <input v-model="nuevaProtectora.telefono" placeholder="Telefono" required>
-                <input v-model="nuevaProtectora.horario_Atención" placeholder="horario_Atención" required>
-                <input v-model="nuevaProtectora.imagen_Protectora" type="text" placeholder="Url imagen de la protectora" required>
+                <input v-model="nuevaProtectora.correo_Protectora" type="email" placeholder="Email" required>
+                <input v-model="nuevaProtectora.telefono_Protectora" placeholder="Teléfono" required>
+                <input v-model="nuevaProtectora.pagina_Web" type="text" placeholder="Página web de la protectora" required>
+                <input v-model="nuevaProtectora.imagen_Protectora" type="text" placeholder="Url de la imagen de la protectora" required>
+                <input v-model="nuevaProtectora.id_Usuario" type="text" placeholder="ID del usuario admin" required>
                 <button type="submit" class="admin-protectoras__boton">Agregar Protectora</button>
             </form>
         </div>
@@ -79,7 +81,7 @@ const cerrarModal = () => {
                     <div class="admin-protectoras__info">
                         <p><strong>Nombre:</strong> {{ protectora.nombre_Protectora }}</p>
                         <p><strong>Dirección:</strong> {{ protectora.direccion }}</p>
-                        <p><strong>Email:</strong> {{ protectora.email }}</p>
+                        <p><strong>Email:</strong> {{ protectora.correo_Protectora }}</p>
                         
                     </div>
                     <div class="admin-protectoras__acciones">
@@ -95,15 +97,13 @@ const cerrarModal = () => {
                 <v-card-title>Editar Protectora</v-card-title>
                 <v-card-text>
                     <form @submit.prevent="guardarEdicion" class="admin-protectoras__form">
-                        <input v-model="protectoraEditada.nombre_Protectora" placeholder="Nombre de la protectora"
-                            required>
-                <input v-model="nuevaProtectora.nombre_Protectora" placeholder="Nombre de la protectora" required>
-                <input v-model="nuevaProtectora.direccion" placeholder="Dirección" required>
-                <input v-model="nuevaProtectora.email" type="email" placeholder="Email" required>
-                <input v-model="nuevaProtectora.telefono" placeholder="Telefono" required>
-                <input v-model="nuevaProtectora.horario_Atención" placeholder="horario_Atención" required>
-                <input v-model="nuevaProtectora.imagen_Protectora" type="text" placeholder="Url imagen de la protectora" required>
-                <button type="submit" class="admin-protectoras__boton">Agregar Protectora</button>
+                <input v-model="protectoraEditada.nombre_Protectora" placeholder="Nombre de la protectora" required>
+                <input v-model="protectoraEditada.direccion" placeholder="Dirección" required>
+                <input v-model="protectoraEditada.correo_Protectora" type="email" placeholder="Email" required>
+                <input v-model="protectoraEditada.telefono_Protectora" placeholder="Teléfono" required>
+                <input v-model="protectoraEditada.pagina_Web" type="text" placeholder="Página web de la protectora" required>
+                <input v-model="protectoraEditada.imagen_Protectora" type="text" placeholder="Url de la imagen de la protectora" required>
+                <input v-model="protectoraEditada.id_Usuario" type="text" placeholder="ID del usuario admin" required>
                     </form>
                 </v-card-text>
                 <v-card-actions>
