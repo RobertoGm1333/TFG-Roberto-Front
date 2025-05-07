@@ -133,6 +133,7 @@ const cerrarModal = () => {
         border-radius: $espacio-mediano;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         margin-bottom: $espacio-extra-grande;
+        background-color: #E9E9E9;
     }
 
     &__subtitulo {
@@ -147,7 +148,7 @@ const cerrarModal = () => {
 
         input {
             padding: $espacio-mediano;
-            border: $border-gris2;
+            border: solid #c5c5c5;
             border-radius: $espacio-pequeno;
         }
 
@@ -174,7 +175,7 @@ const cerrarModal = () => {
     }
 
     &__item {
-        background: white;
+        background: #E9E9E9;
         padding: 15px;
         border-radius: 8px;
         box-shadow: $sombra-contenedor;
@@ -243,11 +244,21 @@ const cerrarModal = () => {
         }
 
         input{
-            color: whitesmoke
+            color: whitesmoke;
+            border:solid #5d5d5d;
+            border-color: rgba(93, 93, 93, 0.5);
         }
 
         p {
             color: grey;
+        }
+
+        .admin-protectoras__formulario {
+            background-color: #272727;
+        }
+
+        .admin-protectoras__item {
+            background-color: #272727;
         }
     }
 }

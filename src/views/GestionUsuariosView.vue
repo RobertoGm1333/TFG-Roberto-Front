@@ -117,6 +117,7 @@ const usuariosFiltrados = computed(() => {
     }
 
     &__item {
+        background: #E9E9E9;
         padding: 15px;
         border-radius: 8px;
         box-shadow: $sombra-contenedor;
@@ -153,7 +154,7 @@ const usuariosFiltrados = computed(() => {
             background: darkred;
         }
     }
-    
+
     @media (prefers-color-scheme: dark){
 
         h2 {
@@ -170,6 +171,10 @@ const usuariosFiltrados = computed(() => {
 
         p {
             color: grey;
+        }
+
+        .admin-usuarios__item {
+            background-color: #272727;
         }
     }
 }
