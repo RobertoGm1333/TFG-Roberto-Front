@@ -4,7 +4,7 @@ import { useusuariosStore } from "@/stores/usuarios.ts";
 
 const usuariosStore = useusuariosStore();
 const mostrarModal = ref(false);
-const usuarioEditado = ref({ id_Usuario: 0, nombre: "", apellido:"", email: "", contraseña: "" });
+const usuarioEditado = ref({ id_Usuario: 0, nombre: "", apellido:"", email: "", contraseña: "", fecha_Registro: new Date() , rol: "", activo: true });
 const busqueda = ref("");
 
 onMounted(() => {
@@ -59,7 +59,7 @@ const usuariosFiltrados = computed(() => {
                         <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
                         <p><strong>Apellido</strong> {{ usuario.apellido }} </p>
                         <p><strong>Email:</strong> {{ usuario.email }}</p>
-                        <p><strong>Contraseña</strong> {{ usuario.apellido }}</p>
+                        <p><strong>Contraseña</strong> {{ usuario.contraseña }}</p>
                     </div>
                     <div class="admin-usuarios__acciones">
                         <button @click="editarUsuario(usuario)" class="admin-usuarios__boton--editar">Editar</button>
@@ -71,12 +71,12 @@ const usuariosFiltrados = computed(() => {
 
         <v-dialog v-model="mostrarModal" max-width="500px">
             <v-card>
-                <v-card-title>Editar Usuario</v-card-title>
+                <v-card-title class="titulo-edit-user">Editar Usuario</v-card-title>
                 <v-card-text>
-                    <input v-model="usuarioEditado.nombre" placeholder="Nombre" style="margin-right: 10px; padding-left: 5px">
-                    <input v-model="usuarioEditado.apellido" placeholder="Apellido" style="padding-left: 5px;">
-                    <input v-model="usuarioEditado.email" placeholder="Email" style="margin-right: 10px; padding-left: 5px" >
-                    <input v-model="usuarioEditado.contraseña" placeholder="Contraseña" style="padding-left: 5px;">
+                    <input v-model="usuarioEditado.nombre" placeholder="Nombre" class="input-edit-user">
+                    <input v-model="usuarioEditado.apellido" placeholder="Apellido" class="input-edit-user">
+                    <input v-model="usuarioEditado.email" placeholder="Email" class="input-edit-user" >
+                    <input v-model="usuarioEditado.contraseña" placeholder="Contraseña" class="input-edit-user">
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="grey" @click="cerrarModal">Cancelar</v-btn>
@@ -88,6 +88,20 @@ const usuariosFiltrados = computed(() => {
 </template>
 
 <style scoped lang="scss">
+
+.titulo-edit-user{
+    padding-top: 3%;
+    padding-left: 5%;
+}
+
+.input-edit-user{
+    margin-right: 10px;
+    padding-left: 5px;
+    border: solid;
+    border-radius: 5px;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
 .admin-usuarios {
     padding: $espacio-grande;
     max-width: 800px;
