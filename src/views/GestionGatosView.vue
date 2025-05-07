@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { usegatosStore } from "@/stores/gatos.ts";
+import { vi } from "vuetify/locale";
 
 const gatosStore = usegatosStore();
 const mostrarModal = ref(false);
-const usuarioEditado = ref({ id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 1 });
+const gatoEditado = ref({ id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 1, visible: true })
 
 const nuevoGato = ref({
     id_Gato: 0,  // Se genera en la API, pero en el frontend puede ser un valor temporal
@@ -15,7 +16,8 @@ const nuevoGato = ref({
     esterilizado: false,
     descripcion_Gato: "", 
     imagen_Gato: "",
-    id_Protectora: 1 
+    id_Protectora: 1,
+    visible: true 
 });
 
 onMounted(() => {
@@ -27,7 +29,7 @@ const crearGato = async () => {
         await gatosStore.createGato(nuevoGato.value);
         alert("Gato agregado exitosamente");
         // Limpiar formulario
-        nuevoGato.value = { id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 1 };
+        nuevoGato.value = { id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 1, visible: true };
     } catch (error) {
         console.error("Error al agregar el gato:", error);
     }
@@ -47,12 +49,12 @@ const eliminarGato = async (id_Gato: number) => {
 };
 
 const editarGato = (gato: any) => {
-    usuarioEditado.value = { ...gato };
+    gatoEditado.value = { ...gato };
     mostrarModal.value = true;
 };
 
 const guardarEdicion = async () => {
-    await gatosStore.updateGato(usuarioEditado.value);
+    await gatosStore.updateGato(gatoEditado.value);
     cerrarModal();
 };
 
@@ -105,15 +107,15 @@ const cerrarModal = () => {
             <v-card>
                 <v-card-title>Editar Gato</v-card-title>
                 <v-card-text>
-                    <input v-model="usuarioEditado.nombre_Gato" placeholder="Nombre" style="margin-right: 10px;">
-                    <input v-model="usuarioEditado.raza" placeholder="Raza">
-                    <input v-model.number="usuarioEditado.edad" type="number" placeholder="Edad">
-                    <input v-model="usuarioEditado.sexo" placeholder="Sexo"><br>
+                    <input v-model="gatoEditado.nombre_Gato" placeholder="Nombre" style="margin-right: 10px;">
+                    <input v-model="gatoEditado.raza" placeholder="Raza">
+                    <input v-model.number="gatoEditado.edad" type="number" placeholder="Edad">
+                    <input v-model="gatoEditado.sexo" placeholder="Sexo"><br>
                     <label>
-                        <input v-model="usuarioEditado.esterilizado" type="checkbox"> Esterilizado
+                        <input v-model="gatoEditado.esterilizado" type="checkbox"> Esterilizado
                     </label>
-                    <input v-model="usuarioEditado.descripcion_Gato" placeholder="Descripción" style="width: 272px; margin-left: 10px">
-                    <input v-model="usuarioEditado.imagen_Gato" placeholder="URL de imagen">
+                    <input v-model="gatoEditado.descripcion_Gato" placeholder="Descripción" style="width: 272px; margin-left: 10px">
+                    <input v-model="gatoEditado.imagen_Gato" placeholder="URL de imagen">
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="grey"@click="cerrarModal" class="admin-gatos__boton">Cancelar</v-btn>
