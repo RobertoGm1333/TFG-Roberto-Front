@@ -29,9 +29,23 @@ const headers = [
   { title: 'Acciones', key: 'acciones', sortable: false }
 ]
 
-onMounted(() => {
-  cargarGatos()
-})
+onMounted(async () => {
+  try {
+    const response = await fetch(`http://localhost:5167/api/Protectora/usuario/${authStore.obtenerIdUsuario}`);
+    if (!response.ok) throw new Error("No se pudo obtener la protectora");
+
+    const protectora = await response.json();
+    const idProtectora = protectora.id_Protectora;
+
+    const resGatos = await fetch(`http://localhost:5167/api/Gato/protectora/${idProtectora}`);
+    if (!resGatos.ok) throw new Error("Error al obtener gatos");
+
+    gatos.value = await resGatos.json();
+  } catch (err) {
+    console.error("Error cargando gatos de la protectora:", err);
+  }
+});
+
 
 function cargarGatos() {
   fetch(`http://localhost:5167/api/Gato/protectora/${authStore.obtenerIdUsuario}`)
