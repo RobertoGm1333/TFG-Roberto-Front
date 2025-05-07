@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { usegatosStore } from "@/stores/gatos.ts";
-import { vi } from "vuetify/locale";
 
 const gatosStore = usegatosStore();
 const mostrarModal = ref(false);

@@ -66,6 +66,12 @@ const router = createRouter({
       component: RegistrarseView,
     },
     {
+      path: '/protectora-admin',
+      name: 'protectora-admin',
+      component: () => import('@/views/ProtectoraAdmin.vue'),
+      meta: { requiereProtectora: true }
+    },
+    {
       path: '/admin',
       name: 'administrador',
       component: AdminView,
@@ -101,6 +107,10 @@ router.beforeEach((to, from, next) => {
 
   // Redirección si requiere rol admin y no lo es
   if (to.meta.requiereAdmin && (!autenticacionStore.usuario || autenticacionStore.usuario.rol !== 'admin')) {
+    return next('/')
+  }
+
+  if (to.meta.requiereProtectora && (!autenticacionStore.usuario || autenticacionStore.usuario.rol !== 'protectora')) {
     return next('/')
   }
 

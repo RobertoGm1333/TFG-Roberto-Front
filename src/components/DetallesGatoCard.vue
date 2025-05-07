@@ -117,7 +117,7 @@ const eliminarDeDeseados = async () => {
     <p v-if="mensaje" class="gato-card__mensaje">{{ mensaje }}</p>
     <v-card-actions>
       <v-btn color="#FF5500" to="/gato">Volver a gatos</v-btn>
-      <v-btn color="green" :href="`mailto:${protectora?.email}`" :disabled="!protectora?.email">
+      <v-btn color="green" :href="`mailto:${protectora?.correo_Protectora}`" :disabled="!protectora?.correo_Protectora">
         Contactar Protectora
       </v-btn>
     </v-card-actions>

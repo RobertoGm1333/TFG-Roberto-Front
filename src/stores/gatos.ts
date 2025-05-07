@@ -209,6 +209,21 @@ export const usegatosStore = defineStore('gatos', () => {
         }
     }
 
+    async function fetchGatosPorProtectora(idProtectora: number) {
+        try {
+            const response = await fetch(`http://localhost:5167/api/Gato/protectora/${idProtectora}`);
+            if (!response.ok) throw new Error("Error al obtener los gatos de la protectora");
+    
+            const data = await response.json();
+            console.log("Gatos de la protectora obtenidos:", data);
+            return data;
+        } catch (error) {
+            console.error("Error en fetchGatosPorProtectora:", error);
+            return [];
+        }
+    }
+    
+
     return {
         gatos,
         gatosFiltrados,
@@ -223,6 +238,7 @@ export const usegatosStore = defineStore('gatos', () => {
         obtenerGatosDeseados,
         agregarGatoADeseados,
         eliminarGatoDeDeseados,
-        cargarGatosDeseadosDesdeStorage
+        cargarGatosDeseadosDesdeStorage,
+        fetchGatosPorProtectora
     }
 })
