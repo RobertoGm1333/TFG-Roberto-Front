@@ -5,7 +5,7 @@ import { vi } from "vuetify/locale";
 
 const gatosStore = usegatosStore();
 const mostrarModal = ref(false);
-const gatoEditado = ref({ id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 1, visible: true })
+const gatoEditado = ref({ id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 0, visible: true })
 
 const nuevoGato = ref({
     id_Gato: 0,  // Se genera en la API, pero en el frontend puede ser un valor temporal
@@ -16,7 +16,7 @@ const nuevoGato = ref({
     esterilizado: false,
     descripcion_Gato: "", 
     imagen_Gato: "",
-    id_Protectora: 1,
+    id_Protectora: 0,
     visible: true 
 });
 
@@ -79,6 +79,7 @@ const cerrarModal = () => {
                     <input v-model="nuevoGato.esterilizado" type="checkbox"> Esterilizado
                 </label>
                 <input v-model="nuevoGato.descripcion_Gato" placeholder="Descripción" required>
+                <input v-model="nuevoGato.id_Protectora" placeholder="Id de la protectora" required>
                 <input v-model="nuevoGato.imagen_Gato" placeholder="URL de imagen" required>
                 <button type="submit" class="admin-gatos__boton">Agregar Gato</button>
             </form>
@@ -115,6 +116,7 @@ const cerrarModal = () => {
                         <input v-model="gatoEditado.esterilizado" type="checkbox"> Esterilizado
                     </label>
                     <input v-model="gatoEditado.descripcion_Gato" placeholder="Descripción" style="width: 272px; margin-left: 10px">
+                    <input v-model="gatoEditado.id_Protectora" placeholder="Id de la protectora" required>
                     <input v-model="gatoEditado.imagen_Gato" placeholder="URL de imagen">
                 </v-card-text>
                 <v-card-actions>
