@@ -8,8 +8,11 @@ import { esContraseñaValida } from '@/stores/validaciones';
 const autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(autenticacion);
 const router = useRouter();
+
 const nuevaContraseña = ref('');
 const repetirContraseña = ref('');
+const verNueva = ref(false);
+const verRepetir = ref(false);
 const mensaje = ref('');
 
 onMounted(() => {
@@ -64,8 +67,33 @@ const cerrarSesion = () => {
 
     <div class="perfil__cambiar-contrasena">
       <h2 class="perfil__subtitulo">Cambiar Contraseña</h2>
-      <input class="perfil__input" v-model="nuevaContraseña" type="password" placeholder="Nueva contraseña" />
-      <input class="perfil__input" v-model="repetirContraseña" type="password" placeholder="Repite la contraseña" />
+
+      <div class="perfil__password-wrapper">
+        <input
+          :type="verNueva ? 'text' : 'password'"
+          class="perfil__input"
+          v-model="nuevaContraseña"
+          placeholder="Nueva contraseña"
+        />
+        <button type="button" class="perfil__eye-icon" @click="verNueva = !verNueva">
+          <span v-if="verNueva">👁️</span>
+          <span v-else>👁️‍🗨️</span>
+        </button>
+      </div>
+
+      <div class="perfil__password-wrapper">
+        <input
+          :type="verRepetir ? 'text' : 'password'"
+          class="perfil__input"
+          v-model="repetirContraseña"
+          placeholder="Repite la contraseña"
+        />
+        <button type="button" class="perfil__eye-icon" @click="verRepetir = !verRepetir">
+          <span v-if="verRepetir">👁️</span>
+          <span v-else>👁️‍🗨️</span>
+        </button>
+      </div>
+
       <button class="perfil__boton" @click="cambiarContraseña">Actualizar</button>
       <p class="perfil__mensaje" v-if="mensaje">{{ mensaje }}</p>
     </div>
@@ -127,11 +155,34 @@ const cerrarSesion = () => {
       font-size: 18px;
     }
   }
+
+  &__mensaje {
+    margin-top: $espacio-mediano;
+    color: green;
+  }
+
+  &__password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
-  .perfil{
-    color:black;
+  .perfil {
+    color: black;
   }
 }
 
@@ -146,5 +197,4 @@ const cerrarSesion = () => {
     font-size: 18px;
   }
 }
-
 </style>
