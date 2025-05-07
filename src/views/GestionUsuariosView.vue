@@ -153,5 +153,24 @@ const usuariosFiltrados = computed(() => {
             background: darkred;
         }
     }
+    
+    @media (prefers-color-scheme: dark){
+
+        h2 {
+            color: #ffffff;
+        }
+
+        h3 {
+            color: #ffffff;
+        }
+
+        input{
+            color: whitesmoke
+        }
+
+        p {
+            color: grey;
+        }
+    }
 }
 </style>

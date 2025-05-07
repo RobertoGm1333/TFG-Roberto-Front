@@ -69,7 +69,7 @@ const cerrarModal = () => {
         <div class="admin-gatos__formulario">
             <h3 class="admin-gatos__subtitulo">Agregar Nuevo Gato</h3>
             <form @submit.prevent="crearGato" class="admin-gatos__form">
-                <input v-model="nuevoGato.nombre_Gato" placeholder="Nombre del gato" required>
+                <input class="form-campo" v-model="nuevoGato.nombre_Gato" placeholder="Nombre del gato" required>
                 <input v-model="nuevoGato.raza" placeholder="Raza" required>
                 <input v-model.number="nuevoGato.edad" type="number" placeholder="Edad" required>
                 <input v-model="nuevoGato.sexo" placeholder="Sexo" required>
@@ -268,10 +268,6 @@ const cerrarModal = () => {
         p {
             color: grey;
         }
-        
-        label {
-        color: whitesmoke; // o el color que tú prefieras
-    }
     }
 }
 
