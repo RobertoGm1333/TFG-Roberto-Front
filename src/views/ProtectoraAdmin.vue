@@ -5,6 +5,8 @@ import { useAutenticacion } from '@/stores/Autentificacion'
 const authStore = useAutenticacion()
 const gatos = ref<any[]>([])
 const mostrarDialogo = ref(false)
+const idProtectora = ref<number | null>(null)
+
 const gato = ref<any>({
   id_Gato: 0,
   nombre_Gato: '',
@@ -14,7 +16,7 @@ const gato = ref<any>({
   esterilizado: false,
   descripcion_Gato: '',
   imagen_Gato: '',
-  id_Protectora: authStore.obtenerIdUsuario,
+  id_Protectora: null,
   visible: true
 })
 
@@ -35,25 +37,25 @@ onMounted(async () => {
     if (!response.ok) throw new Error("No se pudo obtener la protectora");
 
     const protectora = await response.json();
-    const idProtectora = protectora.id_Protectora;
+    idProtectora.value = protectora.id_Protectora;
 
-    const resGatos = await fetch(`http://localhost:5167/api/Gato/protectora/${idProtectora}`);
-    if (!resGatos.ok) throw new Error("Error al obtener gatos");
-
-    gatos.value = await resGatos.json();
+    await cargarGatos()
   } catch (err) {
-    console.error("Error cargando gatos de la protectora:", err);
+    console.error("Error cargando datos de la protectora:", err);
   }
-});
+})
 
+async function cargarGatos() {
+  if (!idProtectora.value) return
 
-function cargarGatos() {
-  fetch(`http://localhost:5167/api/Gato/protectora/${authStore.obtenerIdUsuario}`)
-    .then(res => res.json())
-    .then(data => {
-      gatos.value = data
-    })
-    .catch(err => console.error("Error al cargar gatos:", err))
+  try {
+    const res = await fetch(`http://localhost:5167/api/Gato/protectora/${idProtectora.value}`);
+    if (!res.ok) throw new Error("Error al obtener gatos");
+
+    gatos.value = await res.json();
+  } catch (err) {
+    console.error("Error cargando gatos:", err);
+  }
 }
 
 function abrirFormulario() {
@@ -66,7 +68,7 @@ function abrirFormulario() {
     esterilizado: false,
     descripcion_Gato: '',
     imagen_Gato: '',
-    id_Protectora: authStore.obtenerIdUsuario,
+    id_Protectora: idProtectora.value, // correcto aquí
     visible: true
   }
   mostrarDialogo.value = true
@@ -81,36 +83,45 @@ function cerrarDialogo() {
   mostrarDialogo.value = false
 }
 
-function guardarGato() {
+async function guardarGato() {
+  if (!idProtectora.value) return
+
+  gato.value.id_Protectora = idProtectora.value // forzar ID correcto siempre
+
   const metodo = gato.value.id_Gato ? 'PUT' : 'POST'
   const url = gato.value.id_Gato
     ? `http://localhost:5167/api/Gato/${gato.value.id_Gato}`
     : 'http://localhost:5167/api/Gato'
 
-  fetch(url, {
-    method: metodo,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(gato.value)
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('Error al guardar el gato')
-      cerrarDialogo()
-      cargarGatos()
+  try {
+    const res = await fetch(url, {
+      method: metodo,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(gato.value)
     })
-    .catch(err => console.error(err))
+
+    if (!res.ok) throw new Error('Error al guardar el gato')
+    cerrarDialogo()
+    await cargarGatos()
+  } catch (err) {
+    console.error(err)
+  }
 }
 
-function eliminarGato(id: number) {
-  fetch(`http://localhost:5167/api/Gato/${id}`, {
-    method: 'DELETE'
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('Error al eliminar el gato')
-      cargarGatos()
+async function eliminarGato(id: number) {
+  try {
+    const res = await fetch(`http://localhost:5167/api/Gato/${id}`, {
+      method: 'DELETE'
     })
-    .catch(err => console.error(err))
+
+    if (!res.ok) throw new Error('Error al eliminar el gato')
+    await cargarGatos()
+  } catch (err) {
+    console.error(err)
+  }
 }
 </script>
+
 
 <template>
     <v-container>
