@@ -5,6 +5,8 @@ import { useAutenticacion } from '@/stores/Autentificacion'
 const authStore = useAutenticacion()
 const gatos = ref<any[]>([])
 const mostrarDialogo = ref(false)
+const mostrarConfirmacion = ref(false)
+const gatoAEliminar = ref<any>(null)
 const idProtectora = ref<number | null>(null)
 
 const gato = ref<any>({
@@ -86,9 +88,8 @@ function cerrarDialogo() {
 }
 
 async function guardarGato() {
-const { valid } = await formularioGato.value?.validate()
-if (!valid) return
-
+  const { valid } = await formularioGato.value?.validate()
+  if (!valid) return
 
   if (!idProtectora.value) return
 
@@ -113,19 +114,29 @@ if (!valid) return
     console.error(err)
   }
 }
-async function eliminarGato(id: number) {
+
+function pedirConfirmacion(g: any) {
+  gatoAEliminar.value = g
+  mostrarConfirmacion.value = true
+}
+
+async function confirmarEliminacion() {
+  if (!gatoAEliminar.value) return
+
   try {
-    const res = await fetch(`http://localhost:5167/api/Gato/${id}`, {
+    const res = await fetch(`http://localhost:5167/api/Gato/${gatoAEliminar.value.id_Gato}`, {
       method: 'DELETE'
     })
 
     if (!res.ok) throw new Error('Error al eliminar el gato')
+    mostrarConfirmacion.value = false
     await cargarGatos()
   } catch (err) {
     console.error(err)
   }
 }
 </script>
+
 
 <template>
   <v-container>
@@ -142,11 +153,12 @@ async function eliminarGato(id: number) {
       <template v-slot:item.acciones="{ item }">
         <div class="botones-control">
           <v-btn color="blue" @click="editarGato(item)">Editar</v-btn>
-          <v-btn color="red" @click="eliminarGato(item.id_Gato)">Eliminar</v-btn>
+          <v-btn color="red" @click="pedirConfirmacion(item)">Eliminar</v-btn>
         </div>
       </template>
     </v-data-table>
 
+    <!-- Formulario de creación/edición -->
     <v-dialog v-model="mostrarDialogo" max-width="600px">
       <v-card class="protectora-admin__dialogo">
         <v-card-title>{{ gato.id_Gato ? 'Editar Gato' : 'Nuevo Gato' }}</v-card-title>
@@ -194,8 +206,24 @@ async function eliminarGato(id: number) {
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Confirmación para eliminar -->
+    <v-dialog v-model="mostrarConfirmacion" max-width="500px">
+      <v-card class="protectora-admin__dialogo">
+        <v-card-title class="text-h6">Confirmar eliminación</v-card-title>
+        <v-card-text>
+          ¿Estás seguro que quieres eliminar a <strong>{{ gatoAEliminar?.nombre_Gato }}</strong>?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="grey" @click="mostrarConfirmacion = false">Cancelar</v-btn>
+          <v-btn color="red" @click="confirmarEliminacion">Eliminar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
+
   
   <style scoped lang="scss">
 .protectora-admin {
