@@ -104,7 +104,7 @@ const cerrarModal = () => {
         </div>
 
         <v-dialog v-model="mostrarModal" max-width="500px">
-            <v-card>
+            <v-card class="admin-gatos__tarjeta--editar">
                 <v-card-title>Editar Gato</v-card-title>
                 <v-card-text>
                     <input v-model="gatoEditado.nombre_Gato" placeholder="Nombre" style="margin-right: 10px;">
@@ -151,6 +151,14 @@ const cerrarModal = () => {
     &__subtitulo {
         font-size: 1.5rem;
         margin-bottom: 15px;
+    }
+
+    &__tarjeta--editar{
+        background-color: #202020;
+        color: #eeeeee;
+        input {
+            color: #eeeeee;
+        }
     }
 
     &__form {

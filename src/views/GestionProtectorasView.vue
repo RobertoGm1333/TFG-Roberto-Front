@@ -93,7 +93,7 @@ const cerrarModal = () => {
         </div>
 
         <v-dialog v-model="mostrarModal" max-width="500px">
-            <v-card>
+            <v-card class="admin-protectoras__tarjeta--editar">
                 <v-card-title>Editar Protectora</v-card-title>
                 <v-card-text>
                     <form @submit.prevent="guardarEdicion" class="admin-protectoras__form">
@@ -139,6 +139,14 @@ const cerrarModal = () => {
     &__subtitulo {
         font-size: 1.5rem;
         margin-bottom: 15px;
+    }
+    
+    &__tarjeta--editar{
+        background-color: #202020;
+        color: #eeeeee;
+        input {
+            color: #eeeeee;
+        }
     }
 
     &__form {

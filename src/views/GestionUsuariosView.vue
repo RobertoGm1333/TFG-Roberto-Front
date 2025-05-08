@@ -70,7 +70,7 @@ const usuariosFiltrados = computed(() => {
         </div>
 
         <v-dialog v-model="mostrarModal" max-width="500px">
-            <v-card>
+            <v-card class="admin-usuarios__tarjeta--editar">
                 <v-card-title class="titulo-edit-user">Editar Usuario</v-card-title>
                 <v-card-text>
                     <input v-model="usuarioEditado.nombre" placeholder="Nombre" class="input-edit-user">
@@ -128,6 +128,14 @@ const usuariosFiltrados = computed(() => {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 15px;
         padding: $espacio-mediano;
+    }
+
+    &__tarjeta--editar{
+        background-color: #202020;
+        color: #eeeeee;
+        input {
+            color: #eeeeee;
+        }
     }
 
     &__item {
