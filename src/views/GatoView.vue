@@ -63,6 +63,8 @@ const gatosFiltrados = computed(() => {
 <style scoped lang="scss">
 .v-row + .v-row {
   margin-top: 8px;
+  padding-right: 0%;
+  padding-left: 2%;
 }
 
 .NoFiltroContenedor {
@@ -82,6 +84,13 @@ const gatosFiltrados = computed(() => {
 :deep(.v-alert.info) {
   background-color: $color-principal !important;
   border-color: $color-principal !important;
+}
+
+@media (min-width: 620px) {
+  .v-row + .v-row {
+  padding-left: 0%;
+  }
+
 }
 
 </style>
