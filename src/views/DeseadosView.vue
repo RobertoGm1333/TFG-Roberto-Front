@@ -7,7 +7,11 @@ import DeseadosGatoCard from '@/components/DeseadosGatoCard.vue';
 // Obtener la store
 const Autenticacion = useAutenticacion();
 const gatosStore = usegatosStore();
-const gatosDeseados = computed(() => gatosStore.gatosDeseados);
+
+// Filtrado de gatos visibles
+const gatosDeseados = computed(() =>
+  gatosStore.gatosDeseados.filter(g => g.visible === true)
+);
 
 // Estado para controlar la visualización del mensaje
 const mostrarMensaje = ref(false);
@@ -16,9 +20,9 @@ onMounted(async () => {
   await gatosStore.obtenerGatosDeseados();
   console.log('Gatos deseados al montar la vista:', gatosDeseados.value);
   Autenticacion.cargarUsuarioDesdeLocalStorage();
-  
+
   if (Autenticacion.usuario) {
-    await gatosStore.obtenerGatosDeseados(Autenticacion.usuario.id_Usuario); // ✅ Ahora solo carga los gatos del usuario
+    await gatosStore.obtenerGatosDeseados(Autenticacion.usuario.id_Usuario);
   }
 
   // Esperar 1 segundo antes de mostrar el mensaje si no hay gatos

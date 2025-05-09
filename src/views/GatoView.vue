@@ -22,13 +22,14 @@ const actualizarFiltros = (filtros) => {
 // Gatos filtrados como propiedad computada
 const gatosFiltrados = computed(() => {
   return store.gatos.filter(gato => {
+    const visible = gato.visible === true
     // Filtrar por edad
     const edadEnRango = gato.edad >= edadMin.value && gato.edad <= edadMax.value
     
     // Filtrar por raza (si hay una seleccionada)
     const razaCoincide = razaSeleccionada.value === '' || gato.raza === razaSeleccionada.value
     
-    return edadEnRango && razaCoincide
+    return visible && edadEnRango && razaCoincide
   })
 })
 </script>
