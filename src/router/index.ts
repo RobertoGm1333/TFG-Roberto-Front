@@ -5,6 +5,7 @@ import DetallesGatoView from '@/views/DetallesGatoView.vue'
 import FAQ from '@/views/FAQView.vue'
 import PerfilView from '@/views/PerfilView.vue'
 import DeseadosView from '@/views/DeseadosView.vue'
+import SolicitudesView from '@/views/SolicitudesView.vue'
 import Iniciar_sesionView from '@/views/Iniciar_sesionView.vue'
 import RegistrarseView from '@/views/RegistrarseView.vue'
 import AdminView from '../views/AdminView.vue'
@@ -51,6 +52,14 @@ const router = createRouter({
       path: '/deseados',
       name: 'deseados',
       component: DeseadosView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/solicitudes',
+      name: 'solicitudes',
+      component: SolicitudesView,
       meta: {
         requiresAuth: true
       }

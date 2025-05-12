@@ -5,10 +5,28 @@ import type SolicitudAdopcionDto from './dtos/solicitudadopcion.dto'
 export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', () => {
     const solicitudes = ref<SolicitudAdopcionDto[]>([])
 
+    // Obtener el token de autenticación y datos del usuario
+    function getAuthData() {
+        const user = localStorage.getItem('user')
+        if (!user) return null
+        const userData = JSON.parse(user)
+        return {
+            token: userData.token,
+            id: userData.id_Usuario
+        }
+    }
+
     // Obtener TODAS las solicitudes (admin)
     async function fetchSolicitudes() {
         try {
-            const response = await fetch('http://localhost:5167/api/SolicitudAdopcion')
+            const authData = getAuthData()
+            if (!authData) return
+            
+            const response = await fetch('http://localhost:5167/api/SolicitudAdopcion', {
+                headers: {
+                    'Authorization': `Bearer ${authData.token}`
+                }
+            })
             if (!response.ok) throw new Error('Error al obtener las solicitudes')
             solicitudes.value = await response.json()
         } catch (error) {
@@ -19,7 +37,14 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     // Obtener solicitudes del usuario loggeado
     async function fetchMisSolicitudes() {
         try {
-            const response = await fetch('http://localhost:5167/api/SolicitudAdopcion/mias')
+            const authData = getAuthData()
+            if (!authData) return
+            
+            const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/usuario/${authData.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${authData.token}`
+                }
+            })
             if (!response.ok) throw new Error('Error al obtener mis solicitudes')
             solicitudes.value = await response.json()
         } catch (error) {
@@ -30,7 +55,14 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     // Obtener solicitudes de una protectora (por idProtectora)
     async function fetchSolicitudesProtectora(idProtectora: number) {
         try {
-            const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/protectora/${idProtectora}`)
+            const authData = getAuthData()
+            if (!authData) return
+            
+            const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/protectora/${idProtectora}`, {
+                headers: {
+                    'Authorization': `Bearer ${authData.token}`
+                }
+            })
             if (!response.ok) throw new Error('Error al obtener solicitudes de protectora')
             solicitudes.value = await response.json()
         } catch (error) {
@@ -41,9 +73,15 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     // Crear solicitud (usuario)
     async function createSolicitud(solicitud: SolicitudAdopcionDto) {
         try {
+            const authData = getAuthData()
+            if (!authData) return
+            
             const response = await fetch('http://localhost:5167/api/SolicitudAdopcion', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authData.token}`
+                },
                 body: JSON.stringify(solicitud)
             })
 
@@ -58,9 +96,15 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     // Actualizar solicitud completa (solo para admin o caso especial)
     async function updateSolicitud(solicitud: SolicitudAdopcionDto) {
         try {
+            const authData = getAuthData()
+            if (!authData) return
+            
             const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/${solicitud.id_Solicitud}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authData.token}`
+                },
                 body: JSON.stringify(solicitud)
             })
 
@@ -77,14 +121,19 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     // Cambiar solo estado y comentario de protectora (para protectora)
     async function updateEstadoSolicitud(idSolicitud: number, estado: string, comentarioProtectora: string, idProtectora: number) {
         try {
+            const authData = getAuthData()
+            if (!authData) return
+            
             const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/estado/${idSolicitud}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authData.token}`
+                },
                 body: JSON.stringify({ estado, comentario_Protectora: comentarioProtectora })
             })
             if (!response.ok) throw new Error('Error al actualizar el estado')
     
-            // ✅ Ahora sí pasas el idProtectora activo que te llegue desde donde llames a esta función
             await fetchSolicitudesProtectora(idProtectora)
         } catch (error) {
             console.error('Error en updateEstadoSolicitud:', error)
@@ -94,8 +143,14 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     // Eliminar solicitud
     async function deleteSolicitud(id_Solicitud: number) {
         try {
+            const authData = getAuthData()
+            if (!authData) return
+            
             const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/${id_Solicitud}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${authData.token}`
+                }
             })
 
             if (!response.ok) throw new Error('Error al eliminar la solicitud')

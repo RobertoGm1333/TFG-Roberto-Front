@@ -140,6 +140,7 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
                 <p>Hola {{ usuario.nombre }}</p>
                 <RouterLink to="/perfil" class="boton-1"><span>Mi Perfil</span></RouterLink>
                 <RouterLink to="/deseados" class="boton-2"><span>❤️ Deseados</span></RouterLink>
+                <RouterLink to="/solicitudes" class="boton-2"><span>📋 Solicitudes</span></RouterLink>
                 <RouterLink v-if="usuario.rol === 'admin'" to="/admin" class="admin-boton">Panel de Admin</RouterLink>
                 <RouterLink v-if="usuario.rol === 'protectora'" to="/protectora-admin" class="admin-boton">Panel de Protectora</RouterLink>
                 <RouterLink to="/"><button class="logout-btn" @click="Autenticacion.cerrarSesion">Cerrar sesión</button></RouterLink>

@@ -17,6 +17,7 @@ const Autenticacion = useAutenticacion();
 const gato = ref<any>(null);
 const protectora = ref<any>(null);
 const cargando = ref(true);
+const solicitudExistente = ref<any>(null);
 
 const comentarioUsuario = ref('');
 
@@ -28,10 +29,25 @@ const rulesComentario = [
   (v: string) => !!v && v.trim().length > 0 || 'Este campo es obligatorio'
 ]
 
+// Comprobar si ya existe una solicitud para este gato
+async function comprobarSolicitudExistente() {
+  if (!idUsuario.value || !gato.value) return;
+  
+  try {
+    const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/usuario/${idUsuario.value}/gato/${gato.value.id_Gato}`);
+    if (response.ok) {
+      solicitudExistente.value = await response.json();
+    }
+  } catch (error) {
+    console.error('Error al comprobar solicitud existente:', error);
+  }
+}
+
 const obtenerGato = async () => {
   cargando.value = true;
   gato.value = null;
   protectora.value = null;
+  solicitudExistente.value = null;
 
   const id = Number(route.params.id);
 
@@ -48,6 +64,7 @@ const obtenerGato = async () => {
     protectora.value = protectorasStore.protectoras.find(
       (p) => p.id_Protectora === gato.value.id_Protectora
     );
+    await comprobarSolicitudExistente();
   }
 
   cargando.value = false;
@@ -100,21 +117,34 @@ watch(() => route.params.id, obtenerGato);
     <v-row justify="center" v-if="gato">
       <v-col cols="11" md="9">
         <v-card class="pa-4 mt-6">
-          <h3>Solicitar adopción de {{ gato.nombre_Gato }}</h3>
-          <v-textarea
-            v-model="comentarioUsuario"
-            :label="`Cuéntanos por qué quieres adoptar a ${gato.nombre_Gato}`"
-            :rules="rulesComentario"
-            rows="3"
-            auto-grow
-            outlined
-            dense
-            class="mt-2"
-          ></v-textarea>
+          <template v-if="solicitudExistente">
+            <h3>Ya has solicitado adoptar a {{ gato.nombre_Gato }}</h3>
+            <v-alert
+              type="info"
+              class="mt-4"
+            >
+              Estado de tu solicitud: <strong>{{ solicitudExistente.estado }}</strong>
+              <br>
+              Fecha de solicitud: {{ new Date(solicitudExistente.fecha_Solicitud).toLocaleDateString() }}
+            </v-alert>
+          </template>
+          <template v-else>
+            <h3>Solicitar adopción de {{ gato.nombre_Gato }}</h3>
+            <v-textarea
+              v-model="comentarioUsuario"
+              :label="`Cuéntanos por qué quieres adoptar a ${gato.nombre_Gato}`"
+              :rules="rulesComentario"
+              rows="3"
+              auto-grow
+              outlined
+              dense
+              class="mt-2"
+            ></v-textarea>
 
-          <v-btn color="primary" class="mt-3" @click="solicitarAdopcion">
-            Enviar solicitud de adopción
-          </v-btn>
+            <v-btn color="primary" class="mt-3" @click="solicitarAdopcion">
+              Enviar solicitud de adopción
+            </v-btn>
+          </template>
         </v-card>
       </v-col>
     </v-row>
