@@ -231,24 +231,38 @@ function getEstadoColor(estado: string) {
 
 
 <template>
-  <v-container>
-    <v-row justify="space-between" class="mb-4">
-      <v-col cols="auto">
-        <h1>Gestión de Gatos - Protectora</h1>
+  <v-container fluid class="protectora-admin pa-0">
+    <v-row justify="space-between" align="center" class="mb-4 mx-0">
+      <v-col cols="12" sm="auto" class="text-center text-sm-start px-4">
+        <h1 class="protectora-admin__titulo">Gestión de Gatos - Protectora</h1>
       </v-col>
-      <v-col cols="auto">
-        <v-btn color="primary" @click="abrirFormulario">Nuevo gato</v-btn>
+      <v-col cols="12" sm="auto" class="text-center text-sm-start mt-4 mt-sm-0 px-4">
+        <v-btn color="primary" @click="abrirFormulario" class="protectora-admin__boton">Nuevo gato</v-btn>
       </v-col>
     </v-row>
 
-    <v-data-table :headers="headers" :items="gatos" class="elevation-1 protectora-admin__tabla">
-      <template v-slot:item.acciones="{ item }">
-        <div class="botones-control">
-          <v-btn color="blue" @click="editarGato(item)">Editar</v-btn>
-          <v-btn color="red" @click="pedirConfirmacion(item)">Eliminar</v-btn>
-        </div>
-      </template>
-    </v-data-table>
+    <!-- Tabla responsive -->
+    <div class="protectora-admin__tabla-container px-4">
+      <v-data-table
+        :headers="headers"
+        :items="gatos"
+        class="elevation-1 protectora-admin__tabla"
+        :class="{'protectora-admin__tabla--mobile': $vuetify.display.smAndDown}"
+      >
+        <template v-slot:item.acciones="{ item }">
+          <div class="protectora-admin__acciones">
+            <v-btn color="primary" @click="editarGato(item)" class="mb-2 mb-sm-0 me-sm-2">
+              <v-icon>mdi-pencil</v-icon>
+              <span class="d-none d-sm-inline ms-2">Editar</span>
+            </v-btn>
+            <v-btn color="error" @click="pedirConfirmacion(item)">
+              <v-icon>mdi-delete</v-icon>
+              <span class="d-none d-sm-inline ms-2">Eliminar</span>
+            </v-btn>
+          </div>
+        </template>
+      </v-data-table>
+    </div>
 
     <!-- Mensaje de confirmación/error -->
     <v-snackbar
@@ -260,104 +274,111 @@ function getEstadoColor(estado: string) {
     </v-snackbar>
 
     <!-- Sección de Solicitudes -->
-    <v-row class="mt-8">
-      <v-col>
-        <h1>Solicitudes de Adopción</h1>
-        <v-data-table
-          :headers="[
-            { title: 'ID', key: 'id_Solicitud' },
-            { title: 'Gato', key: 'id_Gato' },
-            { title: 'Solicitante', key: 'id_Usuario' },
-            { title: 'Estado', key: 'estado' },
-            { title: 'Fecha', key: 'fecha_Solicitud' },
-            { title: 'Acciones', key: 'actions', sortable: false }
-          ]"
-          :items="solicitudes"
-          class="elevation-1 protectora-admin__tabla mt-4"
-        >
-          <template v-slot:item.id_Gato="{ item }">
-            {{ nombresGatos.get(item.id_Gato) || 'Cargando...' }}
-          </template>
+    <v-row class="mt-8 mx-0">
+      <v-col cols="12" class="px-4">
+        <h2 class="protectora-admin__subtitulo">Solicitudes de Adopción</h2>
+        <div class="protectora-admin__tabla-container">
+          <v-data-table
+            :headers="[
+              { title: 'ID', key: 'id_Solicitud', align: 'start' },
+              { title: 'Gato', key: 'id_Gato' },
+              { title: 'Solicitante', key: 'id_Usuario' },
+              { title: 'Estado', key: 'estado' },
+              { title: 'Fecha', key: 'fecha_Solicitud' },
+              { title: 'Acciones', key: 'actions', sortable: false, align: 'end' }
+            ]"
+            :items="solicitudes"
+            class="elevation-1 protectora-admin__tabla mt-4"
+            :class="{'protectora-admin__tabla--mobile': $vuetify.display.smAndDown}"
+          >
+            <template v-slot:item.id_Gato="{ item }">
+              {{ nombresGatos.get(item.id_Gato) || 'Cargando...' }}
+            </template>
 
-          <template v-slot:item.id_Usuario="{ item }">
-            {{ nombresUsuarios.get(item.id_Usuario) || 'Cargando...' }}
-          </template>
+            <template v-slot:item.id_Usuario="{ item }">
+              {{ nombresUsuarios.get(item.id_Usuario) || 'Cargando...' }}
+            </template>
 
-          <template v-slot:item.fecha_Solicitud="{ item }">
-            {{ new Date(item.fecha_Solicitud).toLocaleDateString() }}
-          </template>
-          
-          <template v-slot:item.estado="{ item }">
-            <v-chip
-              :color="getEstadoColor(item.estado)"
-              text-color="white"
-              small
-            >
-              {{ item.estado }}
-            </v-chip>
-          </template>
+            <template v-slot:item.fecha_Solicitud="{ item }">
+              {{ new Date(item.fecha_Solicitud).toLocaleDateString() }}
+            </template>
+            
+            <template v-slot:item.estado="{ item }">
+              <v-chip
+                :color="getEstadoColor(item.estado)"
+                text-color="white"
+                size="small"
+              >
+                {{ item.estado }}
+              </v-chip>
+            </template>
 
-          <template v-slot:item.actions="{ item }">
-            <div class="botones-control">
-              <v-dialog v-model="item.showDialog" max-width="500">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    color="blue"
-                    v-bind="props"
-                    class="protectora-admin__boton protectora-admin__boton--editar"
-                  >
-                    Gestionar
-                  </v-btn>
-                </template>
+            <template v-slot:item.actions="{ item }">
+              <div class="protectora-admin__acciones">
+                <v-dialog v-model="item.showDialog" max-width="500px">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      color="primary"
+                      v-bind="props"
+                      class="protectora-admin__boton"
+                    >
+                      <v-icon>mdi-cog</v-icon>
+                      <span class="d-none d-sm-inline ms-2">Gestionar</span>
+                    </v-btn>
+                  </template>
 
-                <v-card class="protectora-admin__dialogo">
-                  <v-card-title class="protectora-admin__dialogo-titulo">Gestionar Solicitud</v-card-title>
-                  <v-card-text class="protectora-admin__dialogo-formulario">
-                    <v-select
-                      v-model="nuevoEstado"
-                      :items="['Pendiente', 'Aceptada', 'Rechazada']"
-                      label="Nuevo Estado"
-                      :rules="reglas.estado"
-                      class="mb-4"
-                      required
-                    ></v-select>
+                  <v-card class="protectora-admin__dialogo">
+                    <v-card-title class="protectora-admin__dialogo-titulo">
+                      Gestionar Solicitud
+                    </v-card-title>
+                    <v-card-text class="protectora-admin__dialogo-contenido">
+                      <v-select
+                        v-model="nuevoEstado"
+                        :items="['Pendiente', 'Aceptada', 'Rechazada']"
+                        label="Nuevo Estado"
+                        :rules="reglas.estado"
+                        class="mb-4"
+                        required
+                      ></v-select>
+                      
+                      <v-textarea
+                        v-model="comentarioProtectora"
+                        label="Comentario"
+                        rows="3"
+                        :rules="reglas.comentario"
+                        class="mb-4"
+                        required
+                      ></v-textarea>
+                    </v-card-text>
                     
-                    <v-textarea
-                      v-model="comentarioProtectora"
-                      label="Comentario"
-                      rows="3"
-                      :rules="reglas.comentario"
-                      class="mb-4"
-                      required
-                    ></v-textarea>
-                  </v-card-text>
-                  
-                  <v-card-actions class="protectora-admin__dialogo-acciones">
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="grey"
-                      @click="item.showDialog = false"
-                    >
-                      Cancelar
-                    </v-btn>
-                    <v-btn
-                      color="green"
-                      @click="() => {
-                        actualizarEstado(item);
-                        if (nuevoEstado && comentarioProtectora) {
-                          item.showDialog = false;
-                        }
-                      }"
-                      :disabled="!nuevoEstado || !comentarioProtectora"
-                    >
-                      Guardar
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </div>
-          </template>
-        </v-data-table>
+                    <v-card-actions class="protectora-admin__dialogo-acciones">
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="grey"
+                        @click="item.showDialog = false"
+                        class="me-2"
+                      >
+                        Cancelar
+                      </v-btn>
+                      <v-btn
+                        color="success"
+                        @click="() => {
+                          actualizarEstado(item);
+                          if (nuevoEstado && comentarioProtectora) {
+                            item.showDialog = false;
+                          }
+                        }"
+                        :disabled="!nuevoEstado || !comentarioProtectora"
+                      >
+                        Guardar
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </div>
+            </template>
+          </v-data-table>
+        </div>
       </v-col>
     </v-row>
 
@@ -413,14 +434,16 @@ function getEstadoColor(estado: string) {
     <!-- Confirmación para eliminar -->
     <v-dialog v-model="mostrarConfirmacion" max-width="500px">
       <v-card class="protectora-admin__dialogo">
-        <v-card-title class="text-h6">Confirmar eliminación</v-card-title>
-        <v-card-text>
+        <v-card-title class="protectora-admin__dialogo-titulo">
+          Confirmar eliminación
+        </v-card-title>
+        <v-card-text class="py-4">
           ¿Estás seguro que quieres eliminar a <strong>{{ gatoAEliminar?.nombre_Gato }}</strong>?
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
-          <v-btn color="grey" @click="mostrarConfirmacion = false">Cancelar</v-btn>
-          <v-btn color="red" @click="confirmarEliminacion">Eliminar</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" @click="mostrarConfirmacion = false" class="me-2">Cancelar</v-btn>
+          <v-btn color="error" @click="confirmarEliminacion">Eliminar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -430,166 +453,211 @@ function getEstadoColor(estado: string) {
   
 <style scoped lang="scss">
 .protectora-admin {
-  margin: 2rem auto;
-  max-width: 1200px;
-  padding: 1rem;
-  background-color: #121212;
-  border-radius: 10px;
-  min-height: calc(100vh - 180px); // Ajuste para mantener el footer en la parte inferior
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: $espacio-grande;
 
   &__titulo {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #eeeeee;
-    margin-bottom: 1rem;
-  }
+    font-size: 1.25rem;
+    color: $color-principal;
+    margin: $espacio-mediano 0;
+    text-align: center;
 
-  &__top-bar {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1rem;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
+    @media (min-width: 600px) {
+      font-size: 2rem;
+      text-align: left;
+      margin-bottom: $espacio-grande;
     }
   }
 
-  &__content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  &__subtitulo {
+    font-size: 1.1rem;
+    color: $color-principal;
+    margin: $espacio-mediano 0;
+    text-align: center;
+
+    @media (min-width: 600px) {
+      font-size: 1.8rem;
+      text-align: left;
+    }
   }
 
-  &__section {
-    margin-bottom: 2rem;
-  }
+  &__tabla-container {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
 
-  &__boton-nuevo {
-    background-color: #FF5500;
-    color: white;
-    font-weight: 600;
-    border-radius: 6px;
-    padding: 0.5rem 1rem;
+    :deep(.v-data-table) {
+      width: 100%;
+      font-size: 0.875rem;
+      border-radius: 0;
 
-    &:hover {
-      background-color: darken(#FF5500, 10%);
+      @media (min-width: 600px) {
+        font-size: 1rem;
+        border-radius: $espacio-pequeno;
+      }
+    }
+
+    :deep(.v-data-table-header) {
+      th {
+        padding: 12px 16px !important;
+        font-size: 0.875rem !important;
+        height: 48px !important;
+        background-color: $color-blanco;
+      }
+    }
+
+    :deep(.v-data-table__wrapper) {
+      td {
+        padding: 12px 16px !important;
+        font-size: 0.875rem !important;
+        height: 48px !important;
+      }
     }
   }
 
   &__tabla {
-    background-color: #E9E9E9;
-    border-radius: 8px;
-    overflow-x: auto;
+    width: 100%;
+    background-color: $color-blanco;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.12);
 
-    th {
-      color: #f5f5f5;
-      font-weight: 600;
+    @media (min-width: 600px) {
+      box-shadow: $sombra-contenedor;
     }
 
-    td {
-      color: #dddddd;
-      border-color: #333;
-    }
+    &--mobile {
+      :deep(.v-data-table__wrapper) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        
+        table {
+          width: 100%;
+          min-width: 500px;
+        }
+      }
 
-    tr:nth-child(even) {
-      background-color: rgba(255, 255, 255, 0.02);
+      :deep(th), :deep(td) {
+        white-space: nowrap;
+        min-width: 100px;
+        padding: 12px 16px !important;
+      }
+
+      :deep(td:first-child), :deep(th:first-child) {
+        padding-left: 16px !important;
+      }
+
+      :deep(td:last-child), :deep(th:last-child) {
+        padding-right: 16px !important;
+      }
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+
+    .v-btn {
+      min-width: 40px !important;
+      padding: 0 12px !important;
+      height: 36px !important;
+
+      @media (min-width: 600px) {
+        min-width: 64px !important;
+        padding: 0 16px !important;
+      }
     }
   }
 
   &__boton {
-    border-radius: 6px;
-    text-transform: none;
-    font-weight: 500;
-    margin-right: 0.5rem;
+    width: auto;
+    min-width: 120px !important;
+    height: 36px !important;
+    font-size: 0.875rem !important;
 
-    &--editar {
-      background-color: #2680eb;
-      color: white;
-      &:hover {
-        background-color: #3a90f0;
-      }
-    }
-
-    &--eliminar {
-      background-color: #e53935;
-      color: white;
-      &:hover {
-        background-color: #c62828;
-      }
+    @media (min-width: 600px) {
+      height: 40px !important;
+      font-size: 1rem !important;
     }
   }
 
   &__dialogo {
-    .v-card {
-      background-color: #202020;
-      color: #eeeeee;
-      border-radius: 10px;
+    margin: 8px;
+    width: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    @media (min-width: 600px) {
+      margin: 0;
     }
 
     &-titulo {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #f5f5f5;
+      background-color: $color-principal;
+      color: $color-blanco;
+      padding: 12px 16px;
+      font-size: 1.1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
-    &-formulario {
-      .v-text-field,
-      .v-select,
-      .v-textarea,
-      .v-checkbox {
-        background-color: #2a2a2a;
-        color: #eeeeee;
-        border-radius: 6px;
-        margin-bottom: 1rem;
+    &-contenido {
+      padding: 16px 12px;
+
+      :deep(.v-input) {
+        margin-bottom: 12px;
       }
 
-      input,
-      textarea {
-        color: #eeeeee !important;
+      :deep(.v-text-field) {
+        font-size: 0.875rem;
+      }
+
+      :deep(.v-label) {
+        font-size: 0.875rem;
       }
     }
 
     &-acciones {
+      padding: 12px;
       display: flex;
       justify-content: flex-end;
-      gap: 0.5rem;
+      gap: 8px;
     }
   }
-}
 
-.botones-control {
-  display: flex;
-  gap: 10px;
-  padding-top: 4%;
-  padding-bottom: 4%;
+  @media (min-width: 960px) {
+    max-width: 1200px;
+    padding: $espacio-grande;
+    margin-top: 95px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
-  .protectora-admin__tabla {
-    background-color: #272727;
-    color: whitesmoke;
-    border: solid #5d5d5d;
-    border-color: rgba(93, 93, 93, 0.5);
-  }
-  .protectora-admin__dialogo {
-    background-color: #272727;
-    color: whitesmoke;
-  }
-}
+  .protectora-admin {
+    &__tabla {
+      background-color: #272727;
+      color: $color-blanco;
+    }
 
-@media (width <= 978px) {
-  .v-container {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-  .botones-control {
-    flex-wrap: wrap;
+    &__dialogo {
+      background-color: #272727;
+      color: $color-blanco;
+
+      :deep(.v-text-field),
+      :deep(.v-select),
+      :deep(.v-textarea) {
+        color: $color-blanco;
+      }
+    }
   }
 }
 </style>

@@ -18,16 +18,30 @@ const gato = ref<any>(null);
 const protectora = ref<any>(null);
 const cargando = ref(true);
 const solicitudExistente = ref<any>(null);
+const mostrarFormulario = computed(() => {
+  return Autenticacion.esAutenticado && !solicitudExistente.value;
+});
 
 const comentarioUsuario = ref('');
 
 // Usuario logueado dinámico
-const idUsuario = computed(() => Autenticacion.usuario?.id_Usuario ?? 0)
+const idUsuario = computed(() => Autenticacion.usuario?.id_Usuario ?? 0);
+
+// Función para formatear la fecha y hora
+function formatearFechaHora(fecha: Date): string {
+  return new Date(fecha).toLocaleString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
 
 // Reglas de validación
 const rulesComentario = [
   (v: string) => !!v && v.trim().length > 0 || 'Este campo es obligatorio'
-]
+];
 
 // Comprobar si ya existe una solicitud para este gato
 async function comprobarSolicitudExistente() {
@@ -64,7 +78,9 @@ const obtenerGato = async () => {
     protectora.value = protectorasStore.protectoras.find(
       (p) => p.id_Protectora === gato.value.id_Protectora
     );
-    await comprobarSolicitudExistente();
+    if (Autenticacion.esAutenticado) {
+      await comprobarSolicitudExistente();
+    }
   }
 
   cargando.value = false;
@@ -81,18 +97,27 @@ const solicitarAdopcion = async () => {
     return;
   }
 
-  const solicitud = new SolicitudAdopcionDto(
-    0,
-    idUsuario.value,
-    gato.value.id_Gato,
-    new Date(),
-    'pendiente',
-    comentarioUsuario.value,
-    ''
-  );
-  await solicitudesStore.createSolicitud(solicitud);
-  alert('¡Solicitud enviada!');
-  comentarioUsuario.value = '';
+  try {
+    const solicitud = new SolicitudAdopcionDto(
+      0,
+      idUsuario.value,
+      gato.value.id_Gato,
+      new Date(),
+      'pendiente',
+      comentarioUsuario.value,
+      ''
+    );
+    await solicitudesStore.createSolicitud(solicitud);
+    await comprobarSolicitudExistente(); // Recargar la solicitud para mostrar el estado actualizado
+    comentarioUsuario.value = '';
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    } else {
+      alert('Error al crear la solicitud de adopción');
+    }
+    await comprobarSolicitudExistente(); // Recargar por si acaso
+  }
 };
 
 onMounted(() => {
@@ -117,17 +142,48 @@ watch(() => route.params.id, obtenerGato);
     <v-row justify="center" v-if="gato">
       <v-col cols="11" md="9">
         <v-card class="pa-4 mt-6">
-          <template v-if="solicitudExistente">
+          <!-- Si el usuario no está autenticado -->
+          <template v-if="!Autenticacion.esAutenticado">
+            <v-alert type="info" class="mb-4">
+              Para solicitar la adopción de {{ gato.nombre_Gato }}, necesitas iniciar sesión.
+            </v-alert>
+            <v-btn color="primary" to="/iniciar-sesion">
+              Iniciar sesión
+            </v-btn>
+          </template>
+
+          <!-- Si ya existe una solicitud -->
+          <template v-else-if="solicitudExistente">
             <h3>Ya has solicitado adoptar a {{ gato.nombre_Gato }}</h3>
             <v-alert
-              type="info"
+              :type="solicitudExistente.estado.toLowerCase() === 'pendiente' ? 'warning' : 
+                    solicitudExistente.estado.toLowerCase() === 'aceptada' ? 'success' : 'error'"
               class="mt-4"
             >
-              Estado de tu solicitud: <strong>{{ solicitudExistente.estado }}</strong>
-              <br>
-              Fecha de solicitud: {{ new Date(solicitudExistente.fecha_Solicitud).toLocaleDateString() }}
+              <p><strong>Estado de tu solicitud:</strong> 
+                <v-chip
+                  :color="solicitudExistente.estado.toLowerCase() === 'pendiente' ? 'orange' : 
+                         solicitudExistente.estado.toLowerCase() === 'aceptada' ? 'green' : 
+                         solicitudExistente.estado.toLowerCase() === 'rechazada' ? 'red' : 'grey'"
+                  text-color="white"
+                  small
+                  class="ml-2"
+                >
+                  {{ solicitudExistente.estado.charAt(0).toUpperCase() + solicitudExistente.estado.slice(1).toLowerCase() }}
+                </v-chip>
+              </p>
+              <p><strong>Fecha de solicitud:</strong> {{ formatearFechaHora(solicitudExistente.fecha_Solicitud) }}</p>
+              <p><strong>Tu comentario:</strong> {{ solicitudExistente.comentario_Usuario }}</p>
+              <template v-if="solicitudExistente.comentario_Protectora">
+                <p><strong>Respuesta de la protectora:</strong> {{ solicitudExistente.comentario_Protectora }}</p>
+              </template>
             </v-alert>
+            <v-btn color="primary" to="/solicitudes" class="mt-3">
+              Ver todas mis solicitudes
+            </v-btn>
           </template>
+
+          <!-- Formulario de nueva solicitud -->
           <template v-else>
             <h3>Solicitar adopción de {{ gato.nombre_Gato }}</h3>
             <v-textarea
@@ -167,6 +223,17 @@ watch(() => route.params.id, obtenerGato);
 .v-col-12 {
   flex: 0 0 125%;
   max-width: 125%;
+}
+
+:deep(.v-alert.info) {
+  background-color: $color-principal !important;
+  border-color: $color-principal !important;
+  color: white !important;
+}
+
+:deep(.v-btn.primary) {
+  background-color: $color-principal !important;
+  border-color: $color-principal !important;
 }
 
 @media (min-width: 1010px) {

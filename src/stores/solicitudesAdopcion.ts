@@ -75,6 +75,14 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
         try {
             const authData = getAuthData()
             if (!authData) return
+
+            // Primero verificar si ya existe una solicitud
+            const checkResponse = await fetch(`http://localhost:5167/api/SolicitudAdopcion/usuario/${solicitud.id_Usuario}/gato/${solicitud.id_Gato}`)
+            
+            if (checkResponse.ok) {
+                // Si la respuesta es ok, significa que ya existe una solicitud
+                throw new Error('Ya existe una solicitud de adopción para este gato')
+            }
             
             const response = await fetch('http://localhost:5167/api/SolicitudAdopcion', {
                 method: 'POST',
@@ -88,8 +96,10 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
             if (!response.ok) throw new Error('Error al crear la solicitud')
             const nueva = await response.json()
             solicitudes.value.push(nueva)
+            return nueva
         } catch (error) {
             console.error('Error en createSolicitud:', error)
+            throw error // Propagar el error para manejarlo en el componente
         }
     }
 

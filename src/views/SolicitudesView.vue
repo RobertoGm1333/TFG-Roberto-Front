@@ -60,7 +60,7 @@ onMounted(async () => {
   <div class="solicitudes">
     <h1 class="solicitudes__titulo">Mis Solicitudes de Adopción</h1>
 
-    <v-alert v-if="cargandoSolicitudes" type="info" class="solicitudes__cargando">
+    <v-alert v-if="cargandoSolicitudes" type="info" class="solicitudes__cargando solicitudes__alert">
       Cargando solicitudes...
     </v-alert>
 
@@ -123,6 +123,12 @@ onMounted(async () => {
   &__cargando {
     max-width: 600px;
     margin: 0 auto;
+  }
+
+  &__alert {
+    background-color: $color-principal !important;
+    border-color: $color-principal !important;
+    color: $color-blanco !important;
   }
 
   &__vacio {

@@ -167,11 +167,11 @@ const togglePasswordVisibility = () => {
       border: none;
       cursor: pointer;
       font-size: 1.5rem;
-      color: #007bff;
+      color: $color-principal;
       transition: color 0.3s;
 
       &:hover {
-        color: #0056b3;
+        color: darken($color-principal, 10%);
       }
     }
   }

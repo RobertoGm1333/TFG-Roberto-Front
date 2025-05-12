@@ -142,7 +142,7 @@ const cerrarSesion = () => {
     width: 100%;
     padding: $espacio-mediano;
     margin-top: $espacio-mediano;
-    background-color: #007bff;
+    background-color: $color-principal;
     color: $color-blanco;
     border: none;
     border-radius: 6px;
@@ -153,6 +153,14 @@ const cerrarSesion = () => {
       background-color: $color-rojo;
       margin-top: $espacio-grande;
       font-size: 18px;
+    }
+
+    &:hover {
+      background-color: darken($color-principal, 10%);
+    }
+
+    &--rojo:hover {
+      background-color: darken($color-rojo, 10%);
     }
   }
 
