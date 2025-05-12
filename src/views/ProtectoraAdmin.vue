@@ -15,6 +15,9 @@ const idProtectora = ref<number | null>(null)
 const solicitudes = ref<any[]>([])
 const nuevoEstado = ref('')
 const comentarioProtectora = ref('')
+const mostrarMensaje = ref(false)
+const mensajeTexto = ref('')
+const mensajeTipo = ref('success')
 
 const gato = ref<any>({
   id_Gato: 0,
@@ -31,6 +34,9 @@ const gato = ref<any>({
 
 const formularioGato = ref()
 
+const nombresGatos = ref<Map<number, string>>(new Map())
+const nombresUsuarios = ref<Map<number, string>>(new Map())
+
 const headers = [
   { title: 'ID', key: 'id_Gato' },
   { title: 'Nombre', key: 'nombre_Gato' },
@@ -41,6 +47,12 @@ const headers = [
   { title: 'Visible', key: 'visible' },
   { title: 'Acciones', key: 'acciones', sortable: false }
 ]
+
+// Reglas de validación
+const reglas = {
+  estado: [(v: string) => !!v || 'El estado es obligatorio'],
+  comentario: [(v: string) => !!v || 'El comentario es obligatorio']
+}
 
 onMounted(async () => {
   try {
@@ -75,17 +87,57 @@ async function cargarSolicitudes() {
 
   await solicitudesStore.fetchSolicitudesProtectora(idProtectora.value)
   solicitudes.value = solicitudesStore.solicitudes
+
+  for (const solicitud of solicitudes.value) {
+    await cargarDatosGato(solicitud.id_Gato)
+    await cargarDatosUsuario(solicitud.id_Usuario)
+  }
+}
+
+async function cargarDatosGato(idGato: number) {
+  try {
+    const res = await fetch(`http://localhost:5167/api/Gato/${idGato}`)
+    if (!res.ok) throw new Error('Error al obtener el gato')
+    const gato = await res.json()
+    nombresGatos.value.set(idGato, gato.nombre_Gato)
+  } catch (err) {
+    console.error('Error cargando datos del gato:', err)
+  }
+}
+
+async function cargarDatosUsuario(idUsuario: number) {
+  try {
+    const res = await fetch(`http://localhost:5167/api/Usuario/${idUsuario}`)
+    if (!res.ok) throw new Error('Error al obtener el usuario')
+    const usuario = await res.json()
+    nombresUsuarios.value.set(idUsuario, `${usuario.nombre} ${usuario.apellido}`)
+  } catch (err) {
+    console.error('Error cargando datos del usuario:', err)
+  }
 }
 
 async function actualizarEstado(solicitud: any) {
+  // Validar campos
+  if (!nuevoEstado.value || !comentarioProtectora.value) {
+    mensajeTipo.value = 'error'
+    mensajeTexto.value = 'Por favor, complete todos los campos'
+    mostrarMensaje.value = true
+    return
+  }
+
   try {
     await solicitudesStore.updateEstadoSolicitud(solicitud.id_Solicitud, nuevoEstado.value, comentarioProtectora.value, idProtectora.value!)
-    alert('Estado actualizado correctamente')
+    mensajeTipo.value = 'success'
+    mensajeTexto.value = 'Solicitud editada correctamente'
+    mostrarMensaje.value = true
     await cargarSolicitudes()
     nuevoEstado.value = ''
     comentarioProtectora.value = ''
   } catch (err) {
     console.error('Error actualizando estado:', err)
+    mensajeTipo.value = 'error'
+    mensajeTexto.value = 'Error al actualizar la solicitud'
+    mostrarMensaje.value = true
   }
 }
 
@@ -162,6 +214,19 @@ async function confirmarEliminacion() {
     console.error(err)
   }
 }
+
+function getEstadoColor(estado: string) {
+  switch (estado) {
+    case 'Pendiente':
+      return 'orange'
+    case 'Aceptada':
+      return 'green'
+    case 'Rechazada':
+      return 'red'
+    default:
+      return 'grey'
+  }
+}
 </script>
 
 
@@ -184,6 +249,117 @@ async function confirmarEliminacion() {
         </div>
       </template>
     </v-data-table>
+
+    <!-- Mensaje de confirmación/error -->
+    <v-snackbar
+      v-model="mostrarMensaje"
+      :color="mensajeTipo"
+      :timeout="3000"
+    >
+      {{ mensajeTexto }}
+    </v-snackbar>
+
+    <!-- Sección de Solicitudes -->
+    <v-row class="mt-8">
+      <v-col>
+        <h1>Solicitudes de Adopción</h1>
+        <v-data-table
+          :headers="[
+            { title: 'ID', key: 'id_Solicitud' },
+            { title: 'Gato', key: 'id_Gato' },
+            { title: 'Solicitante', key: 'id_Usuario' },
+            { title: 'Estado', key: 'estado' },
+            { title: 'Fecha', key: 'fecha_Solicitud' },
+            { title: 'Acciones', key: 'actions', sortable: false }
+          ]"
+          :items="solicitudes"
+          class="elevation-1 protectora-admin__tabla mt-4"
+        >
+          <template v-slot:item.id_Gato="{ item }">
+            {{ nombresGatos.get(item.id_Gato) || 'Cargando...' }}
+          </template>
+
+          <template v-slot:item.id_Usuario="{ item }">
+            {{ nombresUsuarios.get(item.id_Usuario) || 'Cargando...' }}
+          </template>
+
+          <template v-slot:item.fecha_Solicitud="{ item }">
+            {{ new Date(item.fecha_Solicitud).toLocaleDateString() }}
+          </template>
+          
+          <template v-slot:item.estado="{ item }">
+            <v-chip
+              :color="getEstadoColor(item.estado)"
+              text-color="white"
+              small
+            >
+              {{ item.estado }}
+            </v-chip>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <div class="botones-control">
+              <v-dialog v-model="item.showDialog" max-width="500">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    color="blue"
+                    v-bind="props"
+                    class="protectora-admin__boton protectora-admin__boton--editar"
+                  >
+                    Gestionar
+                  </v-btn>
+                </template>
+
+                <v-card class="protectora-admin__dialogo">
+                  <v-card-title class="protectora-admin__dialogo-titulo">Gestionar Solicitud</v-card-title>
+                  <v-card-text class="protectora-admin__dialogo-formulario">
+                    <v-select
+                      v-model="nuevoEstado"
+                      :items="['Pendiente', 'Aceptada', 'Rechazada']"
+                      label="Nuevo Estado"
+                      :rules="reglas.estado"
+                      class="mb-4"
+                      required
+                    ></v-select>
+                    
+                    <v-textarea
+                      v-model="comentarioProtectora"
+                      label="Comentario"
+                      rows="3"
+                      :rules="reglas.comentario"
+                      class="mb-4"
+                      required
+                    ></v-textarea>
+                  </v-card-text>
+                  
+                  <v-card-actions class="protectora-admin__dialogo-acciones">
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="grey"
+                      @click="item.showDialog = false"
+                    >
+                      Cancelar
+                    </v-btn>
+                    <v-btn
+                      color="green"
+                      @click="() => {
+                        actualizarEstado(item);
+                        if (nuevoEstado && comentarioProtectora) {
+                          item.showDialog = false;
+                        }
+                      }"
+                      :disabled="!nuevoEstado || !comentarioProtectora"
+                    >
+                      Guardar
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </div>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
 
     <!-- Formulario de creación/edición -->
     <v-dialog v-model="mostrarDialogo" max-width="600px">
@@ -252,13 +428,16 @@ async function confirmarEliminacion() {
 </template>
 
   
-  <style scoped lang="scss">
+<style scoped lang="scss">
 .protectora-admin {
   margin: 2rem auto;
   max-width: 1200px;
   padding: 1rem;
   background-color: #121212;
   border-radius: 10px;
+  min-height: calc(100vh - 180px); // Ajuste para mantener el footer en la parte inferior
+  display: flex;
+  flex-direction: column;
 
   &__titulo {
     font-size: 1.6rem;
@@ -278,6 +457,17 @@ async function confirmarEliminacion() {
       justify-content: space-between;
       align-items: center;
     }
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__section {
+    margin-bottom: 2rem;
   }
 
   &__boton-nuevo {
@@ -369,38 +559,23 @@ async function confirmarEliminacion() {
       display: flex;
       justify-content: flex-end;
       gap: 0.5rem;
-
-      .v-btn[color="grey"] {
-        background-color: #555;
-        color: #eee;
-        &:hover {
-          background-color: #666;
-        }
-      }
-
-      .v-btn[color="green"] {
-        background-color: #4caf50;
-        color: white;
-        &:hover {
-          background-color: #43a047;
-        }
-      }
     }
   }
 }
+
 .botones-control {
-    display: flex;
-    gap: 10px;
-    padding-top:4%;
-    padding-bottom:4%;
-  }
+  display: flex;
+  gap: 10px;
+  padding-top: 4%;
+  padding-bottom: 4%;
+}
 
 @media (prefers-color-scheme: dark) {
   .protectora-admin__tabla {
     background-color: #272727;
     color: whitesmoke;
-            border:solid #5d5d5d;
-            border-color: rgba(93, 93, 93, 0.5);
+    border: solid #5d5d5d;
+    border-color: rgba(93, 93, 93, 0.5);
   }
   .protectora-admin__dialogo {
     background-color: #272727;
@@ -417,5 +592,4 @@ async function confirmarEliminacion() {
     flex-wrap: wrap;
   }
 }
-
 </style>
