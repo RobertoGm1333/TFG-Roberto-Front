@@ -5,6 +5,7 @@ import type SolicitudAdopcionDto from './dtos/solicitudadopcion.dto'
 export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', () => {
     const solicitudes = ref<SolicitudAdopcionDto[]>([])
 
+    // Obtener TODAS las solicitudes (admin)
     async function fetchSolicitudes() {
         try {
             const response = await fetch('http://localhost:5167/api/SolicitudAdopcion')
@@ -15,6 +16,29 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
         }
     }
 
+    // Obtener solicitudes del usuario loggeado
+    async function fetchMisSolicitudes() {
+        try {
+            const response = await fetch('http://localhost:5167/api/SolicitudAdopcion/mias')
+            if (!response.ok) throw new Error('Error al obtener mis solicitudes')
+            solicitudes.value = await response.json()
+        } catch (error) {
+            console.error('Error en fetchMisSolicitudes:', error)
+        }
+    }
+
+    // Obtener solicitudes de una protectora (por idProtectora)
+    async function fetchSolicitudesProtectora(idProtectora: number) {
+        try {
+            const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/protectora/${idProtectora}`)
+            if (!response.ok) throw new Error('Error al obtener solicitudes de protectora')
+            solicitudes.value = await response.json()
+        } catch (error) {
+            console.error('Error en fetchSolicitudesProtectora:', error)
+        }
+    }
+
+    // Crear solicitud (usuario)
     async function createSolicitud(solicitud: SolicitudAdopcionDto) {
         try {
             const response = await fetch('http://localhost:5167/api/SolicitudAdopcion', {
@@ -31,6 +55,7 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
         }
     }
 
+    // Actualizar solicitud completa (solo para admin o caso especial)
     async function updateSolicitud(solicitud: SolicitudAdopcionDto) {
         try {
             const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/${solicitud.id_Solicitud}`, {
@@ -49,6 +74,24 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
         }
     }
 
+    // Cambiar solo estado y comentario de protectora (para protectora)
+    async function updateEstadoSolicitud(idSolicitud: number, estado: string, comentarioProtectora: string, idProtectora: number) {
+        try {
+            const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/estado/${idSolicitud}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado, comentario_Protectora: comentarioProtectora })
+            })
+            if (!response.ok) throw new Error('Error al actualizar el estado')
+    
+            // ✅ Ahora sí pasas el idProtectora activo que te llegue desde donde llames a esta función
+            await fetchSolicitudesProtectora(idProtectora)
+        } catch (error) {
+            console.error('Error en updateEstadoSolicitud:', error)
+        }
+    }    
+
+    // Eliminar solicitud
     async function deleteSolicitud(id_Solicitud: number) {
         try {
             const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/${id_Solicitud}`, {
@@ -66,8 +109,11 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     return {
         solicitudes,
         fetchSolicitudes,
+        fetchMisSolicitudes,
+        fetchSolicitudesProtectora,
         createSolicitud,
         updateSolicitud,
+        updateEstadoSolicitud,
         deleteSolicitud
     }
 })

@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useAutenticacion } from '@/stores/Autentificacion'
+import { useAutenticacion } from '@/stores/Autentificacion';
+import { useSolicitudesAdopcionStore } from '@/stores/solicitudesAdopcion'
 
 const authStore = useAutenticacion()
+const solicitudesStore = useSolicitudesAdopcionStore()
+
 const gatos = ref<any[]>([])
 const mostrarDialogo = ref(false)
 const mostrarConfirmacion = ref(false)
 const gatoAEliminar = ref<any>(null)
 const idProtectora = ref<number | null>(null)
+
+const solicitudes = ref<any[]>([])
+const nuevoEstado = ref('')
+const comentarioProtectora = ref('')
 
 const gato = ref<any>({
   id_Gato: 0,
@@ -44,6 +51,7 @@ onMounted(async () => {
     idProtectora.value = protectora.id_Protectora;
 
     await cargarGatos()
+    await cargarSolicitudes()
   } catch (err) {
     console.error("Error cargando datos de la protectora:", err);
   }
@@ -59,6 +67,25 @@ async function cargarGatos() {
     gatos.value = await res.json();
   } catch (err) {
     console.error("Error cargando gatos:", err);
+  }
+}
+
+async function cargarSolicitudes() {
+  if (!idProtectora.value) return
+
+  await solicitudesStore.fetchSolicitudesProtectora(idProtectora.value)
+  solicitudes.value = solicitudesStore.solicitudes
+}
+
+async function actualizarEstado(solicitud: any) {
+  try {
+    await solicitudesStore.updateEstadoSolicitud(solicitud.id_Solicitud, nuevoEstado.value, comentarioProtectora.value, idProtectora.value!)
+    alert('Estado actualizado correctamente')
+    await cargarSolicitudes()
+    nuevoEstado.value = ''
+    comentarioProtectora.value = ''
+  } catch (err) {
+    console.error('Error actualizando estado:', err)
   }
 }
 
