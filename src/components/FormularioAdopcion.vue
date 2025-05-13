@@ -12,6 +12,10 @@ const props = defineProps<{
 
 const emit = defineEmits(['success', 'cancel']);
 
+// Definir las referencias con sus tipos
+const dniInput = ref<HTMLInputElement | null>(null);
+const hogarInput = ref<HTMLInputElement | null>(null);
+
 const handleEscKey = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     emit('cancel');
@@ -331,7 +335,7 @@ async function processFiles(files: File[]): Promise<string> {
                     variant="outlined"
                     size="small"
                     prepend-icon="mdi-camera"
-                    @click="$refs.dniInput.click()"
+                    @click="dniInput?.click()"
                     :disabled="formulario.fotos_DNI.length >= 2"
                   >
                     Añadir foto
@@ -450,7 +454,7 @@ async function processFiles(files: File[]): Promise<string> {
                     variant="outlined"
                     size="small"
                     prepend-icon="mdi-camera"
-                    @click="$refs.hogarInput.click()"
+                    @click="hogarInput?.click()"
                     :disabled="formulario.fotos_Hogar.length >= 10"
                   >
                     Añadir foto
