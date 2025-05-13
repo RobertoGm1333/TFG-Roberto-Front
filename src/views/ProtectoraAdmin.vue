@@ -332,6 +332,226 @@ function getEstadoColor(estado: string) {
                       Gestionar Solicitud
                     </v-card-title>
                     <v-card-text class="protectora-admin__dialogo-contenido">
+                      <!-- Información Personal -->
+                      <h3 class="mb-4">Información Personal</h3>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.nombreCompleto"
+                            label="Nombre completo"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.edad"
+                            label="Edad"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field
+                            :value="item.direccion"
+                            label="Dirección"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.telefono"
+                            label="Teléfono"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.email"
+                            label="Email"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <!-- Información de Vivienda -->
+                      <h3 class="mb-4 mt-6">Información de Vivienda</h3>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.tipoVivienda"
+                            label="Tipo de vivienda"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.propiedadAlquiler"
+                            label="Propiedad/Alquiler"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.permiteAnimales"
+                            label="¿Se permiten animales?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-text-field
+                            :value="item.numeroPersonas"
+                            label="Número de personas"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row v-if="item.hayNinos">
+                        <v-col cols="12">
+                          <v-text-field
+                            :value="item.edadesNinos"
+                            label="Edades de los niños"
+                            readonly
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <!-- Experiencia con Mascotas -->
+                      <h3 class="mb-4 mt-6">Experiencia con Mascotas</h3>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.experienciaGatos"
+                            label="¿Tiene experiencia con gatos?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.tieneOtrosAnimales"
+                            label="¿Tiene otros animales?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.cortarUnas"
+                            label="¿Sabe cortar uñas?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.animalesVacunadosEsterilizados"
+                            label="¿Animales vacunados/esterilizados?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-textarea
+                            :value="item.historialMascotas"
+                            label="Historial con mascotas"
+                            readonly
+                            dense
+                            rows="3"
+                            auto-grow
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+
+                      <!-- Compromiso y Responsabilidad -->
+                      <h3 class="mb-4 mt-6">Compromiso y Responsabilidad</h3>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-textarea
+                            :value="item.motivacionAdopcion"
+                            label="Motivación para adoptar"
+                            readonly
+                            dense
+                            rows="3"
+                            auto-grow
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-textarea
+                            :value="item.problemasComportamiento"
+                            label="¿Qué haría ante problemas de comportamiento?"
+                            readonly
+                            dense
+                            rows="3"
+                            auto-grow
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-textarea
+                            :value="item.enfermedadesCostosas"
+                            label="¿Qué haría ante enfermedades costosas?"
+                            readonly
+                            dense
+                            rows="3"
+                            auto-grow
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-textarea
+                            :value="item.vacaciones"
+                            label="Plan para vacaciones"
+                            readonly
+                            dense
+                            rows="3"
+                            auto-grow
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.seguimientoPostAdopcion"
+                            label="¿Acepta seguimiento post-adopción?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-checkbox
+                            :input-value="item.visitaHogar"
+                            label="¿Acepta visita al hogar?"
+                            readonly
+                            dense
+                          ></v-checkbox>
+                        </v-col>
+                      </v-row>
+
+                      <!-- Gestión de la Solicitud -->
+                      <h3 class="mb-4 mt-6">Gestión de la Solicitud</h3>
                       <v-select
                         v-model="nuevoEstado"
                         :items="['Pendiente', 'Aceptada', 'Rechazada']"
@@ -343,7 +563,7 @@ function getEstadoColor(estado: string) {
                       
                       <v-textarea
                         v-model="comentarioProtectora"
-                        label="Comentario"
+                        label="Comentario de la Protectora"
                         rows="3"
                         :rules="reglas.comentario"
                         class="mb-4"
@@ -598,20 +818,29 @@ function getEstadoColor(estado: string) {
 
     @media (min-width: 600px) {
       margin: 0;
+      min-width: 600px;
     }
 
     &-titulo {
       background-color: $color-principal;
       color: $color-blanco;
-      padding: 12px 16px;
-      font-size: 1.1rem;
+      padding: 16px 20px;
+      font-size: 1.2rem;
       position: sticky;
       top: 0;
       z-index: 1;
     }
 
     &-contenido {
-      padding: 16px 12px;
+      padding: 24px 20px;
+
+      h3 {
+        color: $color-principal;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-bottom: 2px solid $color-principal;
+        padding-bottom: 8px;
+      }
 
       :deep(.v-input) {
         margin-bottom: 12px;
@@ -619,20 +848,85 @@ function getEstadoColor(estado: string) {
 
       :deep(.v-text-field) {
         font-size: 0.875rem;
+
+        &.v-text-field--readonly {
+          .v-field__input {
+            color: rgba(0, 0, 0, 0.7);
+          }
+        }
+      }
+
+      :deep(.v-textarea) {
+        font-size: 0.875rem;
+
+        &.v-textarea--readonly {
+          .v-field__input {
+            color: rgba(0, 0, 0, 0.7);
+          }
+        }
+      }
+
+      :deep(.v-checkbox) {
+        &.v-checkbox--readonly {
+          opacity: 0.7;
+        }
       }
 
       :deep(.v-label) {
         font-size: 0.875rem;
+        opacity: 0.8;
+      }
+
+      .v-row {
+        margin: 0 -12px;
+      }
+
+      .v-col {
+        padding: 12px;
       }
     }
 
     &-acciones {
-      padding: 12px;
+      padding: 16px 20px;
       display: flex;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      background-color: #f5f5f5;
+      position: sticky;
+      bottom: 0;
+      z-index: 1;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &__dialogo {
+      background-color: #272727;
+
+      &-contenido {
+        h3 {
+          border-bottom-color: $color-principal;
+        }
+
+        :deep(.v-text-field--readonly) {
+          .v-field__input {
+            color: rgba(255, 255, 255, 0.7);
+          }
+        }
+
+        :deep(.v-textarea--readonly) {
+          .v-field__input {
+            color: rgba(255, 255, 255, 0.7);
+          }
         }
       }
+
+      &-acciones {
+        background-color: #1e1e1e;
+        border-top-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+  }
 
   @media (min-width: 960px) {
     max-width: 1200px;

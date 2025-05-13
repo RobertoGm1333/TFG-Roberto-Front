@@ -2,10 +2,10 @@
 import { ref, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import DetallesGatoCard from "@/components/DetallesGatoCard.vue";
+import FormularioAdopcion from "@/components/FormularioAdopcion.vue";
 import { usegatosStore } from "@/stores/gatos";
 import { useprotectorasStore } from "@/stores/protectoras";
 import { useSolicitudesAdopcionStore } from "@/stores/solicitudesAdopcion";
-import SolicitudAdopcionDto from "@/stores/dtos/solicitudadopcion.dto";
 import { useAutenticacion } from '@/stores/Autentificacion';
 
 const route = useRoute();
@@ -21,8 +21,7 @@ const solicitudExistente = ref<any>(null);
 const mostrarFormulario = computed(() => {
   return Autenticacion.esAutenticado && !solicitudExistente.value;
 });
-
-const comentarioUsuario = ref('');
+const dialogoFormulario = ref(false);
 
 // Usuario logueado dinámico
 const idUsuario = computed(() => Autenticacion.usuario?.id_Usuario ?? 0);
@@ -37,11 +36,6 @@ function formatearFechaHora(fecha: Date): string {
     minute: '2-digit'
   });
 }
-
-// Reglas de validación
-const rulesComentario = [
-  (v: string) => !!v && v.trim().length > 0 || 'Este campo es obligatorio'
-];
 
 // Comprobar si ya existe una solicitud para este gato
 async function comprobarSolicitudExistente() {
@@ -86,38 +80,9 @@ const obtenerGato = async () => {
   cargando.value = false;
 };
 
-const solicitarAdopcion = async () => {
-  if (!gato.value || !idUsuario.value) {
-    alert('Error: Usuario no logueado o gato no encontrado');
-    return;
-  }
-
-  if (!comentarioUsuario.value.trim()) {
-    alert('Por favor, cuéntanos por qué quieres adoptar a ' + gato.value.nombre_Gato);
-    return;
-  }
-
-  try {
-  const solicitud = new SolicitudAdopcionDto(
-    0,
-    idUsuario.value,
-    gato.value.id_Gato,
-    new Date(),
-    'pendiente',
-    comentarioUsuario.value,
-    ''
-  );
-  await solicitudesStore.createSolicitud(solicitud);
-    await comprobarSolicitudExistente(); // Recargar la solicitud para mostrar el estado actualizado
-  comentarioUsuario.value = '';
-  } catch (error) {
-    if (error instanceof Error) {
-      alert(error.message);
-    } else {
-      alert('Error al crear la solicitud de adopción');
-    }
-    await comprobarSolicitudExistente(); // Recargar por si acaso
-  }
+const handleSolicitudSuccess = async () => {
+  dialogoFormulario.value = false;
+  await comprobarSolicitudExistente();
 };
 
 onMounted(() => {
@@ -173,7 +138,6 @@ watch(() => route.params.id, obtenerGato);
                 </v-chip>
               </p>
               <p><strong>Fecha de solicitud:</strong> {{ formatearFechaHora(solicitudExistente.fecha_Solicitud) }}</p>
-              <p><strong>Tu comentario:</strong> {{ solicitudExistente.comentario_Usuario }}</p>
               <template v-if="solicitudExistente.comentario_Protectora">
                 <p><strong>Respuesta de la protectora:</strong> {{ solicitudExistente.comentario_Protectora }}</p>
               </template>
@@ -183,27 +147,43 @@ watch(() => route.params.id, obtenerGato);
             </v-btn>
           </template>
 
-          <!-- Formulario de nueva solicitud -->
+          <!-- Botón para mostrar el formulario -->
           <template v-else>
-          <h3>Solicitar adopción de {{ gato.nombre_Gato }}</h3>
-          <v-textarea
-            v-model="comentarioUsuario"
-            :label="`Cuéntanos por qué quieres adoptar a ${gato.nombre_Gato}`"
-            :rules="rulesComentario"
-            rows="3"
-            auto-grow
-            outlined
-            dense
-            class="mt-2"
-          ></v-textarea>
-
-          <v-btn color="primary" class="mt-3" @click="solicitarAdopcion">
-            Enviar solicitud de adopción
-          </v-btn>
+            <div class="text-center">
+              <v-btn
+                color="primary"
+                size="large"
+                @click="dialogoFormulario = true"
+                class="mb-4"
+              >
+                Rellenar solicitud de adopción
+              </v-btn>
+            </div>
           </template>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Diálogo del formulario -->
+    <v-dialog
+      v-model="dialogoFormulario"
+      max-width="800px"
+      persistent
+    >
+      <v-card class="formulario-dialog">
+        <v-card-text class="pa-0">
+          <div class="formulario-container">
+            <FormularioAdopcion
+              v-if="dialogoFormulario"
+              :idGato="gato?.id_Gato"
+              :nombreGato="gato?.nombre_Gato"
+              @success="handleSolicitudSuccess"
+              @cancel="dialogoFormulario = false"
+            />
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -234,6 +214,52 @@ watch(() => route.params.id, obtenerGato);
 :deep(.v-btn.primary) {
   background-color: $color-principal !important;
   border-color: $color-principal !important;
+}
+
+.formulario-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  margin: 0;
+  
+  :deep(.v-card) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  :deep(.v-card-text) {
+    height: 100%;
+    padding: 0;
+  }
+}
+
+.formulario-container {
+  height: 100%;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $color-principal;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: darken($color-principal, 10%);
+  }
+}
+
+@media (max-width: 600px) {
+  .formulario-dialog {
+    height: 100vh;
+    margin: 0;
+  }
 }
 
 @media (min-width: 1010px) {

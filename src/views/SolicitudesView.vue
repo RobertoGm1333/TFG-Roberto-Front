@@ -8,6 +8,7 @@ import type SolicitudAdopcionDto from '@/stores/dtos/solicitudadopcion.dto';
 interface SolicitudExtendida extends SolicitudAdopcionDto {
   nombre_Gato?: string;
   imagen_Gato?: string;
+  showDetails?: boolean;
 }
 
 const autenticacion = useAutenticacion();
@@ -41,6 +42,7 @@ async function cargarMisSolicitudes() {
         const gato = await response.json();
         solicitud.nombre_Gato = gato.nombre_Gato;
         solicitud.imagen_Gato = gato.imagen_Gato;
+        solicitud.showDetails = false;
       }
     }
   } catch (error) {
@@ -95,10 +97,62 @@ onMounted(async () => {
                 </v-chip>
               </p>
               <p><strong>Fecha de solicitud:</strong> {{ formatearFechaHora(solicitud.fecha_Solicitud) }}</p>
-              <p><strong>Tu comentario:</strong> {{ solicitud.comentario_Usuario }}</p>
               <template v-if="solicitud.comentario_Protectora">
                 <p><strong>Respuesta de la protectora:</strong> {{ solicitud.comentario_Protectora }}</p>
               </template>
+
+              <v-btn
+                color="primary"
+                variant="text"
+                @click="(solicitud as SolicitudExtendida).showDetails = !(solicitud as SolicitudExtendida).showDetails"
+                class="mt-2"
+              >
+                {{ (solicitud as SolicitudExtendida).showDetails ? 'Ocultar detalles' : 'Ver detalles' }}
+                <v-icon>{{ (solicitud as SolicitudExtendida).showDetails ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+              </v-btn>
+
+              <div v-if="(solicitud as SolicitudExtendida).showDetails" class="solicitud-card__detalles">
+                <!-- Información Personal -->
+                <h3>Información Personal</h3>
+                <div class="detalles-seccion">
+                  <p><strong>Nombre:</strong> {{ solicitud.nombreCompleto }}</p>
+                  <p><strong>Edad:</strong> {{ solicitud.edad }} años</p>
+                  <p><strong>Dirección:</strong> {{ solicitud.direccion }}</p>
+                  <p><strong>Teléfono:</strong> {{ solicitud.telefono }}</p>
+                  <p><strong>Email:</strong> {{ solicitud.email }}</p>
+                </div>
+
+                <!-- Información de Vivienda -->
+                <h3>Información de Vivienda</h3>
+                <div class="detalles-seccion">
+                  <p><strong>Tipo de vivienda:</strong> {{ solicitud.tipoVivienda }}</p>
+                  <p><strong>Propiedad/Alquiler:</strong> {{ solicitud.propiedadAlquiler }}</p>
+                  <p><strong>¿Se permiten animales?</strong> {{ solicitud.permiteAnimales ? 'Sí' : 'No' }}</p>
+                  <p><strong>Número de personas:</strong> {{ solicitud.numeroPersonas }}</p>
+                  <p v-if="solicitud.hayNinos"><strong>Edades de los niños:</strong> {{ solicitud.edadesNinos }}</p>
+                </div>
+
+                <!-- Experiencia con Mascotas -->
+                <h3>Experiencia con Mascotas</h3>
+                <div class="detalles-seccion">
+                  <p><strong>¿Tiene experiencia con gatos?</strong> {{ solicitud.experienciaGatos ? 'Sí' : 'No' }}</p>
+                  <p><strong>¿Tiene otros animales?</strong> {{ solicitud.tieneOtrosAnimales ? 'Sí' : 'No' }}</p>
+                  <p><strong>¿Sabe cortar uñas?</strong> {{ solicitud.cortarUnas ? 'Sí' : 'No' }}</p>
+                  <p><strong>¿Animales vacunados/esterilizados?</strong> {{ solicitud.animalesVacunadosEsterilizados ? 'Sí' : 'No' }}</p>
+                  <p><strong>Historial con mascotas:</strong> {{ solicitud.historialMascotas }}</p>
+                </div>
+
+                <!-- Compromiso y Responsabilidad -->
+                <h3>Compromiso y Responsabilidad</h3>
+                <div class="detalles-seccion">
+                  <p><strong>Motivación para adoptar:</strong> {{ solicitud.motivacionAdopcion }}</p>
+                  <p><strong>Plan ante problemas de comportamiento:</strong> {{ solicitud.problemasComportamiento }}</p>
+                  <p><strong>Plan ante enfermedades costosas:</strong> {{ solicitud.enfermedadesCostosas }}</p>
+                  <p><strong>Plan para vacaciones:</strong> {{ solicitud.vacaciones }}</p>
+                  <p><strong>¿Acepta seguimiento post-adopción?</strong> {{ solicitud.seguimientoPostAdopcion ? 'Sí' : 'No' }}</p>
+                  <p><strong>¿Acepta visita al hogar?</strong> {{ solicitud.visitaHogar ? 'Sí' : 'No' }}</p>
+                </div>
+              </div>
             </v-card-text>
           </div>
         </div>
@@ -189,6 +243,29 @@ onMounted(async () => {
     padding: $espacio-mediano;
   }
 
+  &__detalles {
+    margin-top: $espacio-mediano;
+    text-align: left;
+
+    h3 {
+      color: $color-principal;
+      font-size: 1.1rem;
+      margin: $espacio-mediano 0 $espacio-pequeno;
+      padding-bottom: $espacio-pequeno;
+      border-bottom: 2px solid $color-principal;
+    }
+
+    .detalles-seccion {
+      margin-bottom: $espacio-mediano;
+      padding: 0 $espacio-pequeno;
+
+      p {
+        margin: $espacio-pequeno 0;
+        line-height: 1.4;
+      }
+    }
+  }
+
   .v-card-title {
     color: $color-principal;
     font-size: 1.2rem;
@@ -214,6 +291,12 @@ onMounted(async () => {
     
     .v-card-title {
       color: $color-principal;
+    }
+
+    &__detalles {
+      h3 {
+        border-bottom-color: $color-principal;
+      }
     }
   }
 }
