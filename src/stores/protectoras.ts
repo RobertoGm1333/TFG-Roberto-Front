@@ -1,107 +1,90 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import type ProtectoraDto from './dtos/protectoras.dto'
 
 export const useprotectorasStore = defineStore('protectoras', () => {
-    const protectoras = ref(new Array<ProtectoraDto>())
+    const protectoras = ref<ProtectoraDto[]>([])
+    const currentProtectora = ref<ProtectoraDto | null>(null)
 
-
-    async function fetchProtectora() {
+    const fetchProtectora = async () => {
         try {
-            const response = await fetch("http://localhost:5167/api/Protectora");
+            const response = await fetch("http://localhost:5167/api/Protectora")
+            if (!response.ok) throw new Error('Error al obtener las protectoras')
+            protectoras.value = await response.json()
+        } catch (error) {
+            console.error('Error al obtener las protectoras:', error)
+            throw error
+        }
+    }
 
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
+    const fetchProtectoraById = async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:5167/api/Protectora/${id}`)
+            if (!response.ok) throw new Error('Error al obtener la protectora')
+            currentProtectora.value = await response.json()
+        } catch (error) {
+            console.error('Error al obtener la protectora:', error)
+            throw error
+        }
+    }
+
+    const createProtectora = async (nuevaProtectora: Omit<ProtectoraDto, 'id_Protectora'>) => {
+        try {
+            const response = await fetch('http://localhost:5167/api/Protectora', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevaProtectora)
+            })
+            if (!response.ok) throw new Error('Error al crear la protectora')
+            const protectoraCreada = await response.json()
+            protectoras.value.push(protectoraCreada)
+            return protectoraCreada
+        } catch (error) {
+            console.error('Error al crear la protectora:', error)
+            throw error
+        }
+    }
+
+    const updateProtectora = async (id: number, protectora: Partial<ProtectoraDto>) => {
+        try {
+            const response = await fetch(`http://localhost:5167/api/Protectora/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(protectora)
+            })
+            if (!response.ok) throw new Error('Error al actualizar la protectora')
+            const protectoraActualizada = await response.json()
+            const index = protectoras.value.findIndex(p => p.id_Protectora === id)
+            if (index !== -1) {
+                protectoras.value[index] = protectoraActualizada
             }
-
-            const data: ProtectoraDto[] = await response.json();
-            protectoras.value = data;
-            console.log('Protectoras obtenidas:', data);
+            return protectoraActualizada
         } catch (error) {
-            console.error('Error al obtener los gatos:', error);
+            console.error('Error al actualizar la protectora:', error)
+            throw error
         }
     }
 
-    async function createProtectora(nuevaProtectora: ProtectoraDto) {
-        console.log("Datos enviados a la API:", nuevaProtectora);
+    const deleteProtectora = async (id: number) => {
         try {
-            const response = await fetch("http://localhost:5167/api/Protectora", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    nombre_Protectora: nuevaProtectora.nombre_Protectora,
-                    direccion: nuevaProtectora.direccion,
-                    correo_Protectora: nuevaProtectora.correo_Protectora,
-                    telefono_Protectora: nuevaProtectora.telefono_Protectora,
-                    pagina_Web: nuevaProtectora.pagina_Web,
-                    imagen_Protectora: nuevaProtectora.imagen_Protectora,
-                    id_Usuario: nuevaProtectora.id_Usuario
-                }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Error en la API:", errorText);
-                throw new Error("Error al agregar la protectora");
-            }
-
-            const protectoraCreada = await response.json();
-            protectoras.value.push(protectoraCreada);
-            console.log("Protectora agregada:", protectoraCreada);
+            const response = await fetch(`http://localhost:5167/api/Protectora/${id}`, {
+                method: 'DELETE'
+            })
+            if (!response.ok) throw new Error('Error al eliminar la protectora')
+            protectoras.value = protectoras.value.filter(p => p.id_Protectora !== id)
         } catch (error) {
-
-            console.error("Error al agregar protectora:", error);
+            console.error('Error al eliminar la protectora:', error)
+            throw error
         }
     }
-
-    async function deleteProtectora(id_Protectora: number) {
-        if (!id_Protectora) return;
-
-        try {
-            const response = await fetch(`http://localhost:5167/api/Protectora/${id_Protectora}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) throw new Error("Error al eliminar la protectora");
-
-            protectoras.value = protectoras.value.filter(p => p.id_Protectora !== id_Protectora);
-            console.log(`Protectora con ID ${id_Protectora} eliminada.`);
-        } catch (error) {
-            console.error("Error al eliminar protectora:", error);
-        }
-    }
-
-    async function updateProtectora(protectora: ProtectoraDto) {
-        try {
-            console.log("Enviando datos para actualizar:", protectora);
-
-            const response = await fetch(`http://localhost:5167/api/Protectora/${protectora.id_Protectora}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(protectora),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Error en la API:", errorText);
-                throw new Error("Error al actualizar la protectora");
-            }
-
-            protectoras.value = protectoras.value.map(p => (p.id_Protectora === protectora.id_Protectora ? protectora : p));
-            console.log("Protectora actualizada correctamente:", protectora);
-        } catch (error) {
-            console.error("Error al actualizar protectora:", error);
-        }
-    }
-
-    // REST
-    // create, delete, updated....
 
     return {
         protectoras,
+        currentProtectora,
         fetchProtectora,
+        fetchProtectoraById,
         createProtectora,
-        deleteProtectora,
         updateProtectora,
+        deleteProtectora
     }
 })

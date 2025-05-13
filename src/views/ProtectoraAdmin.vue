@@ -249,7 +249,7 @@ function getEstadoColor(estado: string) {
         class="elevation-1 protectora-admin__tabla"
         :class="{'protectora-admin__tabla--mobile': $vuetify.display.smAndDown}"
       >
-        <template v-slot:item.acciones="{ item }">
+      <template v-slot:item.acciones="{ item }">
           <div class="protectora-admin__acciones">
             <v-btn color="primary" @click="editarGato(item)" class="mb-2 mb-sm-0 me-sm-2">
               <v-icon>mdi-pencil</v-icon>
@@ -259,9 +259,9 @@ function getEstadoColor(estado: string) {
               <v-icon>mdi-delete</v-icon>
               <span class="d-none d-sm-inline ms-2">Eliminar</span>
             </v-btn>
-          </div>
-        </template>
-      </v-data-table>
+        </div>
+      </template>
+    </v-data-table>
     </div>
 
     <!-- Mensaje de confirmación/error -->
@@ -451,7 +451,7 @@ function getEstadoColor(estado: string) {
 </template>
 
   
-<style scoped lang="scss">
+  <style scoped lang="scss">
 .protectora-admin {
   width: 100%;
   margin: 0 auto;
@@ -497,7 +497,7 @@ function getEstadoColor(estado: string) {
       @media (min-width: 600px) {
         font-size: 1rem;
         border-radius: $espacio-pequeno;
-      }
+    }
     }
 
     :deep(.v-data-table-header) {
@@ -555,8 +555,8 @@ function getEstadoColor(estado: string) {
       :deep(td:last-child), :deep(th:last-child) {
         padding-right: 16px !important;
       }
+      }
     }
-  }
 
   &__acciones {
     display: flex;
@@ -631,33 +631,33 @@ function getEstadoColor(estado: string) {
       display: flex;
       justify-content: flex-end;
       gap: 8px;
-    }
-  }
+        }
+      }
 
   @media (min-width: 960px) {
     max-width: 1200px;
     padding: $espacio-grande;
     margin-top: 95px;
   }
-}
+  }
 
 @media (prefers-color-scheme: dark) {
   .protectora-admin {
     &__tabla {
-      background-color: #272727;
+    background-color: #272727;
       color: $color-blanco;
-    }
+  }
 
     &__dialogo {
-      background-color: #272727;
+    background-color: #272727;
       color: $color-blanco;
 
       :deep(.v-text-field),
       :deep(.v-select),
       :deep(.v-textarea) {
         color: $color-blanco;
-      }
-    }
+  }
+}
   }
 }
 </style>

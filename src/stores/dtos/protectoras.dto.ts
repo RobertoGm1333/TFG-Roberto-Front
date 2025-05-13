@@ -7,6 +7,8 @@ export default class ProtectoraDto {
         public telefono_Protectora: string,
         public pagina_Web: string,
         public imagen_Protectora: string,
-        public id_Usuario: number
+        public id_Usuario: number,
+        public ubicacion: string,
+        public descripcion_Protectora: string
     ) { }
 }

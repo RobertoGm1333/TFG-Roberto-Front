@@ -1,42 +1,53 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import type ProtectoraDto from '@/stores/dtos/protectoras.dto'
 
-const props = defineProps({
-  protectora: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps<{
+  protectora: ProtectoraDto
+}>()
 </script>
 
 <template>
-  <v-card class="protectora-card" max-width="500">
+  <v-card 
+    class="protectora-card" 
+    max-width="500"
+    :to="{ name: 'protectora-details', params: { id: protectora.id_Protectora }}"
+  >
     <v-img class="protectora-card__image" :src="protectora.imagen_Protectora" cover></v-img>
     <v-card-title class="protectora-card__title">{{ protectora.nombre_Protectora }}</v-card-title>
-    <v-card-subtitle class="protectora-card__subtitle">
-      <strong>Dirección:</strong> {{ protectora.direccion }}
-    </v-card-subtitle>
     <v-card-text class="protectora-card__content">
-      <div class="protectora-card__correo_Protectora"><strong>Correo Electrónico:</strong> <br> {{ protectora.correo_Protectora }}</div>
-      <div class="protectora-card__schedule">
-        <strong>Página Web:</strong>
-        <a :href="protectora.pagina_Web" target="_blank" rel="noopener noreferrer">
-          {{ protectora.nombre_Protectora }}
-        </a>
-      </div>
+      <div class="protectora-card__direccion"><strong>Dirección:</strong> {{ protectora.direccion }}</div>
+      <div class="protectora-card__correo"><strong>Correo:</strong> <span class="email-text">{{ protectora.correo_Protectora }}</span></div>
     </v-card-text>
   </v-card>
 </template>
 
-  
-
 <style scoped lang="scss">
-.v-img__img--cover {
-  object-fit: cover;
+.protectora-card {
+  cursor: pointer;
 }
 
-.protectora-card__image{
+.protectora-card__image {
   max-height: 260px;
   min-height: 260px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  :deep(.v-img__img) {
+    object-fit: cover;
+  }
+}
+
+.protectora-card__content {
+  div {
+    margin-bottom: $espacio-pequeno;
+  }
+}
+
+.protectora-card__correo {
+  .email-text {
+    color: $color-principal;
+  }
 }
 </style>

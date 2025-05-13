@@ -98,18 +98,18 @@ const solicitarAdopcion = async () => {
   }
 
   try {
-    const solicitud = new SolicitudAdopcionDto(
-      0,
-      idUsuario.value,
-      gato.value.id_Gato,
-      new Date(),
-      'pendiente',
-      comentarioUsuario.value,
-      ''
-    );
-    await solicitudesStore.createSolicitud(solicitud);
+  const solicitud = new SolicitudAdopcionDto(
+    0,
+    idUsuario.value,
+    gato.value.id_Gato,
+    new Date(),
+    'pendiente',
+    comentarioUsuario.value,
+    ''
+  );
+  await solicitudesStore.createSolicitud(solicitud);
     await comprobarSolicitudExistente(); // Recargar la solicitud para mostrar el estado actualizado
-    comentarioUsuario.value = '';
+  comentarioUsuario.value = '';
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message);
@@ -185,21 +185,21 @@ watch(() => route.params.id, obtenerGato);
 
           <!-- Formulario de nueva solicitud -->
           <template v-else>
-            <h3>Solicitar adopción de {{ gato.nombre_Gato }}</h3>
-            <v-textarea
-              v-model="comentarioUsuario"
-              :label="`Cuéntanos por qué quieres adoptar a ${gato.nombre_Gato}`"
-              :rules="rulesComentario"
-              rows="3"
-              auto-grow
-              outlined
-              dense
-              class="mt-2"
-            ></v-textarea>
+          <h3>Solicitar adopción de {{ gato.nombre_Gato }}</h3>
+          <v-textarea
+            v-model="comentarioUsuario"
+            :label="`Cuéntanos por qué quieres adoptar a ${gato.nombre_Gato}`"
+            :rules="rulesComentario"
+            rows="3"
+            auto-grow
+            outlined
+            dense
+            class="mt-2"
+          ></v-textarea>
 
-            <v-btn color="primary" class="mt-3" @click="solicitarAdopcion">
-              Enviar solicitud de adopción
-            </v-btn>
+          <v-btn color="primary" class="mt-3" @click="solicitarAdopcion">
+            Enviar solicitud de adopción
+          </v-btn>
           </template>
         </v-card>
       </v-col>

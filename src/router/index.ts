@@ -25,7 +25,12 @@ const router = createRouter({
     {
       path: '/protectoras',
       name: 'protectoras',
-      component: () => import('../views/ProtectorasView.vue'),
+      component: () => import('@/views/ProtectorasView.vue')
+    },
+    {
+      path: '/protectora/:id',
+      name: 'protectora-details',
+      component: () => import('@/views/DetallesProtectoraView.vue')
     },
     {
       path: '/detalles-gato/:id',
