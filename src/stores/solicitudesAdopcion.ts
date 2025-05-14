@@ -74,14 +74,49 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
     async function createSolicitud(solicitud: SolicitudAdopcionDto) {
         try {
             const authData = getAuthData()
-            if (!authData) return
+            if (!authData) {
+                throw new Error('No hay sesión de usuario activa')
+            }
 
             // Primero verificar si ya existe una solicitud
             const checkResponse = await fetch(`http://localhost:5167/api/SolicitudAdopcion/usuario/${solicitud.id_Usuario}/gato/${solicitud.id_Gato}`)
             
             if (checkResponse.ok) {
-                // Si la respuesta es ok, significa que ya existe una solicitud
                 throw new Error('Ya existe una solicitud de adopción para este gato')
+            }
+
+            // Validar campos requeridos antes de enviar
+            const camposRequeridos = [
+                'nombreCompleto',
+                'edad',
+                'direccion',
+                'dni',
+                'telefono',
+                'email',
+                'tipoVivienda',
+                'propiedadAlquiler',
+                'permiteAnimales',
+                'numeroPersonas',
+                'experienciaGatos',
+                'tieneOtrosAnimales',
+                'cortarUnas',
+                'animalesVacunadosEsterilizados',
+                'historialMascotas',
+                'motivacionAdopcion',
+                'problemasComportamiento',
+                'enfermedadesCostosas',
+                'vacaciones',
+                'seguimientoPostAdopcion',
+                'visitaHogar'
+            ]
+
+            const camposFaltantes = camposRequeridos.filter(campo => {
+                const valor = solicitud[campo as keyof SolicitudAdopcionDto]
+                return valor === undefined || valor === null || valor === ''
+            })
+
+            if (camposFaltantes.length > 0) {
+                throw new Error(`Faltan campos requeridos: ${camposFaltantes.join(', ')}`)
             }
             
             const response = await fetch('http://localhost:5167/api/SolicitudAdopcion', {
@@ -93,7 +128,11 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
                 body: JSON.stringify(solicitud)
             })
 
-            if (!response.ok) throw new Error('Error al crear la solicitud')
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || 'Error al crear la solicitud')
+            }
+
             const nueva = await response.json()
             solicitudes.value.push(nueva)
             return nueva
@@ -134,19 +173,23 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
             const authData = getAuthData()
             if (!authData) return
             
+            // Normalizar el estado para la API
+            const estadoNormalizado = estado.charAt(0).toUpperCase() + estado.slice(1)
+            
             const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/estado/${idSolicitud}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authData.token}`
                 },
-                body: JSON.stringify({ estado, comentario_Protectora: comentarioProtectora })
+                body: JSON.stringify({ estado: estadoNormalizado, comentario_Protectora: comentarioProtectora })
             })
             if (!response.ok) throw new Error('Error al actualizar el estado')
-    
+
             await fetchSolicitudesProtectora(idProtectora)
         } catch (error) {
             console.error('Error en updateEstadoSolicitud:', error)
+            throw error
         }
     }    
 
@@ -171,6 +214,24 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
         }
     }
 
+    async function fetchSolicitudById(id_Solicitud: number) {
+        try {
+            const authData = getAuthData()
+            if (!authData) return null
+            
+            const response = await fetch(`http://localhost:5167/api/SolicitudAdopcion/${id_Solicitud}`, {
+                headers: {
+                    'Authorization': `Bearer ${authData.token}`
+                }
+            })
+            if (!response.ok) throw new Error('Error al obtener la solicitud')
+            return await response.json()
+        } catch (error) {
+            console.error('Error en fetchSolicitudById:', error)
+            return null
+        }
+    }
+
     return {
         solicitudes,
         fetchSolicitudes,
@@ -179,6 +240,7 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
         createSolicitud,
         updateSolicitud,
         updateEstadoSolicitud,
-        deleteSolicitud
+        deleteSolicitud,
+        fetchSolicitudById
     }
 })

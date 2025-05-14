@@ -133,54 +133,90 @@ async function enviarSolicitud() {
     return;
   }
 
+  // Validar fotos requeridas
+  if (formulario.value.fotos_DNI.length < 2) {
+    error.value = 'Debes subir las dos caras del DNI';
+    return;
+  }
+
+  if (formulario.value.fotos_Hogar.length < 3) {
+    error.value = 'Debes subir al menos 3 fotos de la vivienda';
+    return;
+  }
+
   try {
     enviando.value = true;
     error.value = '';
+
+    // Validar tamaño de las imágenes
+    const maxSizeInMB = 5;
+    const validarTamanoImagen = (file: File) => {
+      const sizeInMB = file.size / (1024 * 1024);
+      if (sizeInMB > maxSizeInMB) {
+        throw new Error(`La imagen ${file.name} es demasiado grande. El tamaño máximo es ${maxSizeInMB}MB`);
+      }
+    };
+
+    // Validar todas las imágenes
+    [...formulario.value.fotos_DNI, ...formulario.value.fotos_Hogar].forEach(validarTamanoImagen);
 
     // Procesar las imágenes antes de enviar
     const fotosHogarBase64 = await processFiles(formulario.value.fotos_Hogar);
     const fotosDNIBase64 = await processFiles(formulario.value.fotos_DNI);
 
-    await solicitudesStore.createSolicitud({
+    const solicitud = {
       id_Solicitud: 0,
       id_Usuario: autenticacion.usuario.id_Usuario,
       id_Gato: props.idGato,
       fecha_Solicitud: new Date(),
       estado: 'pendiente',
-      nombreCompleto: formulario.value.nombreCompleto,
+      nombreCompleto: formulario.value.nombreCompleto.trim(),
       edad: formulario.value.edad || 0,
-      direccion: formulario.value.direccion,
-      dni: formulario.value.dni,
-      telefono: formulario.value.telefono,
-      email: formulario.value.email,
+      direccion: formulario.value.direccion.trim(),
+      dni: formulario.value.dni.trim(),
+      telefono: formulario.value.telefono.trim(),
+      email: formulario.value.email.trim(),
       tipoVivienda: formulario.value.tipoVivienda,
       propiedadAlquiler: formulario.value.propiedadAlquiler,
       permiteAnimales: formulario.value.permiteAnimales,
       numeroPersonas: formulario.value.numeroPersonas || 0,
       hayNinos: formulario.value.hayNinos,
-      edadesNinos: formulario.value.edadesNinos,
+      edadesNinos: formulario.value.edadesNinos.trim(),
       experienciaGatos: formulario.value.experienciaGatos,
       tieneOtrosAnimales: formulario.value.tieneOtrosAnimales,
       cortarUnas: formulario.value.cortarUnas,
       animalesVacunadosEsterilizados: formulario.value.animalesVacunadosEsterilizados,
-      historialMascotas: formulario.value.historialMascotas,
-      motivacionAdopcion: formulario.value.motivacionAdopcion,
-      problemasComportamiento: formulario.value.problemasComportamiento,
-      enfermedadesCostosas: formulario.value.enfermedadesCostosas,
-      vacaciones: formulario.value.vacaciones,
+      historialMascotas: formulario.value.historialMascotas.trim(),
+      motivacionAdopcion: formulario.value.motivacionAdopcion.trim(),
+      problemasComportamiento: formulario.value.problemasComportamiento.trim(),
+      enfermedadesCostosas: formulario.value.enfermedadesCostosas.trim(),
+      vacaciones: formulario.value.vacaciones.trim(),
       seguimientoPostAdopcion: formulario.value.seguimientoPostAdopcion,
       visitaHogar: formulario.value.visitaHogar,
       fotos_Hogar: fotosHogarBase64,
       fotos_DNI: fotosDNIBase64,
       comentario_Protectora: ''
-    });
+    };
 
-    emit('success');
+    try {
+      console.log('Enviando solicitud:', solicitud);
+      await solicitudesStore.createSolicitud(solicitud);
+      emit('success');
+    } catch (err) {
+      console.error('Error al enviar la solicitud:', err);
+      if (err instanceof Error) {
+        error.value = err.message;
+      } else {
+        error.value = 'Error al enviar la solicitud. Por favor, inténtalo de nuevo.';
+      }
+      throw err; // Re-lanzar el error para que se maneje en el componente padre si es necesario
+    }
   } catch (err) {
+    console.error('Error en la validación o procesamiento:', err);
     if (err instanceof Error) {
       error.value = err.message;
     } else {
-      error.value = 'Error al enviar la solicitud';
+      error.value = 'Error al procesar la solicitud. Por favor, inténtalo de nuevo.';
     }
   } finally {
     enviando.value = false;
@@ -191,13 +227,69 @@ async function enviarSolicitud() {
 async function processFiles(files: File[]): Promise<string> {
   if (!files || files.length === 0) return '';
 
-  const processFile = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  const processFile = async (file: File): Promise<string> => {
+    // Crear un canvas para comprimir la imagen
+    const compressImage = async (file: File): Promise<Blob> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(img.src);
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Calcular nuevas dimensiones manteniendo la proporción
+          let width = img.width;
+          let height = img.height;
+          const maxDimension = 800; // Máximo tamaño de lado
+
+          if (width > height && width > maxDimension) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else if (height > maxDimension) {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          if (!ctx) {
+            reject(new Error('No se pudo obtener el contexto del canvas'));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convertir a Blob con calidad reducida
+          canvas.toBlob(
+            blob => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error('Error al comprimir la imagen'));
+              }
+            },
+            'image/jpeg',
+            0.7 // Calidad de compresión (0.7 = 70%)
+          );
+        };
+        img.onerror = () => reject(new Error('Error al cargar la imagen'));
+      });
+    };
+
+    try {
+      const compressedBlob = await compressImage(file);
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(compressedBlob);
+      });
+    } catch (error) {
+      console.error('Error al procesar archivo:', error);
+      throw error;
+    }
   };
 
   const base64Array = await Promise.all(files.map(processFile));

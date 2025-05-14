@@ -37,6 +37,8 @@ const formularioGato = ref()
 const nombresGatos = ref<Map<number, string>>(new Map())
 const nombresUsuarios = ref<Map<number, string>>(new Map())
 
+const solicitud = ref<any>(null)
+
 const headers = [
   { title: 'ID', key: 'id_Gato' },
   { title: 'Nombre', key: 'nombre_Gato' },
@@ -116,7 +118,20 @@ async function cargarDatosUsuario(idUsuario: number) {
   }
 }
 
-async function actualizarEstado(solicitud: any) {
+async function cargarSolicitud(id_Solicitud: number) {
+  try {
+    const solicitudData = await solicitudesStore.fetchSolicitudById(id_Solicitud)
+    if (solicitudData) {
+      solicitud.value = solicitudData
+      nuevoEstado.value = solicitudData.estado.toLowerCase()
+      comentarioProtectora.value = solicitudData.comentario_Protectora || ''
+    }
+  } catch (error) {
+    console.error('Error al cargar la solicitud:', error)
+  }
+}
+
+async function actualizarEstado(solicitudItem: any) {
   // Validar campos
   if (!nuevoEstado.value || !comentarioProtectora.value) {
     mensajeTipo.value = 'error'
@@ -126,13 +141,19 @@ async function actualizarEstado(solicitud: any) {
   }
 
   try {
-    await solicitudesStore.updateEstadoSolicitud(solicitud.id_Solicitud, nuevoEstado.value, comentarioProtectora.value, idProtectora.value!)
+    await solicitudesStore.updateEstadoSolicitud(
+      solicitudItem.id_Solicitud, 
+      nuevoEstado.value, 
+      comentarioProtectora.value, 
+      idProtectora.value!
+    )
     mensajeTipo.value = 'success'
     mensajeTexto.value = 'Solicitud editada correctamente'
     mostrarMensaje.value = true
     await cargarSolicitudes()
     nuevoEstado.value = ''
     comentarioProtectora.value = ''
+    solicitudItem.showDialog = false
   } catch (err) {
     console.error('Error actualizando estado:', err)
     mensajeTipo.value = 'error'
@@ -321,6 +342,7 @@ function getEstadoColor(estado: string) {
                       color="primary"
                       v-bind="props"
                       class="protectora-admin__boton"
+                      @click="cargarSolicitud(item.id_Solicitud)"
                     >
                       <v-icon>mdi-cog</v-icon>
                       <span class="d-none d-sm-inline ms-2">Gestionar</span>
@@ -337,46 +359,51 @@ function getEstadoColor(estado: string) {
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.nombreCompleto"
+                            :model-value="solicitud?.nombreCompleto"
                             label="Nombre completo"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.edad"
+                            :model-value="solicitud?.edad"
                             label="Edad"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12">
                           <v-text-field
-                            :value="item.direccion"
+                            :model-value="solicitud?.direccion"
                             label="Dirección"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.telefono"
+                            :model-value="solicitud?.telefono"
                             label="Teléfono"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.email"
+                            :model-value="solicitud?.email"
                             label="Email"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -386,46 +413,50 @@ function getEstadoColor(estado: string) {
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.tipoVivienda"
+                            :model-value="solicitud?.tipoVivienda"
                             label="Tipo de vivienda"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.propiedadAlquiler"
+                            :model-value="solicitud?.propiedadAlquiler"
                             label="Propiedad/Alquiler"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.permiteAnimales"
+                            :model-value="solicitud?.permiteAnimales"
                             label="¿Se permiten animales?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-text-field
-                            :value="item.numeroPersonas"
+                            :model-value="solicitud?.numeroPersonas"
                             label="Número de personas"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                       </v-row>
-                      <v-row v-if="item.hayNinos">
+                      <v-row v-if="solicitud?.hayNinos">
                         <v-col cols="12">
                           <v-text-field
-                            :value="item.edadesNinos"
+                            :model-value="solicitud?.edadesNinos"
                             label="Edades de los niños"
                             readonly
-                            dense
+                            variant="outlined"
+                            density="comfortable"
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -435,48 +466,49 @@ function getEstadoColor(estado: string) {
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.experienciaGatos"
+                            :model-value="solicitud?.experienciaGatos"
                             label="¿Tiene experiencia con gatos?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.tieneOtrosAnimales"
+                            :model-value="solicitud?.tieneOtrosAnimales"
                             label="¿Tiene otros animales?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.cortarUnas"
+                            :model-value="solicitud?.cortarUnas"
                             label="¿Sabe cortar uñas?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.animalesVacunadosEsterilizados"
+                            :model-value="solicitud?.animalesVacunadosEsterilizados"
                             label="¿Animales vacunados/esterilizados?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12">
                           <v-textarea
-                            :value="item.historialMascotas"
+                            :model-value="solicitud?.historialMascotas"
                             label="Historial con mascotas"
                             readonly
-                            dense
-                            rows="3"
+                            variant="outlined"
+                            density="comfortable"
                             auto-grow
+                            rows="3"
                           ></v-textarea>
                         </v-col>
                       </v-row>
@@ -486,75 +518,103 @@ function getEstadoColor(estado: string) {
                       <v-row>
                         <v-col cols="12">
                           <v-textarea
-                            :value="item.motivacionAdopcion"
+                            :model-value="solicitud?.motivacionAdopcion"
                             label="Motivación para adoptar"
                             readonly
-                            dense
-                            rows="3"
+                            variant="outlined"
+                            density="comfortable"
                             auto-grow
+                            rows="3"
                           ></v-textarea>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12">
                           <v-textarea
-                            :value="item.problemasComportamiento"
-                            label="¿Qué haría ante problemas de comportamiento?"
+                            :model-value="solicitud?.problemasComportamiento"
+                            label="Plan ante problemas de comportamiento"
                             readonly
-                            dense
-                            rows="3"
+                            variant="outlined"
+                            density="comfortable"
                             auto-grow
+                            rows="3"
                           ></v-textarea>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12">
                           <v-textarea
-                            :value="item.enfermedadesCostosas"
-                            label="¿Qué haría ante enfermedades costosas?"
+                            :model-value="solicitud?.enfermedadesCostosas"
+                            label="Plan ante enfermedades costosas"
                             readonly
-                            dense
-                            rows="3"
+                            variant="outlined"
+                            density="comfortable"
                             auto-grow
+                            rows="3"
                           ></v-textarea>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12">
                           <v-textarea
-                            :value="item.vacaciones"
+                            :model-value="solicitud?.vacaciones"
                             label="Plan para vacaciones"
                             readonly
-                            dense
-                            rows="3"
+                            variant="outlined"
+                            density="comfortable"
                             auto-grow
+                            rows="3"
                           ></v-textarea>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.seguimientoPostAdopcion"
+                            :model-value="solicitud?.seguimientoPostAdopcion"
                             label="¿Acepta seguimiento post-adopción?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" sm="6">
                           <v-checkbox
-                            :input-value="item.visitaHogar"
+                            :model-value="solicitud?.visitaHogar"
                             label="¿Acepta visita al hogar?"
                             readonly
-                            dense
+                            disabled
                           ></v-checkbox>
                         </v-col>
                       </v-row>
+
+                      <!-- Documentación -->
+                      <div class="respuesta-protectora__seccion">
+                        <h3 class="mb-4 mt-6">Documentación</h3>
+                        <div v-if="solicitud?.fotos_DNI" class="imagenes-container">
+                          <h4>DNI/NIE</h4>
+                          <div class="imagen-preview" v-for="(foto, index) in (solicitud.fotos_DNI || '').split(',').filter(Boolean)" :key="'dni-'+index">
+                            <img :src="foto.startsWith('data:') ? foto : `data:image/jpeg;base64,${foto}`" alt="DNI/NIE" />
+                          </div>
+                        </div>
+                        
+                        <div v-if="solicitud?.fotos_Hogar" class="imagenes-container">
+                          <h4>Fotos del Hogar</h4>
+                          <div class="imagen-preview" v-for="(foto, index) in (solicitud.fotos_Hogar || '').split(',').filter(Boolean)" :key="'hogar-'+index">
+                            <img :src="foto.startsWith('data:') ? foto : `data:image/jpeg;base64,${foto}`" alt="Foto del hogar" />
+                          </div>
+                        </div>
+                      </div>
 
                       <!-- Gestión de la Solicitud -->
                       <h3 class="mb-4 mt-6">Gestión de la Solicitud</h3>
                       <v-select
                         v-model="nuevoEstado"
-                        :items="['Pendiente', 'Aceptada', 'Rechazada']"
+                        :items="[
+                          { value: 'pendiente', text: 'Pendiente' },
+                          { value: 'aprobada', text: 'Aprobar solicitud' },
+                          { value: 'rechazada', text: 'Rechazar solicitud' }
+                        ]"
+                        item-title="text"
+                        item-value="value"
                         label="Nuevo Estado"
                         :rules="reglas.estado"
                         class="mb-4"
@@ -582,12 +642,7 @@ function getEstadoColor(estado: string) {
                       </v-btn>
                       <v-btn
                         color="success"
-                        @click="() => {
-                          actualizarEstado(item);
-                          if (nuevoEstado && comentarioProtectora) {
-                            item.showDialog = false;
-                          }
-                        }"
+                        @click="() => actualizarEstado(item)"
                         :disabled="!nuevoEstado || !comentarioProtectora"
                       >
                         Guardar
@@ -952,6 +1007,30 @@ function getEstadoColor(estado: string) {
         color: $color-blanco;
   }
 }
+  }
+}
+
+.imagenes-container {
+  margin: $espacio-mediano 0;
+  
+  h4 {
+    color: $color-principal;
+    margin-bottom: $espacio-pequeno;
+  }
+
+  .imagen-preview {
+    margin-bottom: $espacio-mediano;
+    border-radius: $espacio-pequeno;
+    overflow: hidden;
+    box-shadow: $sombra-contenedor;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 300px;
+      object-fit: contain;
+    }
   }
 }
 </style>
