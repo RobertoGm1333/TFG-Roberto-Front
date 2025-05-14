@@ -135,7 +135,11 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
             Object.keys(solicitud).forEach(key => {
                 const keyName = key as keyof SolicitudAdopcionDto
                 if (solicitud[keyName] === null) {
-                    // Convertir null a un valor por defecto según el tipo
+                    // Mantener los valores nulos para edad y numeroPersonas
+                    if (keyName === 'edad' || keyName === 'numeroPersonas') {
+                        return;
+                    }
+                    // Convertir null a un valor por defecto según el tipo para otros campos
                     if (typeof Boolean(solicitud[keyName]) === 'boolean') {
                         solicitud[keyName] = false as any;
                     } else if (typeof Number(solicitud[keyName]) === 'number') {
