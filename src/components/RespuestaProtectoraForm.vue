@@ -30,10 +30,15 @@ const estados = [
 onMounted(async () => {
   try {
     loading.value = true;
-    solicitud.value = await solicitudesStore.getSolicitud(props.solicitudId);
+    const solicitudData = await solicitudesStore.fetchSolicitudById(props.solicitudId);
+    if (solicitudData) {
+      solicitud.value = solicitudData;
+      respuesta.value.estado = solicitudData.estado.toLowerCase();
+      respuesta.value.comentario_Protectora = solicitudData.comentario_Protectora || '';
+    }
   } catch (err) {
     error.value = 'Error al cargar la solicitud';
-    console.error(err);
+    console.error('Error al cargar la solicitud:', err);
   } finally {
     loading.value = false;
   }
@@ -47,18 +52,30 @@ async function enviarRespuesta() {
 
   try {
     enviando.value = true;
-    await solicitudesStore.updateEstadoSolicitud(props.solicitudId, {
-      estado: respuesta.value.estado,
-      comentario_Protectora: respuesta.value.comentario_Protectora
-    });
-    
-    if (props.onSuccess) {
-      props.onSuccess();
-    }
+    // Obtener el id_Protectora del localStorage
+    const user = localStorage.getItem('user');
+    if (!user) throw new Error('No hay sesión de usuario');
+    const userData = JSON.parse(user);
+
+    const protectoraResponse = await fetch(`http://localhost:5167/api/Protectora/usuario/${userData.id_Usuario}`);
+    if (!protectoraResponse.ok) throw new Error('Error al obtener la información de la protectora');
+    const protectoraData = await protectoraResponse.json();
+
+    await solicitudesStore.updateEstadoSolicitud(
+      props.solicitudId,
+      respuesta.value.estado,
+      respuesta.value.comentario_Protectora,
+      protectoraData.id_Protectora
+    );
+
     emit('success');
   } catch (err) {
-    console.error('Error al actualizar la solicitud:', err);
-    error.value = 'Error al actualizar la solicitud';
+    console.error('Error al enviar la respuesta:', err);
+    if (err instanceof Error) {
+      error.value = err.message;
+    } else {
+      error.value = 'Error al procesar la respuesta. Por favor, inténtalo de nuevo.';
+    }
   } finally {
     enviando.value = false;
   }
@@ -283,24 +300,6 @@ async function enviarRespuesta() {
             :rules="[v => !!v || 'Por favor, añade un comentario explicando tu decisión']"
             required
           ></v-textarea>
-        </div>
-
-        <!-- Imágenes -->
-        <div class="respuesta-protectora__seccion">
-          <h3>Documentación</h3>
-          <div v-if="solicitud.fotos_DNI" class="imagenes-container">
-            <h4>DNI/NIE</h4>
-            <div class="imagen-preview" v-for="(foto, index) in solicitud.fotos_DNI.split(',')" :key="'dni-'+index">
-              <img :src="foto" alt="DNI/NIE" />
-            </div>
-          </div>
-          
-          <div v-if="solicitud.fotos_Hogar" class="imagenes-container">
-            <h4>Fotos del Hogar</h4>
-            <div class="imagen-preview" v-for="(foto, index) in solicitud.fotos_Hogar.split(',')" :key="'hogar-'+index">
-              <img :src="foto" alt="Foto del hogar" />
-            </div>
-          </div>
         </div>
 
         <v-alert

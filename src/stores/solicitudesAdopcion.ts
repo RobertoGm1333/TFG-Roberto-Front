@@ -78,11 +78,23 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
                 throw new Error('No hay sesión de usuario activa')
             }
 
+            console.log('Enviando solicitud con datos:', JSON.stringify(solicitud, null, 2))
+
             // Primero verificar si ya existe una solicitud
-            const checkResponse = await fetch(`http://localhost:5167/api/SolicitudAdopcion/usuario/${solicitud.id_Usuario}/gato/${solicitud.id_Gato}`)
-            
-            if (checkResponse.ok) {
-                throw new Error('Ya existe una solicitud de adopción para este gato')
+            try {
+                const checkResponse = await fetch(`http://localhost:5167/api/SolicitudAdopcion/usuario/${solicitud.id_Usuario}/gato/${solicitud.id_Gato}`)
+                
+                if (checkResponse.ok) {
+                    const existingSolicitud = await checkResponse.json()
+                    console.log('Solicitud existente encontrada:', existingSolicitud)
+                    throw new Error('Ya existe una solicitud de adopción para este gato')
+                }
+            } catch (checkError) {
+                // Si no existe, continuar con la creación
+                // No hacemos nada si el error es 404, significa que no existe la solicitud
+                if (checkError instanceof Error && checkError.message !== 'Ya existe una solicitud de adopción para este gato') {
+                    console.log('Error al verificar si existe la solicitud, pero continuamos:', checkError)
+                }
             }
 
             // Validar campos requeridos antes de enviar
@@ -119,6 +131,23 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
                 throw new Error(`Faltan campos requeridos: ${camposFaltantes.join(', ')}`)
             }
             
+            // Asegurar que los campos no estén definidos como null
+            Object.keys(solicitud).forEach(key => {
+                const keyName = key as keyof SolicitudAdopcionDto
+                if (solicitud[keyName] === null) {
+                    // Convertir null a un valor por defecto según el tipo
+                    if (typeof Boolean(solicitud[keyName]) === 'boolean') {
+                        solicitud[keyName] = false as any;
+                    } else if (typeof Number(solicitud[keyName]) === 'number') {
+                        solicitud[keyName] = 0 as any;
+                    } else {
+                        solicitud[keyName] = '' as any;
+                    }
+                }
+            })
+
+            console.log('Enviando solicitud a la API:', JSON.stringify(solicitud))
+            
             const response = await fetch('http://localhost:5167/api/SolicitudAdopcion', {
                 method: 'POST',
                 headers: { 
@@ -128,9 +157,21 @@ export const useSolicitudesAdopcionStore = defineStore('solicitudesAdopcion', ()
                 body: JSON.stringify(solicitud)
             })
 
+            console.log('Respuesta del servidor:', response.status, response.statusText)
+
             if (!response.ok) {
-                const errorData = await response.json()
-                throw new Error(errorData.message || 'Error al crear la solicitud')
+                let errorMessage = 'Error al crear la solicitud'
+                try {
+                    const errorData = await response.json()
+                    console.error('Datos de error:', errorData)
+                    errorMessage = errorData.message || errorData.title || errorMessage
+                    if (errorData.errors) {
+                        errorMessage += ': ' + Object.values(errorData.errors).flat().join(', ')
+                    }
+                } catch (e) {
+                    console.error('No se pudieron parsear los datos de error:', e)
+                }
+                throw new Error(errorMessage)
             }
 
             const nueva = await response.json()

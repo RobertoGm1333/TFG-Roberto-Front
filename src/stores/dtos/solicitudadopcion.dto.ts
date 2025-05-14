@@ -28,8 +28,6 @@ export default class SolicitudAdopcionDto {
         public vacaciones: string,
         public seguimientoPostAdopcion: boolean,
         public visitaHogar: boolean,
-        public fotos_Hogar: string,
-        public fotos_DNI: string,
         public comentario_Protectora: string
     ) {}
 }

@@ -586,24 +586,6 @@ function getEstadoColor(estado: string) {
                         </v-col>
                       </v-row>
 
-                      <!-- Documentación -->
-                      <div class="respuesta-protectora__seccion">
-                        <h3 class="mb-4 mt-6">Documentación</h3>
-                        <div v-if="solicitud?.fotos_DNI" class="imagenes-container">
-                          <h4>DNI/NIE</h4>
-                          <div class="imagen-preview" v-for="(foto, index) in (solicitud.fotos_DNI || '').split(',').filter(Boolean)" :key="'dni-'+index">
-                            <img :src="foto.startsWith('data:') ? foto : `data:image/jpeg;base64,${foto}`" alt="DNI/NIE" />
-                          </div>
-                        </div>
-                        
-                        <div v-if="solicitud?.fotos_Hogar" class="imagenes-container">
-                          <h4>Fotos del Hogar</h4>
-                          <div class="imagen-preview" v-for="(foto, index) in (solicitud.fotos_Hogar || '').split(',').filter(Boolean)" :key="'hogar-'+index">
-                            <img :src="foto.startsWith('data:') ? foto : `data:image/jpeg;base64,${foto}`" alt="Foto del hogar" />
-                          </div>
-                        </div>
-                      </div>
-
                       <!-- Gestión de la Solicitud -->
                       <h3 class="mb-4 mt-6">Gestión de la Solicitud</h3>
                       <v-select
@@ -772,7 +754,7 @@ function getEstadoColor(estado: string) {
       @media (min-width: 600px) {
         font-size: 1rem;
         border-radius: $espacio-pequeno;
-    }
+      }
     }
 
     :deep(.v-data-table-header) {
@@ -830,8 +812,8 @@ function getEstadoColor(estado: string) {
       :deep(td:last-child), :deep(th:last-child) {
         padding-right: 16px !important;
       }
-      }
     }
+  }
 
   &__acciones {
     display: flex;
@@ -988,48 +970,24 @@ function getEstadoColor(estado: string) {
     padding: $espacio-grande;
     margin-top: 95px;
   }
-  }
+}
 
 @media (prefers-color-scheme: dark) {
   .protectora-admin {
     &__tabla {
-    background-color: #272727;
+      background-color: #272727;
       color: $color-blanco;
-  }
+    }
 
     &__dialogo {
-    background-color: #272727;
+      background-color: #272727;
       color: $color-blanco;
 
       :deep(.v-text-field),
       :deep(.v-select),
       :deep(.v-textarea) {
         color: $color-blanco;
-  }
-}
-  }
-}
-
-.imagenes-container {
-  margin: $espacio-mediano 0;
-  
-  h4 {
-    color: $color-principal;
-    margin-bottom: $espacio-pequeno;
-  }
-
-  .imagen-preview {
-    margin-bottom: $espacio-mediano;
-    border-radius: $espacio-pequeno;
-    overflow: hidden;
-    box-shadow: $sombra-contenedor;
-
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
-      max-height: 300px;
-      object-fit: contain;
+      }
     }
   }
 }
