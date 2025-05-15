@@ -3,306 +3,527 @@ import { ref, onMounted } from "vue";
 import { usegatosStore } from "@/stores/gatos.ts";
 
 const gatosStore = usegatosStore();
-const mostrarModal = ref(false);
-const gatoEditado = ref({ id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 0, visible: true })
+const gatos = ref([]);
+const mostrarDialogo = ref(false);
+const mostrarConfirmacion = ref(false);
+const gatoAEliminar = ref(null);
+const mostrarMensaje = ref(false);
+const mensajeTexto = ref('');
+const mensajeTipo = ref('success');
 
-const nuevoGato = ref({
-    id_Gato: 0,  // Se genera en la API, pero en el frontend puede ser un valor temporal
+const gato = ref({
+  id_Gato: 0,
+  nombre_Gato: "",
+  raza: "",
+  edad: 0,
+  sexo: "",
+  esterilizado: false,
+  descripcion_Gato: "",
+  imagen_Gato: "",
+  id_Protectora: 0,
+  visible: true
+});
+
+const formularioGato = ref();
+
+const headers = [
+  { title: 'ID', key: 'id_Gato', align: 'start' },
+  { title: 'Nombre', key: 'nombre_Gato' },
+  { title: 'Raza', key: 'raza' },
+  { title: 'Edad', key: 'edad' },
+  { title: 'Sexo', key: 'sexo' },
+  { title: 'Esterilizado', key: 'esterilizado' },
+  { title: 'Visible', key: 'visible' },
+  { title: 'Acciones', key: 'acciones', sortable: false, align: 'end' }
+];
+
+onMounted(async () => {
+  await cargarGatos();
+});
+
+async function cargarGatos() {
+  try {
+    await gatosStore.fetchGato();
+    gatos.value = gatosStore.gatos;
+  } catch (error) {
+    console.error("Error al cargar gatos:", error);
+    mensajeTipo.value = 'error';
+    mensajeTexto.value = 'Error al cargar los gatos';
+    mostrarMensaje.value = true;
+  }
+}
+
+function abrirFormulario() {
+  gato.value = {
+    id_Gato: 0,
     nombre_Gato: "",
     raza: "",
     edad: 0,
     sexo: "",
     esterilizado: false,
-    descripcion_Gato: "", 
+    descripcion_Gato: "",
     imagen_Gato: "",
     id_Protectora: 0,
-    visible: true 
-});
+    visible: true
+  };
+  mostrarDialogo.value = true;
+}
 
-onMounted(() => {
-    gatosStore.fetchGato();
-});
+function editarGato(item) {
+  gato.value = { ...item };
+  mostrarDialogo.value = true;
+}
 
-const crearGato = async () => {
-    try {
-        await gatosStore.createGato(nuevoGato.value);
-        alert("Gato agregado exitosamente");
-        // Limpiar formulario
-        nuevoGato.value = { id_Gato: 0, nombre_Gato: "", raza: "", edad: 0, sexo: "", esterilizado: false, descripcion_Gato: "", imagen_Gato: "", id_Protectora: 1, visible: true };
-    } catch (error) {
-        console.error("Error al agregar el gato:", error);
+function cerrarDialogo() {
+  mostrarDialogo.value = false;
+}
+
+async function guardarGato() {
+  try {
+    const { valid } = await formularioGato.value?.validate();
+    if (!valid) return;
+
+    if (gato.value.id_Gato === 0) {
+      await gatosStore.createGato(gato.value);
+      mensajeTexto.value = 'Gato agregado exitosamente';
+    } else {
+      await gatosStore.updateGato(gato.value);
+      mensajeTexto.value = 'Gato actualizado exitosamente';
     }
-};
+    
+    mensajeTipo.value = 'success';
+    mostrarMensaje.value = true;
+    cerrarDialogo();
+    await cargarGatos();
+  } catch (error) {
+    console.error("Error al guardar el gato:", error);
+    mensajeTipo.value = 'error';
+    mensajeTexto.value = 'Error al guardar el gato';
+    mostrarMensaje.value = true;
+  }
+}
 
-const eliminarGato = async (id_Gato: number) => {
-    console.log("Intentando eliminar gato con ID:", id_Gato); // Verifica el ID antes de eliminar
+function pedirConfirmacion(item) {
+  gatoAEliminar.value = item;
+  mostrarConfirmacion.value = true;
+}
 
-    if (!id_Gato || id_Gato === 0) {
-        alert("Error: ID de gato inválido.");
-        return;
-    }
+async function confirmarEliminacion() {
+  if (!gatoAEliminar.value) return;
 
-    if (confirm("¿Estás seguro de que deseas eliminar este gato?")) {
-        await gatosStore.deleteGato(id_Gato);
-    }
-};
-
-const editarGato = (gato: any) => {
-    gatoEditado.value = { ...gato };
-    mostrarModal.value = true;
-};
-
-const guardarEdicion = async () => {
-    await gatosStore.updateGato(gatoEditado.value);
-    cerrarModal();
-};
-
-const cerrarModal = () => {
-    mostrarModal.value = false;
-};
-
+  try {
+    await gatosStore.deleteGato(gatoAEliminar.value.id_Gato);
+    mensajeTipo.value = 'success';
+    mensajeTexto.value = 'Gato eliminado exitosamente';
+    mostrarMensaje.value = true;
+    mostrarConfirmacion.value = false;
+    await cargarGatos();
+  } catch (error) {
+    console.error("Error al eliminar el gato:", error);
+    mensajeTipo.value = 'error';
+    mensajeTexto.value = 'Error al eliminar el gato';
+    mostrarMensaje.value = true;
+  }
+}
 </script>
 
 <template>
-    <div class="admin-gatos">
-        <h2 class="admin-gatos__titulo">Gestión de Gatos</h2>
+  <v-container fluid class="admin-view pa-0">
+    <v-row justify="space-between" align="center" class="mb-4 mx-0">
+      <v-col cols="12" sm="auto" class="text-center text-sm-start px-4">
+        <h1 class="admin-view__titulo">Gestión de Gatos</h1>
+      </v-col>
+      <v-col cols="12" sm="auto" class="text-center text-sm-start mt-4 mt-sm-0 px-4">
+        <v-btn color="primary" @click="abrirFormulario" class="admin-view__boton">Nuevo gato</v-btn>
+      </v-col>
+    </v-row>
 
-        <div class="admin-gatos__formulario">
-            <h3 class="admin-gatos__subtitulo">Agregar Nuevo Gato</h3>
-            <form @submit.prevent="crearGato" class="admin-gatos__form">
-                <input class="form-campo" v-model="nuevoGato.nombre_Gato" placeholder="Nombre del gato" required>
-                <input v-model="nuevoGato.raza" placeholder="Raza" required>
-                <input v-model.number="nuevoGato.edad" type="number" placeholder="Edad" required>
-                <input v-model="nuevoGato.sexo" placeholder="Sexo" required>
-                <label>
-                    <input v-model="nuevoGato.esterilizado" type="checkbox"> Esterilizado
-                </label>
-                <input v-model="nuevoGato.descripcion_Gato" placeholder="Descripción" required>
-                <input v-model="nuevoGato.id_Protectora" placeholder="Id de la protectora" required>
-                <input v-model="nuevoGato.imagen_Gato" placeholder="URL de imagen" required>
-                <button type="submit" class="admin-gatos__boton">Agregar Gato</button>
-            </form>
-        </div>
-
-        <div class="admin-gatos__lista">
-            <h3 class="admin-gatos__subtitulo">Lista de Gatos</h3>
-            <div class="admin-gatos__grid">
-                <div v-for="gato in gatosStore.gatos" :key="gato.id_Gato" class="admin-gatos__item">
-                    <img :src="gato.imagen_Gato" alt="Gato" class="admin-gatos__imagen">
-                    <div class="admin-gatos__info">
-                        <p><strong>Nombre:</strong> {{ gato.nombre_Gato }}</p>
-                        <p><strong>Raza:</strong> {{ gato.raza }}</p>
-                        <p><strong>Edad:</strong> {{ gato.edad }} años</p>
-                        <p><strong>Sexo:</strong> {{ gato.sexo }}</p>
-                    </div>
-                    <div class="admin-gatos__acciones">
-                        <button @click="editarGato(gato)" class="admin-gatos__boton--editar">Editar</button>
-                        <button @click="eliminarGato(gato.id_Gato)" class="admin-gatos__boton--eliminar">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <v-dialog v-model="mostrarModal" max-width="500px">
-            <v-card class="admin-gatos__tarjeta--editar">
-                <v-card-title>Editar Gato</v-card-title>
-                <v-card-text>
-                    <input v-model="gatoEditado.nombre_Gato" placeholder="Nombre" style="margin-right: 10px;">
-                    <input v-model="gatoEditado.raza" placeholder="Raza">
-                    <input v-model.number="gatoEditado.edad" type="number" placeholder="Edad">
-                    <input v-model="gatoEditado.sexo" placeholder="Sexo"><br>
-                    <label>
-                        <input v-model="gatoEditado.esterilizado" type="checkbox"> Esterilizado
-                    </label>
-                    <input v-model="gatoEditado.descripcion_Gato" placeholder="Descripción" style="width: 272px; margin-left: 10px">
-                    <input v-model="gatoEditado.id_Protectora" placeholder="Id de la protectora" required>
-                    <input v-model="gatoEditado.imagen_Gato" placeholder="URL de imagen">
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn color="grey"@click="cerrarModal" class="admin-gatos__boton">Cancelar</v-btn>
-                    <v-btn color="green" @click="guardarEdicion" class="admin-gatos__boton">Guardar Cambios</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+    <!-- Tabla responsive -->
+    <div class="admin-view__tabla-container px-4">
+      <v-data-table
+        :headers="headers"
+        :items="gatos"
+        class="elevation-1 admin-view__tabla"
+        :class="{'admin-view__tabla--mobile': $vuetify.display.smAndDown}"
+      >
+        <template v-slot:item.esterilizado="{ item }">
+          <v-icon :color="item.esterilizado ? 'success' : 'error'">
+            {{ item.esterilizado ? 'mdi-check' : 'mdi-close' }}
+          </v-icon>
+        </template>
+        
+        <template v-slot:item.visible="{ item }">
+          <v-icon :color="item.visible ? 'success' : 'error'">
+            {{ item.visible ? 'mdi-check' : 'mdi-close' }}
+          </v-icon>
+        </template>
+        
+        <template v-slot:item.acciones="{ item }">
+          <div class="admin-view__acciones">
+            <v-btn color="primary" @click="editarGato(item)" class="mb-2 mb-sm-0 me-sm-2">
+              <v-icon>mdi-pencil</v-icon>
+              <span class="d-none d-sm-inline ms-2">Editar</span>
+            </v-btn>
+            <v-btn color="error" @click="pedirConfirmacion(item)">
+              <v-icon>mdi-delete</v-icon>
+              <span class="d-none d-sm-inline ms-2">Eliminar</span>
+            </v-btn>
+          </div>
+        </template>
+      </v-data-table>
     </div>
+
+    <!-- Mensaje de confirmación/error -->
+    <v-snackbar
+      v-model="mostrarMensaje"
+      :color="mensajeTipo"
+      :timeout="3000"
+    >
+      {{ mensajeTexto }}
+    </v-snackbar>
+
+    <!-- Formulario de creación/edición -->
+    <v-dialog v-model="mostrarDialogo" max-width="600px">
+      <v-card class="admin-view__dialogo">
+        <v-card-title class="admin-view__dialogo-titulo">
+          {{ gato.id_Gato ? 'Editar Gato' : 'Nuevo Gato' }}
+        </v-card-title>
+        <v-card-text class="admin-view__dialogo-contenido">
+          <v-form ref="formularioGato">
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="gato.nombre_Gato"
+                  label="Nombre del gato"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="gato.raza"
+                  label="Raza"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="gato.edad"
+                  label="Edad"
+                  type="number"
+                  :rules="[v => v > 0 || 'Debe ser mayor que 0']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-select
+                  v-model="gato.sexo"
+                  :items="['Macho', 'Hembra']"
+                  label="Sexo"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="gato.id_Protectora"
+                  label="ID Protectora"
+                  type="number"
+                  :rules="[v => v > 0 || 'Debe ser mayor que 0']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-checkbox v-model="gato.esterilizado" label="Esterilizado" />
+              </v-col>
+            </v-row>
+            <v-textarea
+              v-model="gato.descripcion_Gato"
+              label="Descripción"
+              :rules="[v => !!v || 'Campo obligatorio']"
+              rows="3"
+              variant="outlined"
+              class="mb-4"
+            />
+            <v-text-field
+              v-model="gato.imagen_Gato"
+              label="URL de imagen"
+              :rules="[v => !!v || 'Campo obligatorio']"
+              variant="outlined"
+              density="comfortable"
+            />
+            <v-checkbox v-model="gato.visible" label="Visible públicamente" />
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="admin-view__dialogo-acciones">
+          <v-spacer></v-spacer>
+          <v-btn color="grey" @click="cerrarDialogo" class="me-2">Cancelar</v-btn>
+          <v-btn color="success" @click="guardarGato">Guardar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirmación para eliminar -->
+    <v-dialog v-model="mostrarConfirmacion" max-width="500px">
+      <v-card class="admin-view__dialogo">
+        <v-card-title class="admin-view__dialogo-titulo">
+          Confirmar eliminación
+        </v-card-title>
+        <v-card-text class="py-4">
+          ¿Estás seguro que quieres eliminar a <strong>{{ gatoAEliminar?.nombre_Gato }}</strong>?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" @click="mostrarConfirmacion = false" class="me-2">Cancelar</v-btn>
+          <v-btn color="error" @click="confirmarEliminacion">Eliminar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <style scoped lang="scss">
-.admin-gatos {
-    padding: $espacio-grande;
-    max-width: 800px;
-    margin: auto;
+.admin-view {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: $espacio-grande;
+
+  &__titulo {
+    font-size: 1.25rem;
+    color: $color-principal;
+    margin: $espacio-mediano 0;
     text-align: center;
 
-    &__titulo {
-        font-size: 2rem;
-        color: #333;
-        margin-bottom: $espacio-grande;
+    @media (min-width: 600px) {
+      font-size: 2rem;
+      text-align: left;
+      margin-bottom: $espacio-grande;
     }
+  }
 
-    &__formulario {
-        padding: $espacio-grande;
-        border-radius: $espacio-mediano;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: $espacio-extra-grande;
-        background-color: #E9E9E9;
+  &__subtitulo {
+    font-size: 1.1rem;
+    color: $color-principal;
+    margin: $espacio-mediano 0;
+    text-align: center;
+
+    @media (min-width: 600px) {
+      font-size: 1.8rem;
+      text-align: left;
     }
+  }
 
-    &__subtitulo {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-    }
+  &__tabla-container {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
 
-    &__tarjeta--editar{
-        background-color: #202020;
-        color: #eeeeee;
-        input {
-            color: #eeeeee;
-        }
-    }
+    :deep(.v-data-table) {
+      width: 100%;
+      font-size: 0.875rem;
+      border-radius: 0;
 
-    &__form {
-        display: flex;
-        flex-direction: column;
-        gap: $espacio-mediano;
-
-        input {
-            padding: $espacio-mediano;
-            border: solid #c5c5c5;
-            border-radius: $espacio-pequeno;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: solid #c5c5c5;
-            padding-top: 1%;
-            padding-bottom: 1%;
-            padding-left: 1%;
-        }
-
-        button {
-            background: $color-principal;
-            color: white;
-            padding: $espacio-mediano;
-            border: none;
-            border-radius: $espacio-pequeno;
-            cursor: pointer;
-            transition: background 0.3s;
-
-            &:hover {
-                background: $color-principal-oscuro;
-            }
-        }
-    }
-
-    &__lista {
-        margin-top: $espacio-grande;
-    }
-
-    &__grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
-        padding: $espacio-mediano;
-    }
-
-    &__item {
-        background: #E9E9E9;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: $sombra-contenedor;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    &__imagen {
-        width: 100%;
-        max-width: 200px;
-        height: 150px;
+      @media (min-width: 600px) {
+        font-size: 1rem;
         border-radius: $espacio-pequeno;
-        object-fit: cover;
-        margin-bottom: $espacio-mediano;
+      }
     }
 
-    &__info {
+    :deep(.v-data-table-header) {
+      th {
+        padding: 12px 16px !important;
+        font-size: 0.875rem !important;
+        height: 48px !important;
+        background-color: $color-blanco;
+      }
+    }
+
+    :deep(.v-data-table__wrapper) {
+      td {
+        padding: 12px 16px !important;
+        font-size: 0.875rem !important;
+        height: 48px !important;
+      }
+    }
+  }
+
+  &__tabla {
+    width: 100%;
+    background-color: $color-blanco;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+
+    @media (min-width: 600px) {
+      box-shadow: $sombra-contenedor;
+    }
+
+    &--mobile {
+      :deep(.v-data-table__wrapper) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         width: 100%;
-        text-align: center;
-    }
-
-    &__acciones {
-        margin-top: $espacio-mediano;
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-    }
-
-    &__boton--editar {
-        background: $color-principal;
-        color: $color-blanco;
-        padding: 8px;
-        border: none;
-        border-radius: $espacio-pequeno;
-        cursor: pointer;
-        margin-top: $espacio-mediano;
-
-        &:hover {
-            background: $color-principal-oscuro;
-        }
-    }
-
-    &__boton--eliminar {
-        background: $color-rojo;
-        color: $color-blanco;
-        padding: 8px;
-        border: none;
-        border-radius: $espacio-pequeno;
-        cursor: pointer;
-        margin-top: $espacio-mediano;
-
-        &:hover {
-            background: darkred;
-        }
-    }
-    @media (prefers-color-scheme: dark){
-
-        h2 {
-            color: #ffffff;
-        }
-
-        h3 {
-            color: #ffffff;
-        }
+        margin: 0;
+        padding: 0;
         
-        input{
-            color: whitesmoke;
-            border:solid #5d5d5d;
-            border-color: rgba(93, 93, 93, 0.5);
+        table {
+          width: 100%;
+          min-width: 500px;
         }
+      }
 
-        p {
-            color: grey;
-        }
-        .admin-gatos__formulario {
-            background-color: #272727;
-        }
-        .admin-gatos__item {
-            background-color: #272727;
-        }
+      :deep(th), :deep(td) {
+        white-space: nowrap;
+        min-width: 100px;
+        padding: 12px 16px !important;
+      }
 
-        .admin-gatos__form label {
-            border:solid #5d5d5d;
-            border-color: rgba(93, 93, 93, 0.5);
-        }
+      :deep(td:first-child), :deep(th:first-child) {
+        padding-left: 16px !important;
+      }
+
+      :deep(td:last-child), :deep(th:last-child) {
+        padding-right: 16px !important;
+      }
     }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+
+    .v-btn {
+      min-width: 40px !important;
+      padding: 0 12px !important;
+      height: 36px !important;
+
+      @media (min-width: 600px) {
+        min-width: 64px !important;
+        padding: 0 16px !important;
+      }
+    }
+  }
+
+  &__boton {
+    width: auto;
+    min-width: 120px !important;
+    height: 36px !important;
+    font-size: 0.875rem !important;
+
+    @media (min-width: 600px) {
+      height: 40px !important;
+      font-size: 1rem !important;
+    }
+  }
+
+  &__dialogo {
+    margin: 8px;
+    width: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    @media (min-width: 600px) {
+      margin: 0;
+      min-width: 600px;
+    }
+
+    &-titulo {
+      background-color: $color-principal;
+      color: $color-blanco;
+      padding: 16px 20px;
+      font-size: 1.2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    &-contenido {
+      padding: 24px 20px;
+
+      h3 {
+        color: $color-principal;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-bottom: 2px solid $color-principal;
+        padding-bottom: 8px;
+      }
+
+      :deep(.v-input) {
+        margin-bottom: 12px;
+      }
+
+      .v-row {
+        margin: 0 -12px;
+      }
+
+      .v-col {
+        padding: 12px;
+      }
+    }
+
+    &-acciones {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      background-color: #f5f5f5;
+      position: sticky;
+      bottom: 0;
+      z-index: 1;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &__dialogo {
+      background-color: #272727;
+
+      &-contenido {
+        h3 {
+          border-bottom-color: $color-principal;
+        }
+      }
+
+      &-acciones {
+        background-color: #1e1e1e;
+        border-top-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+  }
+
+  @media (min-width: 960px) {
+    max-width: 1200px;
+    padding: $espacio-grande;
+    margin-top: 95px;
+  }
 }
 
-.v-card-text {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+@media (prefers-color-scheme: dark) {
+  .admin-view {
+    &__tabla {
+      background-color: #272727;
+      color: $color-blanco;
+    }
+
+    &__dialogo {
+      background-color: #272727;
+      color: $color-blanco;
+    }
+  }
 }
 </style>

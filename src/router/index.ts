@@ -82,7 +82,7 @@ const router = createRouter({
     {
       path: '/protectora-admin',
       name: 'protectora-admin',
-      component: () => import('@/views/ProtectoraAdmin.vue'),
+      component: () => import('@/views/ProtectoraAdminView.vue'),
       meta: { requiereProtectora: true }
     },
     {

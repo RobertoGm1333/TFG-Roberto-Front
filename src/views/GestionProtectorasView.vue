@@ -3,10 +3,56 @@ import { ref, onMounted } from "vue";
 import { useprotectorasStore } from "@/stores/protectoras.ts";
 
 const protectorasStore = useprotectorasStore();
-const mostrarModal = ref(false);
-const protectoraEditada = ref({ id_Protectora: 0, nombre_Protectora: "", direccion: "", correo_Protectora: "", telefono_Protectora: "", pagina_Web: "", imagen_Protectora: "", id_Usuario: 0 });
+const protectoras = ref([]);
+const mostrarDialogo = ref(false);
+const mostrarConfirmacion = ref(false);
+const protectoraAEliminar = ref(null);
+const mostrarMensaje = ref(false);
+const mensajeTexto = ref('');
+const mensajeTipo = ref('success');
 
-const nuevaProtectora = ref({
+const protectora = ref({
+  id_Protectora: 0,
+  nombre_Protectora: "",
+  direccion: "",
+  correo_Protectora: "",
+  telefono_Protectora: "",
+  pagina_Web: "",
+  imagen_Protectora: "",
+  id_Usuario: 0,
+  ubicacion: "",
+  descripcion_Protectora: ""
+});
+
+const formularioProtectora = ref();
+
+const headers = [
+  { title: 'ID', key: 'id_Protectora', align: 'start' },
+  { title: 'Nombre', key: 'nombre_Protectora' },
+  { title: 'Dirección', key: 'direccion' },
+  { title: 'Email', key: 'correo_Protectora' },
+  { title: 'Teléfono', key: 'telefono_Protectora' },
+  { title: 'Acciones', key: 'acciones', sortable: false, align: 'end' }
+];
+
+onMounted(async () => {
+  await cargarProtectoras();
+});
+
+async function cargarProtectoras() {
+  try {
+    await protectorasStore.fetchProtectora();
+    protectoras.value = protectorasStore.protectoras;
+  } catch (error) {
+    console.error("Error al cargar protectoras:", error);
+    mensajeTipo.value = 'error';
+    mensajeTexto.value = 'Error al cargar las protectoras';
+    mostrarMensaje.value = true;
+  }
+}
+
+function abrirFormulario() {
+  protectora.value = {
     id_Protectora: 0,
     nombre_Protectora: "",
     direccion: "",
@@ -14,266 +60,455 @@ const nuevaProtectora = ref({
     telefono_Protectora: "",
     pagina_Web: "",
     imagen_Protectora: "",
-    id_Usuario: 0
-});
+    id_Usuario: 0,
+    ubicacion: "",
+    descripcion_Protectora: ""
+  };
+  mostrarDialogo.value = true;
+}
 
-onMounted(() => {
-    protectorasStore.fetchProtectora();
-});
+function editarProtectora(item) {
+  protectora.value = { ...item };
+  mostrarDialogo.value = true;
+}
 
-const crearProtectora = async () => {
-    try {
-        await protectorasStore.createProtectora(nuevaProtectora.value);
-        alert("Protectora agregada exitosamente");
-        nuevaProtectora.value = { id_Protectora: 0, nombre_Protectora: "", direccion: "", correo_Protectora: "", telefono_Protectora: "", pagina_Web: "", imagen_Protectora: "", id_Usuario: 0 };
-    } catch (error) {
-        console.error("Error al agregar la protectora:", error);
+function cerrarDialogo() {
+  mostrarDialogo.value = false;
+}
+
+async function guardarProtectora() {
+  try {
+    const { valid } = await formularioProtectora.value?.validate();
+    if (!valid) return;
+
+    if (protectora.value.id_Protectora === 0) {
+      await protectorasStore.createProtectora(protectora.value);
+      mensajeTexto.value = 'Protectora agregada exitosamente';
+    } else {
+      await protectorasStore.updateProtectora(protectora.value.id_Protectora, protectora.value);
+      mensajeTexto.value = 'Protectora actualizada exitosamente';
     }
-};
-
-const eliminarProtectora = async (id_Protectora: number) => {
-    console.log("Intentando eliminar protect con ID:", id_Protectora);
     
-    if (confirm("¿Estás seguro de que deseas eliminar esta protectora?")) {
-        await protectorasStore.deleteProtectora(id_Protectora);
-    }
-};
+    mensajeTipo.value = 'success';
+    mostrarMensaje.value = true;
+    cerrarDialogo();
+    await cargarProtectoras();
+  } catch (error) {
+    console.error("Error al guardar la protectora:", error);
+    mensajeTipo.value = 'error';
+    mensajeTexto.value = 'Error al guardar la protectora';
+    mostrarMensaje.value = true;
+  }
+}
 
-const editarProtectora = (protectora: any) => {
-    protectoraEditada.value = { ...protectora };
-    mostrarModal.value = true;
-};
+function pedirConfirmacion(item) {
+  protectoraAEliminar.value = item;
+  mostrarConfirmacion.value = true;
+}
 
-const guardarEdicion = async () => {
-    await protectorasStore.updateProtectora(protectoraEditada.value);
-    cerrarModal();
-};
+async function confirmarEliminacion() {
+  if (!protectoraAEliminar.value) return;
 
-const cerrarModal = () => {
-    mostrarModal.value = false;
-};
-
+  try {
+    await protectorasStore.deleteProtectora(protectoraAEliminar.value.id_Protectora);
+    mensajeTipo.value = 'success';
+    mensajeTexto.value = 'Protectora eliminada exitosamente';
+    mostrarMensaje.value = true;
+    mostrarConfirmacion.value = false;
+    await cargarProtectoras();
+  } catch (error) {
+    console.error("Error al eliminar la protectora:", error);
+    mensajeTipo.value = 'error';
+    mensajeTexto.value = 'Error al eliminar la protectora';
+    mostrarMensaje.value = true;
+  }
+}
 </script>
 
 <template>
-    <div class="admin-protectoras">
-        <h2 class="admin-protectoras__titulo">Gestión de Protectoras</h2>
+  <v-container fluid class="admin-view pa-0">
+    <v-row justify="space-between" align="center" class="mb-4 mx-0">
+      <v-col cols="12" sm="auto" class="text-center text-sm-start px-4">
+        <h1 class="admin-view__titulo">Gestión de Protectoras</h1>
+      </v-col>
+      <v-col cols="12" sm="auto" class="text-center text-sm-start mt-4 mt-sm-0 px-4">
+        <v-btn color="primary" @click="abrirFormulario" class="admin-view__boton">Nueva protectora</v-btn>
+      </v-col>
+    </v-row>
 
-        <div class="admin-protectoras__formulario">
-            <h3 class="admin-protectoras__subtitulo">Agregar Nueva Protectora</h3>
-            <form @submit.prevent="crearProtectora" class="admin-protectoras__form">
-                <input v-model="nuevaProtectora.nombre_Protectora" placeholder="Nombre de la protectora" required>
-                <input v-model="nuevaProtectora.direccion" placeholder="Dirección" required>
-                <input v-model="nuevaProtectora.correo_Protectora" type="email" placeholder="Email" required>
-                <input v-model="nuevaProtectora.telefono_Protectora" placeholder="Teléfono" required>
-                <input v-model="nuevaProtectora.pagina_Web" type="text" placeholder="Página web de la protectora" required>
-                <input v-model="nuevaProtectora.imagen_Protectora" type="text" placeholder="Url de la imagen de la protectora" required>
-                <input v-model="nuevaProtectora.id_Usuario" type="text" placeholder="ID del usuario admin" required>
-                <button type="submit" class="admin-protectoras__boton">Agregar Protectora</button>
-            </form>
-        </div>
-
-        <div class="admin-protectoras__lista">
-            <h3 class="admin-protectoras__subtitulo">Lista de Protectoras</h3>
-            <div class="admin-protectoras__grid">
-                <div v-for="protectora in protectorasStore.protectoras" :key="protectora.id_Protectora" class="admin-protectoras__item">
-                    <img :src="protectora.imagen_Protectora" alt="Imagen de la protectora" class="admin-protectoras__imagen">
-                    <div class="admin-protectoras__info">
-                        <p><strong>Nombre:</strong> {{ protectora.nombre_Protectora }}</p>
-                        <p><strong>Dirección:</strong> {{ protectora.direccion }}</p>
-                        <p><strong>Email:</strong> {{ protectora.correo_Protectora }}</p>
-                        
-                    </div>
-                    <div class="admin-protectoras__acciones">
-                        <button @click="editarProtectora(protectora)" class="admin-protectoras__boton--editar">Editar</button>
-                        <button @click="eliminarProtectora(protectora.id_Protectora)"class="admin-protectoras__boton--eliminar">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <v-dialog v-model="mostrarModal" max-width="500px">
-            <v-card class="admin-protectoras__tarjeta--editar">
-                <v-card-title>Editar Protectora</v-card-title>
-                <v-card-text>
-                    <form @submit.prevent="guardarEdicion" class="admin-protectoras__form">
-                <input v-model="protectoraEditada.nombre_Protectora" placeholder="Nombre de la protectora" required>
-                <input v-model="protectoraEditada.direccion" placeholder="Dirección" required>
-                <input v-model="protectoraEditada.correo_Protectora" type="email" placeholder="Email" required>
-                <input v-model="protectoraEditada.telefono_Protectora" placeholder="Teléfono" required>
-                <input v-model="protectoraEditada.pagina_Web" type="text" placeholder="Página web de la protectora" required>
-                <input v-model="protectoraEditada.imagen_Protectora" type="text" placeholder="Url de la imagen de la protectora" required>
-                <input v-model="protectoraEditada.id_Usuario" type="text" placeholder="ID del usuario admin" required>
-                    </form>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn color="grey" @click="cerrarModal" class="admin-protectoras__boton">Cancelar</v-btn>
-                    <v-btn color="green" @click="guardarEdicion" class="admin-protectoras__boton">Guardar Cambios</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+    <!-- Tabla responsive -->
+    <div class="admin-view__tabla-container px-4">
+      <v-data-table
+        :headers="headers"
+        :items="protectoras"
+        class="elevation-1 admin-view__tabla"
+        :class="{'admin-view__tabla--mobile': $vuetify.display.smAndDown}"
+      >
+        <template v-slot:item.acciones="{ item }">
+          <div class="admin-view__acciones">
+            <v-btn color="primary" @click="editarProtectora(item)" class="mb-2 mb-sm-0 me-sm-2">
+              <v-icon>mdi-pencil</v-icon>
+              <span class="d-none d-sm-inline ms-2">Editar</span>
+            </v-btn>
+            <v-btn color="error" @click="pedirConfirmacion(item)">
+              <v-icon>mdi-delete</v-icon>
+              <span class="d-none d-sm-inline ms-2">Eliminar</span>
+            </v-btn>
+          </div>
+        </template>
+      </v-data-table>
     </div>
+
+    <!-- Mensaje de confirmación/error -->
+    <v-snackbar
+      v-model="mostrarMensaje"
+      :color="mensajeTipo"
+      :timeout="3000"
+    >
+      {{ mensajeTexto }}
+    </v-snackbar>
+
+    <!-- Formulario de creación/edición -->
+    <v-dialog v-model="mostrarDialogo" max-width="600px">
+      <v-card class="admin-view__dialogo">
+        <v-card-title class="admin-view__dialogo-titulo">
+          {{ protectora.id_Protectora ? 'Editar Protectora' : 'Nueva Protectora' }}
+        </v-card-title>
+        <v-card-text class="admin-view__dialogo-contenido">
+          <v-form ref="formularioProtectora">
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="protectora.nombre_Protectora"
+                  label="Nombre de la protectora"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="protectora.direccion"
+                  label="Dirección"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="protectora.correo_Protectora"
+                  label="Email"
+                  type="email"
+                  :rules="[
+                    v => !!v || 'Campo obligatorio',
+                    v => /.+@.+\..+/.test(v) || 'Email inválido'
+                  ]"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="protectora.telefono_Protectora"
+                  label="Teléfono"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="protectora.pagina_Web"
+                  label="Página web"
+                  :rules="[v => !!v || 'Campo obligatorio']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="protectora.id_Usuario"
+                  label="ID Usuario"
+                  type="number"
+                  :rules="[v => v > 0 || 'Debe ser mayor que 0']"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+            </v-row>
+            <v-text-field
+              v-model="protectora.imagen_Protectora"
+              label="URL de imagen"
+              :rules="[v => !!v || 'Campo obligatorio']"
+              variant="outlined"
+              density="comfortable"
+            />
+            <v-text-field
+              v-model="protectora.ubicacion"
+              label="URL de Google Maps (Embed)"
+              variant="outlined"
+              density="comfortable"
+            />
+            <v-textarea
+              v-model="protectora.descripcion_Protectora"
+              label="Descripción"
+              rows="3"
+              variant="outlined"
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="admin-view__dialogo-acciones">
+          <v-spacer></v-spacer>
+          <v-btn color="grey" @click="cerrarDialogo" class="me-2">Cancelar</v-btn>
+          <v-btn color="success" @click="guardarProtectora">Guardar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirmación para eliminar -->
+    <v-dialog v-model="mostrarConfirmacion" max-width="500px">
+      <v-card class="admin-view__dialogo">
+        <v-card-title class="admin-view__dialogo-titulo">
+          Confirmar eliminación
+        </v-card-title>
+        <v-card-text class="py-4">
+          ¿Estás seguro que quieres eliminar la protectora <strong>{{ protectoraAEliminar?.nombre_Protectora }}</strong>?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" @click="mostrarConfirmacion = false" class="me-2">Cancelar</v-btn>
+          <v-btn color="error" @click="confirmarEliminacion">Eliminar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <style scoped lang="scss">
-.admin-protectoras {
-    padding: $espacio-grande;
-    max-width: 800px;
-    margin: auto;
+.admin-view {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: $espacio-grande;
+
+  &__titulo {
+    font-size: 1.25rem;
+    color: $color-principal;
+    margin: $espacio-mediano 0;
     text-align: center;
 
-    &__titulo {
-        font-size: 2rem;
-        color: #333;
-        margin-bottom: $espacio-grande;
+    @media (min-width: 600px) {
+      font-size: 2rem;
+      text-align: left;
+      margin-bottom: $espacio-grande;
     }
+  }
 
-    &__formulario {
-        padding: $espacio-grande;
-        border-radius: $espacio-mediano;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: $espacio-extra-grande;
-        background-color: #E9E9E9;
-    }
+  &__tabla-container {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
 
-    &__subtitulo {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-    }
-    
-    &__tarjeta--editar{
-        background-color: #202020;
-        color: #eeeeee;
-        input {
-            color: #eeeeee;
-        }
-    }
+    :deep(.v-data-table) {
+      width: 100%;
+      font-size: 0.875rem;
+      border-radius: 0;
 
-    &__form {
-        display: flex;
-        flex-direction: column;
-        gap: $espacio-mediano;
-
-        input {
-            padding: $espacio-mediano;
-            border: solid #c5c5c5;
-            border-radius: $espacio-pequeno;
-        }
-
-        button {
-            background: $color-principal;
-            color: white;
-            padding: $espacio-mediano;
-            border: none;
-            border-radius: $espacio-pequeno;
-            cursor: pointer;
-            transition: background 0.3s;
-
-            &:hover {
-                background: $color-principal-oscuro;
-            }
-        }
-    }
-
-    &__grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
-        padding: $espacio-mediano;
-    }
-
-    &__item {
-        background: #E9E9E9;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: $sombra-contenedor;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    &__imagen {
-        width: 100%;
-        max-width: 200px;
-        height: 150px;
+      @media (min-width: 600px) {
+        font-size: 1rem;
         border-radius: $espacio-pequeno;
-        object-fit: cover;
-        margin-bottom: $espacio-mediano;
+      }
     }
 
-    &__info {
+    :deep(.v-data-table-header) {
+      th {
+        padding: 12px 16px !important;
+        font-size: 0.875rem !important;
+        height: 48px !important;
+        background-color: $color-blanco;
+      }
+    }
+
+    :deep(.v-data-table__wrapper) {
+      td {
+        padding: 12px 16px !important;
+        font-size: 0.875rem !important;
+        height: 48px !important;
+      }
+    }
+  }
+
+  &__tabla {
+    width: 100%;
+    background-color: $color-blanco;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+
+    @media (min-width: 600px) {
+      box-shadow: $sombra-contenedor;
+    }
+
+    &--mobile {
+      :deep(.v-data-table__wrapper) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         width: 100%;
-        text-align: center;
-    }
-
-    &__acciones {
-        margin-top: $espacio-mediano;
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-    }
-
-    &__boton--editar {
-        background: $color-principal;
-        color: $color-blanco;
-        padding: 8px;
-        border: none;
-        border-radius: $espacio-pequeno;
-        cursor: pointer;
-        margin-top: $espacio-mediano;
-
-        &:hover {
-            background: $color-principal-oscuro;
+        margin: 0;
+        padding: 0;
+        
+        table {
+          width: 100%;
+          min-width: 500px;
         }
+      }
+
+      :deep(th), :deep(td) {
+        white-space: nowrap;
+        min-width: 100px;
+        padding: 12px 16px !important;
+      }
+
+      :deep(td:first-child), :deep(th:first-child) {
+        padding-left: 16px !important;
+      }
+
+      :deep(td:last-child), :deep(th:last-child) {
+        padding-right: 16px !important;
+      }
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+
+    .v-btn {
+      min-width: 40px !important;
+      padding: 0 12px !important;
+      height: 36px !important;
+
+      @media (min-width: 600px) {
+        min-width: 64px !important;
+        padding: 0 16px !important;
+      }
+    }
+  }
+
+  &__boton {
+    width: auto;
+    min-width: 120px !important;
+    height: 36px !important;
+    font-size: 0.875rem !important;
+
+    @media (min-width: 600px) {
+      height: 40px !important;
+      font-size: 1rem !important;
+    }
+  }
+
+  &__dialogo {
+    margin: 8px;
+    width: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    @media (min-width: 600px) {
+      margin: 0;
+      min-width: 600px;
     }
 
-    &__boton--eliminar {
-        background: $color-rojo;
-        color: $color-blanco;
-        padding: 8px;
-        border: none;
-        border-radius: $espacio-pequeno;
-        cursor: pointer;
-        margin-top: $espacio-mediano;
-
-        &:hover {
-            background: darkred;
-        }
+    &-titulo {
+      background-color: $color-principal;
+      color: $color-blanco;
+      padding: 16px 20px;
+      font-size: 1.2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
-        @media (prefers-color-scheme: dark){
 
-        h2 {
-            color: #ffffff;
-        }
+    &-contenido {
+      padding: 24px 20px;
 
+      h3 {
+        color: $color-principal;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-bottom: 2px solid $color-principal;
+        padding-bottom: 8px;
+      }
+
+      :deep(.v-input) {
+        margin-bottom: 12px;
+      }
+
+      .v-row {
+        margin: 0 -12px;
+      }
+
+      .v-col {
+        padding: 12px;
+      }
+    }
+
+    &-acciones {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      background-color: #f5f5f5;
+      position: sticky;
+      bottom: 0;
+      z-index: 1;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &__dialogo {
+      background-color: #272727;
+
+      &-contenido {
         h3 {
-            color: #ffffff;
+          border-bottom-color: $color-principal;
         }
+      }
 
-        input{
-            color: whitesmoke;
-            border:solid #5d5d5d;
-            border-color: rgba(93, 93, 93, 0.5);
-        }
-
-        p {
-            color: grey;
-        }
-
-        .admin-protectoras__formulario {
-            background-color: #272727;
-        }
-
-        .admin-protectoras__item {
-            background-color: #272727;
-        }
+      &-acciones {
+        background-color: #1e1e1e;
+        border-top-color: rgba(255, 255, 255, 0.12);
+      }
     }
+  }
+
+  @media (min-width: 960px) {
+    max-width: 1200px;
+    padding: $espacio-grande;
+    margin-top: 95px;
+  }
 }
 
-.v-card-text {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+@media (prefers-color-scheme: dark) {
+  .admin-view {
+    &__tabla {
+      background-color: #272727;
+      color: $color-blanco;
+    }
+
+    &__dialogo {
+      background-color: #272727;
+      color: $color-blanco;
+    }
+  }
 }
 </style>
