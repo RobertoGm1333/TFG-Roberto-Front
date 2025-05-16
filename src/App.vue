@@ -74,7 +74,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   overflow: hidden;
 }
@@ -104,9 +104,4 @@ onMounted(() => {
   position: relative;
 }
 
-@media (min-width: 1010px) {
-  .v-container {
-    margin-top: 105px;
-  }
-}
 </style> 
