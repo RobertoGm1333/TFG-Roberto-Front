@@ -16,16 +16,19 @@ onMounted(() => {
   const pawContainer = document.createElement('div');
   pawContainer.id = 'paw-prints-container';
   
-  // Crear las huellas individuales - de arriba izquierda a abajo derecha
+  // Crear las huellas en sets de 2 en 2, en diagonal, con más separación horizontal y ahora más separación vertical
   const pawPositions = [
-    { left: '5%', top: '5%', rotate: '-30deg' },
-    { left: '20%', top: '20%', rotate: '-30deg' },
-    { left: '35%', top: '35%', rotate: '-30deg' },
-    { left: '50%', top: '50%', rotate: '-30deg' },
-    { left: '65%', top: '65%', rotate: '-30deg' },
-    { left: '80%', top: '80%', rotate: '-30deg' },
-    { left: '20%', top: '35%', rotate: '-30deg' },
-    { left: '65%', top: '35%', rotate: '-30deg' },
+    { left: '20%', top: '8%', rotate: '-45deg' },
+    { left: '35%', top: '12%', rotate: '-45deg' },
+
+    { left: '35%', top: '36%', rotate: '-45deg' },
+    { left: '50%', top: '40%', rotate: '-45deg' },
+
+    { left: '50%', top: '64%', rotate: '-45deg' },
+    { left: '65%', top: '68%', rotate: '-45deg' },
+
+    { left: '65%', top: '92%', rotate: '-45deg' },
+    { left: '80%', top: '96%', rotate: '-45deg' },
   ];
   
   pawPositions.forEach((position) => {
@@ -75,13 +78,13 @@ body {
 
 .paw-print {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: 150px;
+  height: 150px;
   background-image: url('/Images/logos/Huella.svg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 /* Aplicar z-index a todos los elementos directos del body excepto el contenedor de huellas */
