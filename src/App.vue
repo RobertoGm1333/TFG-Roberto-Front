@@ -4,31 +4,36 @@ import Header from './components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import { onMounted } from 'vue';
 
-// Creamos un div para las huellas en el body al montar la aplicación
+// Creamos un div para las huellas en el área de contenido
 onMounted(() => {
   // Eliminar si ya existe
   const existingPawContainer = document.getElementById('paw-prints-container');
   if (existingPawContainer) {
-    document.body.removeChild(existingPawContainer);
+    existingPawContainer.remove();
   }
   
   // Crear contenedor de huellas
+  const mainContent = document.querySelector('.main-content');
+  if (!mainContent) return;
+
   const pawContainer = document.createElement('div');
   pawContainer.id = 'paw-prints-container';
   
-  // Crear las huellas en sets de 2 en 2, en diagonal, con más separación horizontal y ahora más separación vertical
+  // Crear las huellas en sets de 2 en 2, en diagonal
   const pawPositions = [
-    { left: '20%', top: '8%', rotate: '-45deg' },
-    { left: '35%', top: '12%', rotate: '-45deg' },
+    { left: '18%', top: '-12%', rotate: '-45deg' },
+  
+    { left: '15%', top: '7%', rotate: '-45deg' },
+    { left: '33%', top: '11%', rotate: '-45deg' },
 
-    { left: '35%', top: '36%', rotate: '-45deg' },
-    { left: '50%', top: '40%', rotate: '-45deg' },
+    { left: '33%', top: '35%', rotate: '-45deg' },
+    { left: '53%', top: '40%', rotate: '-45deg' },
 
-    { left: '50%', top: '64%', rotate: '-45deg' },
-    { left: '65%', top: '68%', rotate: '-45deg' },
+    { left: '52%', top: '62%', rotate: '-45deg' },
+    { left: '71%', top: '64%', rotate: '-45deg' },
 
-    { left: '65%', top: '92%', rotate: '-45deg' },
-    { left: '80%', top: '96%', rotate: '-45deg' },
+    { left: '70%', top: '86%', rotate: '-45deg' },
+    { left: '90%', top: '88%', rotate: '-45deg' },
   ];
   
   pawPositions.forEach((position) => {
@@ -40,38 +45,36 @@ onMounted(() => {
     pawContainer.appendChild(pawElement);
   });
   
-  // Añadir al body antes que cualquier otro elemento
-  if (document.body.firstChild) {
-    document.body.insertBefore(pawContainer, document.body.firstChild);
-  } else {
-    document.body.appendChild(pawContainer);
-  }
+  // Añadir al área de contenido principal
+  mainContent.appendChild(pawContainer);
 });
 </script>
 
 <template>
   <div class="app-container">
     <Header />
-
-    <RouterView />
-
+    <div class="main-content">
+      <RouterView />
+    </div>
     <Footer />
   </div>
 </template>
 
 <style>
-/* Estilos globales para asegurar que el contenido esté por encima de las huellas */
-body {
+.main-content {
   position: relative;
+  min-height: calc(100vh - 200px); /* Ajusta según el tamaño de tu header y footer */
+  width: 100%;
+  padding: 20px 0;
 }
 
 #paw-prints-container {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -99999;
+  z-index: 0;
   pointer-events: none;
   overflow: hidden;
 }
@@ -85,12 +88,6 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   opacity: 0.1;
-}
-
-/* Aplicar z-index a todos los elementos directos del body excepto el contenedor de huellas */
-body > *:not(#paw-prints-container) {
-  position: relative;
-  z-index: 1;
 }
 </style>
 

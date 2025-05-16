@@ -266,7 +266,6 @@ canvas {
 @media (min-width: 1010px) {
   header {
     padding: 15px 150px;
-    position: absolute;
     top: 0;
     left: 0;
     z-index: 1000;
