@@ -4,7 +4,9 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAutenticacion } from '@/stores/Autentificacion';
 import { esContraseñaValida } from '@/stores/validaciones';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 const autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(autenticacion);
 const router = useRouter();
@@ -22,15 +24,15 @@ onMounted(() => {
 
 const cambiarContraseña = async () => {
   if (!nuevaContraseña.value || !repetirContraseña.value) {
-    mensaje.value = 'Introduce y repite la nueva contraseña';
+    mensaje.value = t('error_contraseñas_vacias');
     return;
   }
   if (nuevaContraseña.value !== repetirContraseña.value) {
-    mensaje.value = 'Las contraseñas no coinciden';
+    mensaje.value = t('error_contraseñas_no_coinciden');
     return;
   }
   if (!esContraseñaValida(nuevaContraseña.value)) {
-    mensaje.value = 'La contraseña debe tener al menos 7 caracteres, incluyendo mayúsculas, minúsculas, números y un símbolo.';
+    mensaje.value = t('error_contraseña_invalida');
     return;
   }
   try {
@@ -42,12 +44,12 @@ const cambiarContraseña = async () => {
       })
     });
 
-    if (!response.ok) throw new Error('Error al cambiar la contraseña');
-    mensaje.value = 'Contraseña actualizada con éxito';
+    if (!response.ok) throw new Error(t('error_cambiar_contraseña'));
+    mensaje.value = t('contraseña_actualizada');
     nuevaContraseña.value = '';
     repetirContraseña.value = '';
   } catch (error) {
-    mensaje.value = 'Error al cambiar la contraseña';
+    mensaje.value = t('error_cambiar_contraseña');
     console.error(error);
   }
 };
@@ -60,20 +62,20 @@ const cerrarSesion = () => {
 
 <template>
   <div class="perfil">
-    <h1 class="perfil__titulo">Mi Perfil</h1>
-    <p class="perfil__dato"><strong>Nombre:</strong> {{ usuario.nombre }}</p>
-    <p class="perfil__dato"><strong>Apellido:</strong> {{ usuario.apellido }}</p>
-    <p class="perfil__dato"><strong>Email:</strong> {{ usuario.email }}</p>
+    <h1 class="perfil__titulo">{{ t('mi_perfil') }}</h1>
+    <p class="perfil__dato"><strong>{{ t('nombre') }}:</strong> {{ usuario?.nombre }}</p>
+    <p class="perfil__dato"><strong>{{ t('apellido') }}:</strong> {{ usuario?.apellido }}</p>
+    <p class="perfil__dato"><strong>{{ t('email') }}:</strong> {{ usuario?.email }}</p>
 
     <div class="perfil__cambiar-contrasena">
-      <h2 class="perfil__subtitulo">Cambiar Contraseña</h2>
+      <h2 class="perfil__subtitulo">{{ t('cambiar_contraseña') }}</h2>
 
       <div class="perfil__password-wrapper">
         <input
           :type="verNueva ? 'text' : 'password'"
           class="perfil__input"
           v-model="nuevaContraseña"
-          placeholder="Nueva contraseña"
+          :placeholder="t('nueva_contraseña')"
         />
         <button type="button" class="perfil__eye-icon" @click="verNueva = !verNueva">
           <span v-if="verNueva">👁️</span>
@@ -86,7 +88,7 @@ const cerrarSesion = () => {
           :type="verRepetir ? 'text' : 'password'"
           class="perfil__input"
           v-model="repetirContraseña"
-          placeholder="Repite la contraseña"
+          :placeholder="t('repetir_contraseña')"
         />
         <button type="button" class="perfil__eye-icon" @click="verRepetir = !verRepetir">
           <span v-if="verRepetir">👁️</span>
@@ -94,11 +96,11 @@ const cerrarSesion = () => {
         </button>
       </div>
 
-      <button class="perfil__boton" @click="cambiarContraseña">Actualizar</button>
+      <button class="perfil__boton" @click="cambiarContraseña">{{ t('actualizar') }}</button>
       <p class="perfil__mensaje" v-if="mensaje">{{ mensaje }}</p>
     </div>
 
-    <button class="perfil__boton perfil__boton--rojo" @click="cerrarSesion">Cerrar Sesión</button>
+    <button class="perfil__boton perfil__boton--rojo" @click="cerrarSesion">{{ t('cerrar_sesion') }}</button>
   </div>
 </template>
 
