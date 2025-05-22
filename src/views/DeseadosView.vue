@@ -3,27 +3,30 @@ import { ref, computed, onMounted } from 'vue';
 import { usegatosStore } from '@/stores/gatos';
 import { useAutenticacion } from '@/stores/Autentificacion';
 import DeseadosGatoCard from '@/components/DeseadosGatoCard.vue';
+import { useI18n } from '@/stores/useI18n';
 
-// Obtener la store
+const { t } = useI18n();
 const Autenticacion = useAutenticacion();
 const gatosStore = usegatosStore();
 
 // Filtrado de gatos visibles
 const gatosDeseados = computed(() =>
-  gatosStore.gatosDeseados.filter(g => g.visible === true)
+  gatosStore.gatosDeseados.filter(g => {
+    const gato = g as any;
+    return gato.visible === true;
+  })
 );
 
 // Estado para controlar la visualización del mensaje
 const mostrarMensaje = ref(false);
 
 onMounted(async () => {
-  await gatosStore.obtenerGatosDeseados();
-  console.log('Gatos deseados al montar la vista:', gatosDeseados.value);
   Autenticacion.cargarUsuarioDesdeLocalStorage();
 
-  if (Autenticacion.usuario) {
+  if (Autenticacion.usuario?.id_Usuario) {
     await gatosStore.obtenerGatosDeseados(Autenticacion.usuario.id_Usuario);
   }
+  console.log('Gatos deseados al montar la vista:', gatosDeseados.value);
 
   // Esperar 1 segundo antes de mostrar el mensaje si no hay gatos
   setTimeout(() => {
@@ -34,12 +37,12 @@ onMounted(async () => {
 
 <template>
   <div class="deseados">
-    <h1 class="deseados__titulo">Mis Gatos Deseados</h1>
+    <h1 class="deseados__titulo">{{ t('mis_gatos_deseados') }}</h1>
 
     <!-- Mostrar mensaje solo después de 1 segundo si no hay gatos -->
     <p v-if="mostrarMensaje" class="deseados__mensaje">
       <img src="../../Images/gatos/Blanqui.png" alt="Gato deseado">
-      No tienes gatos en tu lista de deseados.
+      {{ t('no_gatos_deseados') }}
     </p>
 
     <div v-else class="deseados__lista">

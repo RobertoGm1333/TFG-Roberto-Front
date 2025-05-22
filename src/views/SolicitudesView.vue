@@ -4,7 +4,9 @@ import { useAutenticacion } from '@/stores/Autentificacion';
 import { useSolicitudesAdopcionStore } from '@/stores/solicitudesAdopcion';
 import { storeToRefs } from 'pinia';
 import type SolicitudAdopcionDto from '@/stores/dtos/solicitudadopcion.dto';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 interface SolicitudExtendida extends SolicitudAdopcionDto {
   nombre_Gato?: string;
   imagen_Gato?: string;
@@ -60,15 +62,15 @@ onMounted(async () => {
 
 <template>
   <div class="solicitudes">
-    <h1 class="solicitudes__titulo">Mis Solicitudes de Adopción</h1>
+    <h1 class="solicitudes__titulo">{{ t('mis_solicitudes') }}</h1>
 
     <v-alert v-if="cargandoSolicitudes" type="info" class="solicitudes__cargando solicitudes__alert">
-      Cargando solicitudes...
+      {{ t('cargando_solicitudes') }}
     </v-alert>
 
     <div v-else-if="solicitudes.length === 0" class="solicitudes__vacio">
       <img src="../../Images/gatos/Blanqui.png" alt="Sin solicitudes">
-      <p>Aún no has realizado ninguna solicitud de adopción.</p>
+      <p>{{ t('no_solicitudes_realizadas') }}</p>
     </div>
 
     <div v-else class="solicitudes__lista">
@@ -85,7 +87,7 @@ onMounted(async () => {
           <div class="solicitud-card__info">
             <v-card-title>{{ (solicitud as SolicitudExtendida).nombre_Gato }}</v-card-title>
             <v-card-text>
-              <p><strong>Estado:</strong> 
+              <p><strong>{{ t('estado_solicitud') }}:</strong> 
                 <v-chip
                   :color="solicitud.estado.toLowerCase() === 'pendiente' ? 'orange' : 
                          solicitud.estado.toLowerCase() === 'aceptada' ? 'green' : 
@@ -96,9 +98,9 @@ onMounted(async () => {
                   {{ solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1).toLowerCase() }}
                 </v-chip>
               </p>
-              <p><strong>Fecha de solicitud:</strong> {{ formatearFechaHora(solicitud.fecha_Solicitud) }}</p>
+              <p><strong>{{ t('fecha_solicitud') }}:</strong> {{ formatearFechaHora(solicitud.fecha_Solicitud) }}</p>
               <template v-if="solicitud.comentario_Protectora">
-                <p><strong>Respuesta de la protectora:</strong> {{ solicitud.comentario_Protectora }}</p>
+                <p><strong>{{ t('respuesta_protectora') }}:</strong> {{ solicitud.comentario_Protectora }}</p>
               </template>
 
               <v-btn
@@ -107,50 +109,50 @@ onMounted(async () => {
                 @click="(solicitud as SolicitudExtendida).showDetails = !(solicitud as SolicitudExtendida).showDetails"
                 class="mt-2"
               >
-                {{ (solicitud as SolicitudExtendida).showDetails ? 'Ocultar detalles' : 'Ver detalles' }}
+                {{ (solicitud as SolicitudExtendida).showDetails ? t('ocultar_detalles') : t('ver_detalles') }}
                 <v-icon>{{ (solicitud as SolicitudExtendida).showDetails ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
               </v-btn>
 
               <div v-if="(solicitud as SolicitudExtendida).showDetails" class="solicitud-card__detalles">
                 <!-- Información Personal -->
-                <h3>Información Personal</h3>
+                <h3>{{ t('informacion_personal') }}</h3>
                 <div class="detalles-seccion">
-                  <p><strong>Nombre:</strong> {{ solicitud.nombreCompleto }}</p>
-                  <p><strong>Edad:</strong> {{ solicitud.edad }} años</p>
-                  <p><strong>Dirección:</strong> {{ solicitud.direccion }}</p>
-                  <p><strong>Teléfono:</strong> {{ solicitud.telefono }}</p>
-                  <p><strong>Email:</strong> {{ solicitud.email }}</p>
+                  <p><strong>{{ t('nombre') }}:</strong> {{ solicitud.nombreCompleto }}</p>
+                  <p><strong>{{ t('edad') }}:</strong> {{ solicitud.edad }} {{ t('años') }}</p>
+                  <p><strong>{{ t('direccion') }}:</strong> {{ solicitud.direccion }}</p>
+                  <p><strong>{{ t('telefono') }}:</strong> {{ solicitud.telefono }}</p>
+                  <p><strong>{{ t('email') }}:</strong> {{ solicitud.email }}</p>
                 </div>
 
                 <!-- Información de Vivienda -->
-                <h3>Información de Vivienda</h3>
+                <h3>{{ t('informacion_vivienda') }}</h3>
                 <div class="detalles-seccion">
-                  <p><strong>Tipo de vivienda:</strong> {{ solicitud.tipoVivienda }}</p>
-                  <p><strong>Propiedad/Alquiler:</strong> {{ solicitud.propiedadAlquiler }}</p>
-                  <p><strong>¿Se permiten animales?</strong> {{ solicitud.permiteAnimales ? 'Sí' : 'No' }}</p>
-                  <p><strong>Número de personas:</strong> {{ solicitud.numeroPersonas }}</p>
-                  <p v-if="solicitud.hayNinos"><strong>Edades de los niños:</strong> {{ solicitud.edadesNinos }}</p>
+                  <p><strong>{{ t('tipo_vivienda') }}:</strong> {{ solicitud.tipoVivienda }}</p>
+                  <p><strong>{{ t('propiedad_alquiler') }}:</strong> {{ solicitud.propiedadAlquiler }}</p>
+                  <p><strong>{{ t('permite_animales') }}</strong> {{ solicitud.permiteAnimales ? t('si') : t('no') }}</p>
+                  <p><strong>{{ t('numero_personas') }}:</strong> {{ solicitud.numeroPersonas }}</p>
+                  <p v-if="solicitud.hayNinos"><strong>{{ t('edades_niños') }}:</strong> {{ solicitud.edadesNinos }}</p>
                 </div>
 
                 <!-- Experiencia con Mascotas -->
-                <h3>Experiencia con Mascotas</h3>
+                <h3>{{ t('experiencia_mascotas') }}</h3>
                 <div class="detalles-seccion">
-                  <p><strong>¿Tiene experiencia con gatos?</strong> {{ solicitud.experienciaGatos ? 'Sí' : 'No' }}</p>
-                  <p><strong>¿Tiene otros animales?</strong> {{ solicitud.tieneOtrosAnimales ? 'Sí' : 'No' }}</p>
-                  <p><strong>¿Sabe cortar uñas?</strong> {{ solicitud.cortarUnas ? 'Sí' : 'No' }}</p>
-                  <p><strong>¿Animales vacunados/esterilizados?</strong> {{ solicitud.animalesVacunadosEsterilizados ? 'Sí' : 'No' }}</p>
-                  <p><strong>Historial con mascotas:</strong> {{ solicitud.historialMascotas }}</p>
+                  <p><strong>{{ t('experiencia_gatos') }}</strong> {{ solicitud.experienciaGatos ? t('si') : t('no') }}</p>
+                  <p><strong>{{ t('tiene_otros_animales') }}</strong> {{ solicitud.tieneOtrosAnimales ? t('si') : t('no') }}</p>
+                  <p><strong>{{ t('sabe_cortar_uñas') }}</strong> {{ solicitud.cortarUnas ? t('si') : t('no') }}</p>
+                  <p><strong>{{ t('animales_vacunados') }}</strong> {{ solicitud.animalesVacunadosEsterilizados ? t('si') : t('no') }}</p>
+                  <p><strong>{{ t('historial_mascotas') }}:</strong> {{ solicitud.historialMascotas }}</p>
                 </div>
 
                 <!-- Compromiso y Responsabilidad -->
-                <h3>Compromiso y Responsabilidad</h3>
+                <h3>{{ t('compromiso_responsabilidad') }}</h3>
                 <div class="detalles-seccion">
-                  <p><strong>Motivación para adoptar:</strong> {{ solicitud.motivacionAdopcion }}</p>
-                  <p><strong>Plan ante problemas de comportamiento:</strong> {{ solicitud.problemasComportamiento }}</p>
-                  <p><strong>Plan ante enfermedades costosas:</strong> {{ solicitud.enfermedadesCostosas }}</p>
-                  <p><strong>Plan para vacaciones:</strong> {{ solicitud.vacaciones }}</p>
-                  <p><strong>¿Acepta seguimiento post-adopción?</strong> {{ solicitud.seguimientoPostAdopcion ? 'Sí' : 'No' }}</p>
-                  <p><strong>¿Acepta visita al hogar?</strong> {{ solicitud.visitaHogar ? 'Sí' : 'No' }}</p>
+                  <p><strong>{{ t('motivacion_adopcion') }}:</strong> {{ solicitud.motivacionAdopcion }}</p>
+                  <p><strong>{{ t('plan_comportamiento') }}:</strong> {{ solicitud.problemasComportamiento }}</p>
+                  <p><strong>{{ t('plan_enfermedades') }}:</strong> {{ solicitud.enfermedadesCostosas }}</p>
+                  <p><strong>{{ t('plan_vacaciones') }}:</strong> {{ solicitud.vacaciones }}</p>
+                  <p><strong>{{ t('acepta_seguimiento') }}</strong> {{ solicitud.seguimientoPostAdopcion ? t('si') : t('no') }}</p>
+                  <p><strong>{{ t('acepta_visita') }}</strong> {{ solicitud.visitaHogar ? t('si') : t('no') }}</p>
                 </div>
               </div>
             </v-card-text>
