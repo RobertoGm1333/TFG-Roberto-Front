@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useAutenticacion } from '@/stores/Autentificacion';
 
+const autenticacionStore = useAutenticacion();
 const email = ref('');
 const contraseña = ref('');
 const errorMessage = ref('');
@@ -26,14 +28,22 @@ const handleLogin = async () => {
       throw new Error(data?.message || 'Correo electrónico o contraseña incorrectos');
     }
 
-    localStorage.setItem('user', JSON.stringify(data));
+    if (!data.activo) {
+      throw new Error('Tu cuenta ha sido desactivada. Por favor, contacta con el administrador.');
+    }
 
-    successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...';
-    errorMessage.value = '';
+    try {
+      autenticacionStore.iniciarSesion(data);
+      successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...';
+      errorMessage.value = '';
 
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 1500);
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+    } catch (error: any) {
+      errorMessage.value = error.message;
+      successMessage.value = '';
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       errorMessage.value = error.message;
