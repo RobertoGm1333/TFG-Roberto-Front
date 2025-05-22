@@ -24,7 +24,7 @@ const props = defineProps<{
         <p><strong>{{ t('protectora_telefono') }}:</strong> {{ protectora.telefono_Protectora }}</p>
         <p><strong>{{ t('protectora_correo') }}:</strong> {{ protectora.correo_Protectora }}</p>
         <p v-if="protectora.pagina_Web">
-          <strong>{{ t('protectora_redes') }}:</strong> 
+          <strong>{{ t('pagina_protectora') }}:</strong> 
           <a :href="protectora.pagina_Web" target="_blank" rel="noopener noreferrer">
             {{ protectora.pagina_Web }}
           </a>
@@ -64,6 +64,13 @@ const props = defineProps<{
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  border-radius: $espacio-pequeno;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  @media (max-width: 599px) {
+    width: 94%;
+  }
 }
 
 .image-container {
@@ -71,23 +78,34 @@ const props = defineProps<{
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  overflow: hidden;
 }
 
 .protectora-image {
   max-height: 250px;
-  width: auto;
+  width: 100%;
   background-color: transparent;
 
   :deep(.v-img__img) {
-    object-fit: fill;
+    object-fit: contain;
   }
+}
+
+.v-card-text {
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
 }
 
 .info-section {
   margin: $espacio-mediano 0;
+  width: 100%;
+  box-sizing: border-box;
   
   p {
     margin-bottom: $espacio-pequeno;
+    word-wrap: break-word;
   }
 }
 
@@ -137,6 +155,10 @@ const props = defineProps<{
   justify-content: space-between;
   flex-wrap: wrap;
   gap: $espacio-pequeno;
+
+  @media (max-width: 599px) {
+    padding: $espacio-mediano calc(3% + #{$espacio-pequeno});
+  }
 }
 
 // Tablet
