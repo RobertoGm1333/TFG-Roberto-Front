@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from '@/stores/useI18n'
+
+const { t } = useI18n()
 
 // Definir el rango de edad
 const edadMin = ref(1)
@@ -63,19 +66,19 @@ const mostrarTodasRazas = () => {
 <template>
   <v-container fluid class="pa-0">
     <v-sheet rounded="lg" elevation="1" class="mb-4">
-      <div class="filtros-title text-center py-2">¿Buscas algo concreto?</div>
+      <div class="filtros-title text-center py-2">{{ t('filtros_titulo') }}</div>
       <v-divider></v-divider>
       
       <!-- Panel expandible para filtro por edad -->
       <v-expansion-panels flat>
         <v-expansion-panel>
           <v-expansion-panel-title class="filtro-header">
-            Filtrar por edad
+            {{ t('filtros_edad') }}
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <div class="px-0">
               <div class="d-flex align-center">
-                <span class="mr-2 text-caption">{{ edadMin }} años</span>
+                <span class="mr-2 text-caption">{{ edadMin }} {{ t('filtros_años') }}</span>
                 <v-range-slider
                   v-model="rangoEdad"
                   min="1"
@@ -85,7 +88,7 @@ const mostrarTodasRazas = () => {
                   thumb-label="always"
                   density="compact"
                 ></v-range-slider>
-                <span class="ml-2 text-caption">{{ edadMax }} años</span>
+                <span class="ml-2 text-caption">{{ edadMax }} {{ t('filtros_años') }}</span>
               </div>
             </div>
           </v-expansion-panel-text>
@@ -98,16 +101,16 @@ const mostrarTodasRazas = () => {
       <v-expansion-panels flat>
         <v-expansion-panel>
           <v-expansion-panel-title class="filtro-header">
-            Filtrar por raza
+            {{ t('filtros_raza') }}
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <div class="px-0">
-              <div class="filtro-label mt-1 mb-1">Raza del gato</div>
+              <div class="filtro-label mt-1 mb-1">{{ t('filtros_raza_gato') }}</div>
               <div class="d-flex align-center flex-wrap gap-2 ResponsiveBoton">
                 <v-select
                   v-model="razaSeleccionada"
                   :items="razasDisponibles"
-                  placeholder="Seleccionar raza"
+                  :placeholder="t('filtros_seleccionar_raza')"
                   clearable
                   variant="outlined"
                   density="compact"
@@ -121,7 +124,7 @@ const mostrarTodasRazas = () => {
                   class="ml-2 white--text"
                   @click="mostrarTodasRazas"
                 >
-                  Mostrar todas las razas
+                  {{ t('filtros_mostrar_todas') }}
                 </v-btn>
               </div>
             </div>
@@ -139,7 +142,7 @@ const mostrarTodasRazas = () => {
           class="white--text"
           block
         >
-          APLICAR FILTROS
+          {{ t('filtros_aplicar') }}
         </v-btn>
       </div>
     </v-sheet>

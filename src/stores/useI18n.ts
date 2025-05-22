@@ -168,6 +168,16 @@ const traducciones: Traducciones = {
     faq_donacion_respuesta: "La web no gestiona donaciones, pero cada protectora puede aceptar ayuda económica o en especie (alimento, arena, etc.).",
     faq_problema: "¿Cómo puedo reportar un problema en la web?",
     faq_problema_respuesta: "Si encuentras un error o tienes sugerencias, puedes enviarnos un email a info@adopcioneszaragoza.com.",
+
+    // Filtros
+    filtros_titulo: "¿Buscas algo concreto?",
+    filtros_edad: "Filtrar por edad",
+    filtros_años: "años",
+    filtros_raza: "Filtrar por raza",
+    filtros_raza_gato: "Raza del gato",
+    filtros_seleccionar_raza: "Seleccionar raza",
+    filtros_mostrar_todas: "Mostrar todas las razas",
+    filtros_aplicar: "APLICAR FILTROS",
   },
   en: {
     // Home
@@ -324,6 +334,16 @@ const traducciones: Traducciones = {
     protectora_ubicacion: "Location",
     protectora_contactar: "Contact",
     volver_protectoras: "Back to shelters",
+
+    // Filters
+    filtros_titulo: "Looking for something specific?",
+    filtros_edad: "Filter by age",
+    filtros_años: "years",
+    filtros_raza: "Filter by breed",
+    filtros_raza_gato: "Cat breed",
+    filtros_seleccionar_raza: "Select breed",
+    filtros_mostrar_todas: "Show all breeds",
+    filtros_aplicar: "APPLY FILTERS",
   }
 }
 
