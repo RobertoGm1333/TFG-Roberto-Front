@@ -7,7 +7,9 @@ import { usegatosStore } from "@/stores/gatos";
 import { useprotectorasStore } from "@/stores/protectoras";
 import { useSolicitudesAdopcionStore } from "@/stores/solicitudesAdopcion";
 import { useAutenticacion } from '@/stores/Autentificacion';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 const route = useRoute();
 const gatosStore = usegatosStore();
 const protectorasStore = useprotectorasStore();
@@ -162,12 +164,12 @@ watch(() => route.params.id, obtenerGato);
 
 <template>
   <v-container>
-    <h1 v-if="gato?.nombre_Gato" class="titulo-detalles">Soy {{ gato.nombre_Gato }} ¡Conóceme! 🐾</h1>
+    <h1 v-if="gato?.nombre_Gato" class="titulo-detalles">{{ t('conoceme', { nombre: gato.nombre_Gato }) }}</h1>
     <v-row justify="center">
       <v-col cols="11" md="9" class="ContainerDetallesGatos">
         <DetallesGatoCard v-if="gato" :gato="gato" :protectora="protectora" />
-        <v-alert v-else-if="cargando" type="info">Cargando...</v-alert>
-        <v-alert v-else type="error">No se encontró el gato.</v-alert>
+        <v-alert v-else-if="cargando" type="info">{{ t('cargando') }}</v-alert>
+        <v-alert v-else type="error">{{ t('gato_no_encontrado') }}</v-alert>
       </v-col>
     </v-row>
 
@@ -178,29 +180,29 @@ watch(() => route.params.id, obtenerGato);
           <!-- Si el usuario no está autenticado -->
           <template v-if="!Autenticacion.esAutenticado">
             <v-alert type="info" class="mb-4">
-              Para solicitar la adopción de {{ gato.nombre_Gato }}, necesitas iniciar sesión.
+              {{ t('login_adoptar', { nombre: gato.nombre_Gato }) }}
             </v-alert>
             <v-btn color="primary" to="/iniciar-sesion">
-              Iniciar sesión
+              {{ t('iniciar_sesion') }}
             </v-btn>
           </template>
 
           <!-- Si es la protectora del gato -->
           <template v-else-if="esProtectoraDelGato">
-            <h3>Solicitudes de adopción para {{ gato.nombre_Gato }}</h3>
+            <h3>{{ t('solicitudes_adopcion', { nombre: gato.nombre_Gato }) }}</h3>
             <div v-if="solicitudesGato.length === 0" class="mt-4">
               <v-alert type="info">
-                No hay solicitudes de adopción para este gato.
+                {{ t('no_solicitudes') }}
               </v-alert>
             </div>
             <div v-else class="mt-4">
               <v-data-table
                 :headers="[
                   { title: 'ID', key: 'id_Solicitud', align: 'start' },
-                  { title: 'Solicitante', key: 'nombreCompleto' },
-                  { title: 'Estado', key: 'estado' },
-                  { title: 'Fecha', key: 'fecha_Solicitud' },
-                  { title: 'Acciones', key: 'actions', sortable: false, align: 'end' }
+                  { title: t('solicitante'), key: 'nombreCompleto' },
+                  { title: t('estado'), key: 'estado' },
+                  { title: t('fecha'), key: 'fecha_Solicitud' },
+                  { title: t('acciones'), key: 'actions', sortable: false, align: 'end' }
                 ]"
                 :items="solicitudesGato"
                 class="elevation-1 protectora-admin__tabla"
@@ -218,7 +220,7 @@ watch(() => route.params.id, obtenerGato);
                     text-color="white"
                     small
                   >
-                    {{ item.estado.charAt(0).toUpperCase() + item.estado.slice(1).toLowerCase() }}
+                    {{ t(item.estado.toLowerCase()) }}
                   </v-chip>
                 </template>
 
@@ -229,7 +231,7 @@ watch(() => route.params.id, obtenerGato);
                     @click="cargarSolicitud(item.id_Solicitud)"
                   >
                     <v-icon>mdi-eye</v-icon>
-                    <span class="ml-2">Ver detalles</span>
+                    <span class="ml-2">{{ t('ver_detalles') }}</span>
                   </v-btn>
                 </template>
               </v-data-table>
@@ -238,13 +240,13 @@ watch(() => route.params.id, obtenerGato);
 
           <!-- Si ya existe una solicitud -->
           <template v-else-if="solicitudExistente">
-            <h3>Ya has solicitado adoptar a {{ gato.nombre_Gato }}</h3>
+            <h3>{{ t('ya_solicitado', { nombre: gato.nombre_Gato }) }}</h3>
             <v-alert
               :type="solicitudExistente.estado.toLowerCase() === 'pendiente' ? 'warning' : 
                     solicitudExistente.estado.toLowerCase() === 'aceptada' ? 'success' : 'error'"
               class="mt-4"
             >
-              <p><strong>Estado de tu solicitud:</strong> 
+              <p><strong>{{ t('estado_solicitud') }}:</strong> 
                 <v-chip
                   :color="solicitudExistente.estado.toLowerCase() === 'pendiente' ? 'orange' : 
                          solicitudExistente.estado.toLowerCase() === 'aceptada' ? 'green' : 
@@ -253,16 +255,16 @@ watch(() => route.params.id, obtenerGato);
                   small
                   class="ml-2"
                 >
-                  {{ solicitudExistente.estado.charAt(0).toUpperCase() + solicitudExistente.estado.slice(1).toLowerCase() }}
+                  {{ t(solicitudExistente.estado.toLowerCase()) }}
                 </v-chip>
               </p>
-              <p><strong>Fecha de solicitud:</strong> {{ formatearFechaHora(solicitudExistente.fecha_Solicitud) }}</p>
+              <p><strong>{{ t('fecha') }}:</strong> {{ formatearFechaHora(solicitudExistente.fecha_Solicitud) }}</p>
               <template v-if="solicitudExistente.comentario_Protectora">
-                <p><strong>Respuesta de la protectora:</strong> {{ solicitudExistente.comentario_Protectora }}</p>
+                <p><strong>{{ t('comentario_protectora') }}:</strong> {{ solicitudExistente.comentario_Protectora }}</p>
               </template>
             </v-alert>
             <v-btn color="primary" to="/solicitudes" class="mt-3">
-              Ver todas mis solicitudes
+              {{ t('ver_solicitudes') }}
             </v-btn>
           </template>
 
@@ -275,7 +277,7 @@ watch(() => route.params.id, obtenerGato);
                 @click="dialogoFormulario = true"
                 class="mb-4"
               >
-                Rellenar solicitud de adopción
+                {{ t('rellenar_solicitud') }}
               </v-btn>
             </div>
           </template>

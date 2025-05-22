@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from '@/stores/useI18n';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { esContraseñaValida } from '@/stores/validaciones';
 
+const { t } = useI18n();
 const nombre = ref('');
 const apellido = ref('');
 const email = ref('');
@@ -16,17 +18,17 @@ const isConfirmPasswordVisible = ref(false);
 
 const handleRegister = async () => {
   if (!nombre.value || !apellido.value || !email.value || !contraseña.value || !confirmarContraseña.value) {
-    errorMessage.value = 'Todos los campos son obligatorios';
+    errorMessage.value = t('campos_obligatorios');
     return;
   }
 
   if (contraseña.value !== confirmarContraseña.value) {
-    errorMessage.value = 'Las contraseñas no coinciden';
+    errorMessage.value = t('contraseñas_no_coinciden');
     return;
   }
 
   if (!esContraseñaValida(contraseña.value)) {
-    errorMessage.value = 'La contraseña debe tener al menos 7 caracteres, incluyendo mayúsculas, minúsculas, números y un símbolo.';
+    errorMessage.value = t('contraseña_invalida');
     return;
   }
 
@@ -47,14 +49,14 @@ const handleRegister = async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Error al registrar usuario');
+      throw new Error(data.message || t('error_registro'));
     }
 
-    successMessage.value = 'Registro exitoso. Redirigiendo...';
+    successMessage.value = t('registro_exitoso');
     errorMessage.value = '';
 
     setTimeout(() => {
-      window.location.href = '/iniciar-sesion'; // Redirigir al login después de registrar
+      window.location.href = '/iniciar-sesion';
     }, 2000);
 
   } catch (error: any) {
@@ -74,22 +76,22 @@ const toggleConfirmPasswordVisibility = () => {
 
 <template>
   <div class="register-form">
-    <h2 class="register-form__title">Registrarse</h2>
+    <h2 class="register-form__title">{{ t('registrarse') }}</h2>
     <form @submit.prevent="handleRegister" class="register-form__form">
       <div class="register-form__field">
-        <label for="nombre" class="register-form__label">Nombre</label>
+        <label for="nombre" class="register-form__label">{{ t('nombre') }}</label>
         <input type="text" v-model="nombre" id="nombre" class="register-form__input" required />
       </div>
       <div class="register-form__field">
-        <label for="nombre" class="register-form__label">Apellidos</label>
-        <input type="text" v-model="apellido" id="nombre" class="register-form__input" required />
+        <label for="apellido" class="register-form__label">{{ t('apellidos') }}</label>
+        <input type="text" v-model="apellido" id="apellido" class="register-form__input" required />
       </div>
       <div class="register-form__field">
-        <label for="email" class="register-form__label">Correo electrónico</label>
+        <label for="email" class="register-form__label">{{ t('email') }}</label>
         <input type="email" v-model="email" id="email" class="register-form__input" required />
       </div>
       <div class="register-form__field">
-        <label for="password" class="register-form__label">Contraseña</label>
+        <label for="password" class="register-form__label">{{ t('contraseña') }}</label>
         <div class="register-form__password-wrapper">
           <input :type="isPasswordVisible ? 'text' : 'password'" v-model="contraseña" id="contraseña"
             class="register-form__input" required />
@@ -99,7 +101,7 @@ const toggleConfirmPasswordVisibility = () => {
           </button>
         </div>
         <div class="register-form__field">
-          <label for="confirmar-password" class="register-form__label">Confirmar Contraseña</label>
+          <label for="confirmar-password" class="register-form__label">{{ t('confirmar_contraseña') }}</label>
           <div class="register-form__password-wrapper">
             <input :type="isConfirmPasswordVisible ? 'text' : 'password'" v-model="confirmarContraseña"
               id="confirmar-password" class="register-form__input" required />
@@ -110,7 +112,7 @@ const toggleConfirmPasswordVisibility = () => {
           </div>
         </div>
       </div>
-      <button type="submit" class="register-form__button register-form__button--primary">Registrarse</button>
+      <button type="submit" class="register-form__button register-form__button--primary">{{ t('registrarse') }}</button>
     </form>
     <div v-if="errorMessage" class="register-form__error-message">{{ errorMessage }}</div>
     <div v-if="successMessage" class="register-form__success-message">{{ successMessage }}</div>

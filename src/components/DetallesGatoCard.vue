@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useAutenticacion } from "@/stores/Autentificacion";
 import { usegatosStore } from "@/stores/gatos.ts"
 import { useusuariosStore } from "@/stores/usuarios.ts"
+import { useI18n } from '@/stores/useI18n';
 import type GatoDto from "../stores/dtos/gato.dto";
 import type ProtectoraDto from "../stores/dtos/protectoras.dto";
 
@@ -12,7 +13,7 @@ const autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(autenticacion);
 const gatosStore = usegatosStore();
 const gatosDeseados = computed(() => gatosStore.gatosDeseados);
-
+const { t } = useI18n();
 
 const mensaje = ref("");
 const esDeseado = ref(false);
@@ -104,21 +105,21 @@ const eliminarDeDeseados = async () => {
   <v-card class="CardGatoDetalles">
     <v-img :src="gato.imagen_Gato" cover class="FotoDetallesGato"></v-img>
     <v-card-title>{{ gato.nombre_Gato }}</v-card-title>
-    <v-card-subtitle>{{ gato.raza }} - {{ gato.edad }} años</v-card-subtitle>
+    <v-card-subtitle>{{ gato.raza }} - {{ gato.edad }} {{ t('años') }}</v-card-subtitle>
     <v-card-text>
-      <p><strong>Sexo:</strong> {{ gato.sexo }}</p>
-      <p><strong>Protectora:</strong> {{ protectora?.nombre_Protectora || "No disponible" }}</p>
-      <p><strong>Descripción:</strong> {{ gato.descripcion_Gato }}</p>
+      <p><strong>{{ t('sexo') }}:</strong> {{ gato.sexo }}</p>
+      <p><strong>{{ t('protectora') }}:</strong> {{ protectora?.nombre_Protectora || t('no_disponible') }}</p>
+      <p><strong>{{ t('descripcion') }}:</strong> {{ gato.descripcion_Gato }}</p>
     </v-card-text>
     <v-card-actions>
-      <v-btn v-if="usuario" color="green" @click="agregarADeseados" :disabled="esDeseado">Añadir a Deseados</v-btn>
-      <v-btn v-if="usuario" color="red" @click="eliminarDeDeseados" :disabled="!esDeseado">Eliminar de Deseados</v-btn>
+      <v-btn v-if="usuario" color="green" @click="agregarADeseados" :disabled="esDeseado">{{ t('añadir_deseados') }}</v-btn>
+      <v-btn v-if="usuario" color="red" @click="eliminarDeDeseados" :disabled="!esDeseado">{{ t('eliminar_deseados') }}</v-btn>
     </v-card-actions>
     <p v-if="mensaje" class="gato-card__mensaje">{{ mensaje }}</p>
     <v-card-actions>
-      <v-btn color="#FF5500" to="/gato">Volver a gatos</v-btn>
+      <v-btn color="#FF5500" to="/gato">{{ t('volver_gatos') }}</v-btn>
       <v-btn color="green" :href="`mailto:${protectora?.correo_Protectora}`" :disabled="!protectora?.correo_Protectora">
-        Contactar Protectora
+        {{ t('contactar_protectora') }}
       </v-btn>
     </v-card-actions>
   </v-card>

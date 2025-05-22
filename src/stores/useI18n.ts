@@ -7,28 +7,208 @@ type Traducciones = {
   }
 }
 
+interface TranslationParams {
+  [key: string]: string | number;
+}
+
 const idioma = ref<Idioma>((localStorage.getItem('idioma') as Idioma) || 'es')
 
 const traducciones: Traducciones = {
   es: {
+    // Home
     quienes_1: "Nosotros somos AdoptAragón, un espacio dedicado a conectar a los gatos en adopción de Zaragoza con personas que desean darles un hogar. Nuestro propósito es servir como un punto de encuentro entre las protectoras locales y quienes buscan adoptar, facilitando así el proceso de adopción responsable y brindando mayor visibilidad a los felinos que esperan una segunda oportunidad.",
-    quienes_2: "Colaboramos con distintas protectoras de Zaragoza, recopilando y mostrando en un solo lugar información sobre los gatos en adopción. Aquí encontrarás fotos, descripciones y datos de contacto para que puedas conocer a cada uno de ellos y ponerte en contacto con la protectora correspondiente de manera sencilla.",
-    quienes_3: "Nuestra misión es no solo facilitar las adopciones, sino también dar voz a las protectoras, apoyando su labor y concienciando sobre la importancia de la adopción responsable. Cada gato que aparece aquí tiene una historia, un pasado que muchas veces ha sido difícil, pero lo más importante: un futuro lleno de cariño que puede comenzar contigo.",
-    quienes_4: "Si estás pensando en adoptar o simplemente quieres conocer más sobre la labor de las protectoras, te invitamos a explorar nuestra web y ayudar a estos pequeños a encontrar un hogar.",
-    ver_gatos: "Ver gatos en adopción"
+    quienes_2: "Colaboramos con distintas protectoras de Zaragoza, recopilando y mostrando en un solo lugar información sobre los gatos en adopción. Esto facilita que las personas interesadas en adoptar puedan encontrar a su compañero felino ideal de manera más sencilla y eficiente.",
+    quienes_3: "Cada gato en nuestra plataforma tiene su propia historia y personalidad única. Trabajamos para asegurarnos de que cada perfil proporcione información detallada y actualizada, permitiendo a los potenciales adoptantes tomar decisiones informadas.",
+    quienes_4: "Si estás pensando en adoptar un gato, te invitamos a explorar nuestra plataforma. Cada adopción no solo cambia la vida de un gato, sino también la del adoptante. ¡Encuentra a tu compañero perfecto!",
+    ver_gatos: "Ver gatos disponibles",
+
+    // Navegación
+    iniciar_sesion: "Iniciar sesión",
+    registrarse: "Registrarse",
+    gatos: "Gatos",
+    protectoras: "Protectoras",
+    mi_perfil: "Mi Perfil",
+    deseados: "Deseados",
+    solicitudes: "Solicitudes",
+    panel_admin: "Panel de Admin",
+    panel_protectora: "Panel de Protectora",
+    cerrar_sesion: "Cerrar Sesión",
+
+    // Formularios
+    email: "Correo electrónico",
+    contraseña: "Contraseña",
+    confirmar_contraseña: "Confirmar Contraseña",
+    nombre: "Nombre",
+    apellidos: "Apellidos",
+    entrar: "Entrar",
+    campos_obligatorios: "Todos los campos son obligatorios",
+    contraseñas_no_coinciden: "Las contraseñas no coinciden",
+    contraseña_invalida: "La contraseña debe tener al menos 7 caracteres, incluyendo mayúsculas, minúsculas, números y un símbolo.",
+    error_registro: "Error al registrar usuario",
+    registro_exitoso: "Registro exitoso. Redirigiendo...",
+    error_inicio_sesion: "Correo electrónico o contraseña incorrectos",
+    inicio_sesion_exitoso: "Inicio de sesión exitoso. Redirigiendo...",
+    error_inesperado: "Ha ocurrido un error inesperado",
+
+    // Perfil
+    cambiar_contraseña: "Cambiar Contraseña",
+    nueva_contraseña: "Nueva contraseña",
+    repetir_contraseña: "Repite la contraseña",
+    actualizar: "Actualizar",
+    contraseña_actualizada: "Contraseña actualizada con éxito",
+    error_actualizar_contraseña: "Error al cambiar la contraseña",
+
+    // Gatos
+    edad: "Edad",
+    años: "años",
+    sexo: "Sexo",
+    macho: "Macho",
+    hembra: "Hembra",
+    raza: "Raza",
+    esterilizado: "Esterilizado",
+    descripcion: "Descripción",
+    añadir_deseados: "Añadir a Deseados",
+    eliminar_deseados: "Eliminar de Deseados",
+    volver_gatos: "Volver a gatos",
+    contactar_protectora: "Contactar Protectora",
+    adoptar: "Adoptar",
+    no_gatos_filtro: "Todavía no tenemos gatos que cumplan estas condiciones.",
+
+    // Protectoras
+    direccion: "Dirección",
+    correo: "Correo",
+    telefono: "Teléfono",
+
+    // Footer
+    desarrollado_por: "Desarrollado con ❤️ por",
+    derechos_reservados: "Todos los derechos reservados.",
+    preguntas_frecuentes: "Preguntas Frecuentes",
+    footer_info: "Esta plataforma reúne a todas las protectoras de Zaragoza para facilitar la adopción responsable de animales.",
+    hola: "Hola",
+    conoceme: "¡Soy {nombre}! ¡Conóceme! 🐾",
+    cargando: "Cargando...",
+    gato_no_encontrado: "No se encontró el gato.",
+    login_adoptar: "Para solicitar la adopción de {nombre}, necesitas iniciar sesión.",
+    solicitudes_adopcion: "Solicitudes de adopción para {nombre}",
+    no_solicitudes: "No hay solicitudes de adopción para este gato.",
+    solicitante: "Solicitante",
+    fecha: "Fecha",
+    acciones: "Acciones",
+    ver_detalles: "Ver detalles",
+    ya_solicitado: "Ya has solicitado adoptar a {nombre}",
+    estado_solicitud: "Estado de tu solicitud",
+    pendiente: "Pendiente",
+    aceptada: "Aceptada",
+    rechazada: "Rechazada",
+    ver_solicitudes: "Ver todas mis solicitudes",
+    rellenar_solicitud: "Rellenar solicitud de adopción",
+    protectora: "Protectora",
+    no_disponible: "No disponible"
   },
   en: {
-    quienes_1: "We are AdoptAragón, a space dedicated to connecting adoptable cats in Zaragoza with people who want to give them a home. Our purpose is to serve as a meeting point between local shelters and those looking to adopt, facilitating responsible adoptions and giving greater visibility to the felines waiting for a second chance.",
-    quienes_2: "We collaborate with various shelters in Zaragoza, gathering and displaying in one place information about adoptable cats. Here you’ll find photos, descriptions, and contact details so you can get to know each one and easily reach the corresponding shelter.",
-    quienes_3: "Our mission is not only to facilitate adoptions, but also to give voice to the shelters, supporting their work and raising awareness about the importance of responsible adoption. Every cat that appears here has a story, often a difficult past, but most importantly: a future full of love that can begin with you.",
-    quienes_4: "If you're thinking of adopting or simply want to learn more about the work of the shelters, we invite you to explore our website and help these little ones find a home.",
-    ver_gatos: "See cats for adoption"
+    // Home
+    quienes_1: "We are AdoptAragón, a space dedicated to connecting cats for adoption in Zaragoza with people who want to give them a home. Our purpose is to serve as a meeting point between local shelters and those looking to adopt, thus facilitating the responsible adoption process and providing greater visibility to felines waiting for a second chance.",
+    quienes_2: "We collaborate with various shelters in Zaragoza, collecting and displaying information about cats for adoption in one place. This makes it easier for people interested in adopting to find their ideal feline companion more simply and efficiently.",
+    quienes_3: "Each cat on our platform has its own unique history and personality. We work to ensure that each profile provides detailed and up-to-date information, allowing potential adopters to make informed decisions.",
+    quienes_4: "If you're thinking about adopting a cat, we invite you to explore our platform. Each adoption not only changes a cat's life but also the adopter's. Find your perfect companion!",
+    ver_gatos: "See available cats",
+
+    // Navigation
+    iniciar_sesion: "Login",
+    registrarse: "Register",
+    gatos: "Cats",
+    protectoras: "Shelters",
+    mi_perfil: "My Profile",
+    deseados: "Wishlist",
+    solicitudes: "Applications",
+    panel_admin: "Admin Panel",
+    panel_protectora: "Shelter Panel",
+    cerrar_sesion: "Logout",
+
+    // Forms
+    email: "Email",
+    contraseña: "Password",
+    confirmar_contraseña: "Confirm Password",
+    nombre: "Name",
+    apellidos: "Surname",
+    entrar: "Log in",
+    campos_obligatorios: "All fields are required",
+    contraseñas_no_coinciden: "Passwords do not match",
+    contraseña_invalida: "Password must be at least 7 characters long, including uppercase, lowercase, numbers and a symbol.",
+    error_registro: "Error registering user",
+    registro_exitoso: "Registration successful. Redirecting...",
+    error_inicio_sesion: "Incorrect email or password",
+    inicio_sesion_exitoso: "Login successful. Redirecting...",
+    error_inesperado: "An unexpected error has occurred",
+
+    // Profile
+    cambiar_contraseña: "Change Password",
+    nueva_contraseña: "New password",
+    repetir_contraseña: "Repeat password",
+    actualizar: "Update",
+    contraseña_actualizada: "Password successfully updated",
+    error_actualizar_contraseña: "Error changing password",
+
+    // Cats
+    edad: "Age",
+    años: "years old",
+    sexo: "Sex",
+    macho: "Male",
+    hembra: "Female",
+    raza: "Breed",
+    esterilizado: "Neutered",
+    descripcion: "Description",
+    añadir_deseados: "Add to Wishlist",
+    eliminar_deseados: "Remove from Wishlist",
+    volver_gatos: "Back to cats",
+    contactar_protectora: "Contact Shelter",
+    adoptar: "Adopt",
+    no_gatos_filtro: "We don't have any cats that meet these conditions yet.",
+
+    // Shelters
+    direccion: "Address",
+    correo: "Email",
+    telefono: "Phone number",
+
+    // Footer
+    desarrollado_por: "Developed with ❤️ by",
+    derechos_reservados: "All rights reserved.",
+    preguntas_frecuentes: "FAQ",
+    footer_info: "This platform brings together all the shelters in Zaragoza to facilitate responsible animal adoption.",
+    hola: "Hello",
+    conoceme: "Hi! I'm {nombre}! Meet me! 🐾",
+    cargando: "Loading...",
+    gato_no_encontrado: "Cat not found.",
+    login_adoptar: "To request the adoption of {nombre}, you need to log in.",
+    solicitudes_adopcion: "Adoption applications for {nombre}",
+    no_solicitudes: "There are no adoption applications for this cat.",
+    solicitante: "Applicant",
+    fecha: "Date",
+    acciones: "Actions",
+    ver_detalles: "View details",
+    ya_solicitado: "You have already applied to adopt {nombre}",
+    estado_solicitud: "Application status",
+    pendiente: "Pending",
+    aceptada: "Accepted",
+    rechazada: "Rejected",
+    ver_solicitudes: "View all my applications",
+    rellenar_solicitud: "Fill adoption application",
+    protectora: "Shelter",
+    no_disponible: "Not available"
   }
 }
 
 export function useI18n() {
-  const t = (clave: string): string => {
-    return traducciones[idioma.value][clave] || clave
+  const t = (clave: string, params?: TranslationParams): string => {
+    let translation = traducciones[idioma.value][clave] || clave;
+    
+    if (params) {
+      Object.keys(params).forEach(key => {
+        translation = translation.replace(`{${key}}`, String(params[key]));
+      });
+    }
+    
+    return translation;
   }
 
   const cambiarIdioma = () => {
@@ -36,5 +216,9 @@ export function useI18n() {
     localStorage.setItem('idioma', idioma.value)
   }
 
-  return { idioma, t, cambiarIdioma }
+  return {
+    t,
+    cambiarIdioma,
+    idioma
+  }
 }

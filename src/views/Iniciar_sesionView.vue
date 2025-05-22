@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAutenticacion } from '@/stores/Autentificacion';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 const autenticacionStore = useAutenticacion();
 const email = ref('');
 const contraseña = ref('');
@@ -25,7 +27,7 @@ const handleLogin = async () => {
     const data = await response.json();
 
     if (!response.ok || !data) {
-      throw new Error(data?.message || 'Correo electrónico o contraseña incorrectos');
+      throw new Error(data?.message || t('error_inicio_sesion'));
     }
 
     if (!data.activo) {
@@ -34,7 +36,7 @@ const handleLogin = async () => {
 
     try {
       autenticacionStore.iniciarSesion(data);
-      successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...';
+      successMessage.value = t('inicio_sesion_exitoso');
       errorMessage.value = '';
 
       setTimeout(() => {
@@ -48,7 +50,7 @@ const handleLogin = async () => {
     if (error instanceof Error) {
       errorMessage.value = error.message;
     } else {
-      errorMessage.value = 'Ha ocurrido un error inesperado';
+      errorMessage.value = t('error_inesperado');
     }
     successMessage.value = '';
   }
@@ -61,14 +63,14 @@ const togglePasswordVisibility = () => {
 
 <template>
   <div class="login-form">
-    <h2 class="login-form__title">Iniciar sesión</h2>
+    <h2 class="login-form__title">{{ t('iniciar_sesion') }}</h2>
     <form @submit.prevent="handleLogin" class="login-form__form">
       <div class="login-form__field">
-        <label for="email" class="login-form__label">Correo electrónico</label>
+        <label for="email" class="login-form__label">{{ t('email') }}</label>
         <input type="email" v-model="email" id="email" class="login-form__input" required />
       </div>
       <div class="login-form__field">
-        <label for="password" class="login-form__label">Contraseña</label>
+        <label for="password" class="login-form__label">{{ t('contraseña') }}</label>
         <div class="login-form__password-wrapper">
           <input :type="isPasswordVisible ? 'text' : 'password'" v-model="contraseña" id="password"
             class="login-form__input" required />
@@ -78,7 +80,7 @@ const togglePasswordVisibility = () => {
           </button>
         </div>
       </div>
-      <button type="submit" class="login-form__button login-form__button--primary">Entrar</button>
+      <button type="submit" class="login-form__button login-form__button--primary">{{ t('entrar') }}</button>
     </form>
     <div v-if="errorMessage" class="login-form__error-message">{{ errorMessage }}</div>
     <div v-if="successMessage" class="login-form__success-message">{{ successMessage }}</div>

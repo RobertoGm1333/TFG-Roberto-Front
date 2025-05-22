@@ -2,7 +2,9 @@
 import { storeToRefs } from 'pinia';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useAutenticacion } from '@/stores/Autentificacion';
+import { useI18n } from '@/stores/useI18n';
 
+const { t, cambiarIdioma, idioma } = useI18n();
 const Autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(Autenticacion);
 const mostrarMenu = ref(false);
@@ -122,13 +124,16 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
       </RouterLink>
       <div class="text">
         <nav>
-          <RouterLink to="/gato">Gatos</RouterLink>
-          <RouterLink to="/protectoras">Protectoras</RouterLink>
+          <RouterLink to="/gato">{{ t('gatos') }}</RouterLink>
+          <RouterLink to="/protectoras">{{ t('protectoras') }}</RouterLink>
         </nav>
         <div class="usuario">
+          <button @click="cambiarIdioma" class="idioma-btn">
+            {{ idioma === 'es' ? '🇬🇧' : '🇪🇸' }}
+          </button>
           <template v-if="!usuario">
-            <RouterLink to="/iniciar-sesion">Iniciar Sesion‎ ‎ ‎</RouterLink>
-            <RouterLink to="/registrarse">Registrarse</RouterLink>
+            <RouterLink to="/iniciar-sesion">{{ t('iniciar_sesion') }}</RouterLink>
+            <RouterLink to="/registrarse">{{ t('registrarse') }}</RouterLink>
           </template>
           <template v-else>
             <div class="usuario-menu">
@@ -137,13 +142,13 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
                 <path d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20" stroke="#3B2F2F" stroke-width="2" class="cuerpo-usuario" />
               </svg>
               <div v-if="mostrarMenu" ref="menuContainer" class="datos-usuario">
-                <p>Hola {{ usuario.nombre }}</p>
-                <RouterLink to="/perfil" class="boton-1"><span>Mi Perfil</span></RouterLink>
-                <RouterLink to="/deseados" class="boton-2"><span>❤️ Deseados</span></RouterLink>
-                <RouterLink to="/solicitudes" class="boton-2"><span>📋 Solicitudes</span></RouterLink>
-                <RouterLink v-if="usuario.rol === 'admin'" to="/admin" class="admin-boton">Panel de Admin</RouterLink>
-                <RouterLink v-if="usuario.rol === 'protectora'" to="/protectora-admin" class="admin-boton">Panel de Protectora</RouterLink>
-                <RouterLink to="/"><button class="logout-btn" @click="Autenticacion.cerrarSesion">Cerrar sesión</button></RouterLink>
+                <p>{{ t('hola') }} {{ usuario.nombre }}</p>
+                <RouterLink to="/perfil" class="boton-1"><span>{{ t('mi_perfil') }}</span></RouterLink>
+                <RouterLink to="/deseados" class="boton-2"><span>❤️ {{ t('deseados') }}</span></RouterLink>
+                <RouterLink to="/solicitudes" class="boton-2"><span>📋 {{ t('solicitudes') }}</span></RouterLink>
+                <RouterLink v-if="usuario.rol === 'admin'" to="/admin" class="admin-boton">{{ t('panel_admin') }}</RouterLink>
+                <RouterLink v-if="usuario.rol === 'protectora'" to="/protectora-admin" class="admin-boton">{{ t('panel_protectora') }}</RouterLink>
+                <RouterLink to="/"><button class="logout-btn" @click="Autenticacion.cerrarSesion">{{ t('cerrar_sesion') }}</button></RouterLink>
               </div>
             </div>
           </template>
@@ -223,6 +228,20 @@ canvas {
   padding: $espacio-pequeno $espacio-mediano;
   cursor: pointer;
   border-radius: $espacio-pequeno;
+}
+
+.idioma-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-right: 15px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 @media (prefers-color-scheme: dark) {

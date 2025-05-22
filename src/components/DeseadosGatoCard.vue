@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { ref } from 'vue';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 const props = defineProps({
   gato: {
     type: Object,
@@ -17,8 +19,8 @@ const props = defineProps({
       <v-card-title>{{ gato.nombre_Gato }}</v-card-title>
       <v-card-subtitle>{{ gato.raza }}</v-card-subtitle>
       <v-card-text>
-        <div><strong>Sexo:</strong> {{ gato.sexo }}</div>
-        <div><strong>Edad:</strong> {{ gato.edad }} años</div>
+        <div><strong>{{ t('sexo') }}:</strong> {{ gato.sexo }}</div>
+        <div><strong>{{ t('edad') }}:</strong> {{ gato.edad }} {{ t('años') }}</div>
       </v-card-text>
     </v-card>
   </v-card>

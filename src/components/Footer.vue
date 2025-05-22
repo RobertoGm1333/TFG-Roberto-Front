@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 </script>
 
 <template>
@@ -7,26 +9,24 @@
     <div class="footer__container">
       <!-- Contacto -->
       <div class="footer__section">
-        <b>📞 Teléfono: 123456789</b>
+        <b>📞 {{ t('telefono') }}: 123456789</b>
         <b style="width: 230px;">✉️ <a href="mailto:a25959@svalero.com" class="footer-link">a25959@svalero.com</a></b>
       </div>
 
       <!-- Información General -->
       <div class="footer__section">
-        <p>
-          Esta plataforma reúne a todas las protectoras de Zaragoza para facilitar la adopción responsable de animales.
-        </p>
+        <p>{{ t('footer_info') }}</p>
       </div>
 
       <!-- Enlaces -->
       <div class="footer__section">
-        <v-btn to="/faq" variant="text">❓ <b>Preguntas Frecuentes</b></v-btn>
+        <v-btn to="/faq" variant="text">❓ <b>{{ t('preguntas_frecuentes') }}</b></v-btn>
       </div>
     </div>
 
     <div class="footer__credits">
-      <p>Desarrollado con ❤️ por Roberto Gómez y Daniel Santamaría</p>
-      <p>© {{ new Date().getFullYear() }} Adopciones Zaragoza - Todos los derechos reservados.</p>
+      <p>{{ t('desarrollado_por') }} Roberto Gómez y Daniel Santamaría</p>
+      <p>© {{ new Date().getFullYear() }} Adopciones Zaragoza - {{ t('derechos_reservados') }}</p>
     </div>
   </footer>
 </template>
