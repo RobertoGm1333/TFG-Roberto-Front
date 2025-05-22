@@ -3,15 +3,19 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useAutenticacion } from '@/stores/Autentificacion';
 import { useI18n } from '@/stores/useI18n';
+import esFlag from '@/assets/es-flag.svg';
+import gbFlag from '@/assets/gb-flag.svg';
 
 const { t, cambiarIdioma, idioma } = useI18n();
 const Autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(Autenticacion);
 const mostrarMenu = ref(false);
+const mostrarIdiomaMenu = ref(false);
 const isHovering = ref(false);
 const offsets = ref([0, 0, 0]);
 const menuContainer = ref<HTMLElement | null>(null);
 const userIcon = ref<HTMLElement | null>(null);
+const idiomaMenuRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   Autenticacion.cargarUsuarioDesdeLocalStorage();
@@ -36,15 +40,23 @@ onMounted(() => {
     }
   }
 
-  document.addEventListener('click', closeMenu);
+  document.addEventListener('click', (event) => {
+    closeMenu(event);
+    closeIdiomaMenu(event);
+  });
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', closeMenu);
+  document.removeEventListener('click', closeIdiomaMenu);
 });
 
 const toggleMenu = () => {
   mostrarMenu.value = !mostrarMenu.value;
+};
+
+const toggleIdiomaMenu = () => {
+  mostrarIdiomaMenu.value = !mostrarIdiomaMenu.value;
 };
 
 const closeMenu = (event: Event) => {
@@ -57,6 +69,23 @@ const closeMenu = (event: Event) => {
   ) {
     mostrarMenu.value = false;
   }
+};
+
+const closeIdiomaMenu = (event: Event) => {
+  if (
+    mostrarIdiomaMenu.value &&
+    idiomaMenuRef.value &&
+    !idiomaMenuRef.value.contains(event.target as Node)
+  ) {
+    mostrarIdiomaMenu.value = false;
+  }
+};
+
+const cambiarIdiomaSeleccionado = (nuevoIdioma: 'es' | 'en') => {
+  if (idioma.value !== nuevoIdioma) {
+    cambiarIdioma();
+  }
+  mostrarIdiomaMenu.value = false;
 };
 
 function drawPaw(ctx: CanvasRenderingContext2D) {
@@ -128,9 +157,42 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
           <RouterLink to="/protectoras">{{ t('protectoras') }}</RouterLink>
         </nav>
         <div class="usuario">
-          <button @click="cambiarIdioma" class="idioma-btn">
-            {{ idioma === 'es' ? '🇬🇧' : '🇪🇸' }}
-          </button>
+          <div class="idioma-selector" ref="idiomaMenuRef">
+            <button @click="toggleIdiomaMenu" class="idioma-btn">
+              <img 
+                :src="idioma === 'es' ? esFlag : gbFlag" 
+                :alt="idioma === 'es' ? 'Español' : 'English'"
+                class="bandera"
+              >
+              <span class="idioma-texto">{{ idioma.toUpperCase() }}</span>
+            </button>
+            <div v-if="mostrarIdiomaMenu" class="idioma-menu">
+              <button 
+                v-if="idioma !== 'es'" 
+                @click="cambiarIdiomaSeleccionado('es')" 
+                class="idioma-opcion"
+              >
+                <img 
+                  :src="esFlag" 
+                  alt="Español"
+                  class="bandera"
+                >
+                <span class="idioma-texto">ES</span>
+              </button>
+              <button 
+                v-if="idioma !== 'en'" 
+                @click="cambiarIdiomaSeleccionado('en')" 
+                class="idioma-opcion"
+              >
+                <img 
+                  :src="gbFlag" 
+                  alt="English"
+                  class="bandera"
+                >
+                <span class="idioma-texto">EN</span>
+              </button>
+            </div>
+          </div>
           <template v-if="!usuario">
             <RouterLink to="/iniciar-sesion">{{ t('iniciar_sesion') }}</RouterLink>
             <RouterLink to="/registrarse">{{ t('registrarse') }}</RouterLink>
@@ -230,17 +292,81 @@ canvas {
   border-radius: $espacio-pequeno;
 }
 
+.idioma-selector {
+  position: relative;
+  display: inline-block;
+}
+
 .idioma-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
   padding: 5px 10px;
   margin-right: 15px;
   transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: $espacio-pequeno;
+  background-color: rgba(255, 255, 255, 0.1);
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .bandera {
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+
+  .idioma-texto {
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+}
+
+.idioma-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: $border-gris1;
+  border-radius: $espacio-pequeno;
+  box-shadow: $sombra-contenedor;
+  z-index: 1000;
+  margin-top: 5px;
+  min-width: 100%;
+
+  .idioma-opcion {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .bandera {
+      width: 20px;
+      height: 15px;
+      object-fit: cover;
+      border-radius: 2px;
+    }
+
+    .idioma-texto {
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
   }
 }
 
@@ -253,6 +379,22 @@ canvas {
   }
   .usuario-menu path {
     stroke: #ddd;
+  }
+  .idioma-menu {
+    background: #272727;
+    border-color: #404040;
+
+    .idioma-opcion {
+      color: whitesmoke;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .idioma-btn {
+    color: whitesmoke;
   }
 }
 
@@ -306,6 +448,22 @@ canvas {
 
   .usuario {
     gap: $espacio-grande;
+  }
+}
+
+@media (min-width: 768px) {
+  .idioma-btn .bandera,
+  .idioma-menu .idioma-opcion .bandera {
+    width: 24px;
+    height: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .idioma-btn .bandera,
+  .idioma-menu .idioma-opcion .bandera {
+    width: 28px;
+    height: 21px;
   }
 }
 </style>
