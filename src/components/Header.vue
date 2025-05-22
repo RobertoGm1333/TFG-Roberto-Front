@@ -21,24 +21,32 @@ onMounted(() => {
   Autenticacion.cargarUsuarioDesdeLocalStorage();
   console.log("Usuario cargado en el Header:", usuario.value);
 
-  const canvas = document.getElementById('pawCanvas') as HTMLCanvasElement;
-  if (canvas) {
-    canvas.width = 200;
-    canvas.height = 200;
-    const ctx = canvas.getContext('2d');
+  // Asegurarnos de que el canvas existe y tiene el contexto correcto
+  const initCanvas = () => {
+    const canvas = document.getElementById('pawCanvas') as HTMLCanvasElement;
+    if (canvas) {
+      canvas.width = 200;
+      canvas.height = 200;
+      const ctx = canvas.getContext('2d');
 
-    if (ctx) {
-      drawPaw(ctx);
-      canvas.addEventListener('mouseenter', () => {
-        isHovering.value = true;
-        animateRaise(ctx);
-      });
-      canvas.addEventListener('mouseleave', () => {
-        isHovering.value = false;
-        resetPaw(ctx);
-      });
+      if (ctx) {
+        drawPaw(ctx);
+        canvas.addEventListener('mouseenter', () => {
+          isHovering.value = true;
+          animateRaise(ctx);
+        });
+        canvas.addEventListener('mouseleave', () => {
+          isHovering.value = false;
+          resetPaw(ctx);
+        });
+      }
     }
-  }
+  };
+
+  // Intentar inicializar el canvas varias veces para asegurar que se dibuja
+  initCanvas();
+  setTimeout(initCanvas, 100); // Reintento después de 100ms
+  setTimeout(initCanvas, 500); // Reintento después de 500ms
 
   document.addEventListener('click', (event) => {
     closeMenu(event);
@@ -148,9 +156,11 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
 <template>
   <main>
     <header>
-      <RouterLink to="/">
-        <canvas id="pawCanvas"></canvas>
-      </RouterLink>
+      <div class="logo-container">
+        <RouterLink to="/">
+          <canvas id="pawCanvas"></canvas>
+        </RouterLink>
+      </div>
       <div class="text">
         <nav>
           <RouterLink to="/gato">{{ t('gatos') }}</RouterLink>
@@ -237,6 +247,11 @@ nav {
   flex-direction: column;
   width: 150px;
   justify-content: center;
+
+  a {
+    white-space: nowrap;
+    font-size: 0.95rem;
+  }
 }
 
 canvas {
@@ -245,9 +260,21 @@ canvas {
   height: 80px;
 }
 
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  a {
+    white-space: nowrap;
+    font-size: 0.95rem;
+  }
+}
+
 .usuario-menu {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 
   .datos-usuario {
     position: absolute;
@@ -464,6 +491,67 @@ canvas {
   .idioma-menu .idioma-opcion .bandera {
     width: 28px;
     height: 21px;
+  }
+}
+
+@media (max-width: 787px) {
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: $espacio-mediano 15px;
+  }
+
+  .logo-container {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5px;
+
+    canvas {
+      width: 85px !important;
+      height: 85px !important;
+    }
+  }
+
+  .text {
+    width: 50%;
+    padding-top: 10px;
+  }
+
+  nav {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .usuario {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-top: 5px;
+
+    .idioma-selector {
+      align-self: flex-start;
+    }
+
+    .usuario-menu {
+      align-self: flex-start;
+
+      .datos-usuario {
+        left: 0;
+      }
+    }
+  }
+}
+
+// Para pantallas aún más pequeñas, mantener un tamaño mínimo
+@media (max-width: 375px) {
+  .logo-container canvas {
+    width: 80px !important;
+    height: 80px !important;
   }
 }
 </style>
