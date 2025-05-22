@@ -79,6 +79,21 @@ const traducciones: Traducciones = {
     direccion: "Dirección",
     correo: "Correo",
     telefono: "Teléfono",
+    protectoras_titulo: "Protectoras que participan",
+    protectora_direccion: "Dirección",
+    protectora_correo: "Correo",
+    protectora_telefono: "Teléfono",
+    protectora_horario: "Horario",
+    protectora_descripcion: "Descripción",
+    protectora_requisitos: "Requisitos de adopción",
+    protectora_proceso: "Proceso de adopción",
+    protectora_necesidades: "Necesidades actuales",
+    protectora_voluntariado: "Información sobre voluntariado",
+    protectora_redes: "Redes sociales",
+    protectora_donaciones: "Donaciones",
+    protectora_ubicacion: "Ubicación",
+    protectora_contactar: "Contactar",
+    volver_protectoras: "Volver a protectoras",
 
     // Footer
     desarrollado_por: "Desarrollado con ❤️ por",
@@ -292,6 +307,23 @@ const traducciones: Traducciones = {
     faq_donacion_respuesta: "The website doesn't handle donations, but each shelter can accept financial or in-kind help (food, litter, etc.).",
     faq_problema: "How can I report a problem on the website?",
     faq_problema_respuesta: "If you find an error or have suggestions, you can send us an email at info@adopcioneszaragoza.com.",
+
+    // Protectoras
+    protectoras_titulo: "Participating Shelters",
+    protectora_direccion: "Address",
+    protectora_correo: "Email",
+    protectora_telefono: "Phone",
+    protectora_horario: "Opening Hours",
+    protectora_descripcion: "Description",
+    protectora_requisitos: "Adoption Requirements",
+    protectora_proceso: "Adoption Process",
+    protectora_necesidades: "Current Needs",
+    protectora_voluntariado: "Volunteering Information",
+    protectora_redes: "Social Media",
+    protectora_donaciones: "Donations",
+    protectora_ubicacion: "Location",
+    protectora_contactar: "Contact",
+    volver_protectoras: "Back to shelters",
   }
 }
 

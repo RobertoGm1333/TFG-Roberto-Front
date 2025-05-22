@@ -43,6 +43,7 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   padding: 0;
+  max-width: 100%;
 }
 
 .titulo-detalles {

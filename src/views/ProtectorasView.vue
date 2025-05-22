@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import ProtectorasCard from '@/components/ProtectorasCard.vue';
 import { useprotectorasStore } from '@/stores/protectoras';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 const store = useprotectorasStore();
 store.fetchProtectora();
 </script>
 
 <template>
   <div class="protectoras">
-    <h1>Protectoras que participan</h1>
+    <h1>{{ t('protectoras_titulo') }}</h1>
     <div class="protectoras-container">
       <v-col 
         v-for="protectora in store.protectoras" 

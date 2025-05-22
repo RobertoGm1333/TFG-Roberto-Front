@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type ProtectoraDto from '@/stores/dtos/protectoras.dto';
+import { useI18n } from '@/stores/useI18n';
 
+const { t } = useI18n();
 const props = defineProps<{
   protectora: ProtectoraDto
 }>();
@@ -18,18 +20,24 @@ const props = defineProps<{
     <v-card-title>{{ protectora.nombre_Protectora }}</v-card-title>
     <v-card-text>
       <div class="info-section">
-        <p><strong>Dirección:</strong> {{ protectora.direccion }}</p>
-        <p><strong>Teléfono:</strong> {{ protectora.telefono_Protectora }}</p>
-        <p><strong>Correo:</strong> {{ protectora.correo_Protectora }}</p>
-        <p><strong>Página Web:</strong> 
+        <p><strong>{{ t('protectora_direccion') }}:</strong> {{ protectora.direccion }}</p>
+        <p><strong>{{ t('protectora_telefono') }}:</strong> {{ protectora.telefono_Protectora }}</p>
+        <p><strong>{{ t('protectora_correo') }}:</strong> {{ protectora.correo_Protectora }}</p>
+        <p v-if="protectora.pagina_Web">
+          <strong>{{ t('protectora_redes') }}:</strong> 
           <a :href="protectora.pagina_Web" target="_blank" rel="noopener noreferrer">
             {{ protectora.pagina_Web }}
           </a>
         </p>
       </div>
 
-      <div class="map-section">
-        <h3>Ubicación</h3>
+      <div class="description-section">
+        <h3>{{ t('protectora_descripcion') }}</h3>
+        <p>{{ protectora.descripcion_Protectora }}</p>
+      </div>
+
+      <div class="map-section" v-if="protectora.ubicacion">
+        <h3>{{ t('protectora_ubicacion') }}</h3>
         <div class="map-container">
           <iframe
             :src="protectora.ubicacion"
@@ -41,16 +49,11 @@ const props = defineProps<{
           ></iframe>
         </div>
       </div>
-
-      <div class="description-section">
-        <h3>Sobre nosotros</h3>
-        <p>{{ protectora.descripcion_Protectora }}</p>
-      </div>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="#FF5500" to="/protectoras">Volver a protectoras</v-btn>
+      <v-btn color="#FF5500" to="/protectoras">{{ t('volver_protectoras') }}</v-btn>
       <v-btn color="green" :href="`mailto:${protectora.correo_Protectora}`">
-        Contactar
+        {{ t('protectora_contactar') }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -76,7 +79,7 @@ const props = defineProps<{
   background-color: transparent;
 
   :deep(.v-img__img) {
-    object-fit: inherit;
+    object-fit: fill;
   }
 }
 

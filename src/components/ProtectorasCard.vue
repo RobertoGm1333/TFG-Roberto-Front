@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import type ProtectoraDto from '@/stores/dtos/protectoras.dto'
+import { useI18n } from '@/stores/useI18n'
+
+const { t } = useI18n();
 
 const props = defineProps<{
   protectora: ProtectoraDto
@@ -16,8 +19,8 @@ const props = defineProps<{
     <v-img class="protectora-card__image" :src="protectora.imagen_Protectora" cover></v-img>
     <v-card-title class="protectora-card__title">{{ protectora.nombre_Protectora }}</v-card-title>
     <v-card-text class="protectora-card__content">
-      <div class="protectora-card__direccion"><strong>Dirección:</strong> {{ protectora.direccion }}</div>
-      <div class="protectora-card__correo"><strong>Correo:</strong> <span class="email-text">{{ protectora.correo_Protectora }}</span></div>
+      <div class="protectora-card__direccion"><strong>{{ t('protectora_direccion') }}:</strong> {{ protectora.direccion }}</div>
+      <div class="protectora-card__correo"><strong>{{ t('protectora_correo') }}:</strong> <span class="email-text"> <br>{{ protectora.correo_Protectora }}</span></div>
     </v-card-text>
   </v-card>
 </template>
