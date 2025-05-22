@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useI18n } from '@/stores/useI18n'
 
+const { t } = useI18n()
 </script>
 
 <template>
@@ -17,32 +19,23 @@ import { RouterLink } from 'vue-router'
       n
     </h1>
   </div>
+
   <div class="page-container">
     <div class="quienes-somos">
-      <p>
-        <span class="highlight">Nosotros somos AdoptAragón</span>, un espacio dedicado a conectar a los gatos en adopción de Zaragoza con personas que desean darles un hogar. 
-        Nuestro propósito es servir como un punto de encuentro entre las <span class="highlight">protectoras locales</span> y quienes buscan adoptar, 
-        facilitando así el proceso de adopción responsable y brindando mayor visibilidad a los felinos que esperan una segunda oportunidad.
-      </p>
-  <br>
-      <p>
-        Colaboramos con distintas <span class="highlight">protectoras de Zaragoza</span>, recopilando y mostrando en un solo lugar información sobre los gatos en adopción. 
-        Aquí encontrarás fotos, descripciones y datos de contacto para que puedas conocer a cada uno de ellos y ponerte en contacto con la protectora correspondiente de manera sencilla.
-      </p>
-  <br>
-      <img src="../../Images/logos/foto-home.jpeg" alt="foto-home" class="imagen-home">
+      <p>{{ t('quienes_1') }}</p>
       <br>
-      <p>
-        Nuestra misión es no solo facilitar las adopciones, sino también dar voz a las protectoras, apoyando su labor y concienciando sobre la importancia de la <span class="highlight">adopción responsable</span>. 
-        Cada gato que aparece aquí tiene una historia, un pasado que muchas veces ha sido difícil, pero lo más importante: un futuro lleno de cariño que puede comenzar contigo.
-      </p>
-  <br>
-      <p>
-        Si estás pensando en adoptar o simplemente quieres conocer más sobre la labor de las protectoras, te invitamos a explorar nuestra web y ayudar a estos pequeños a encontrar un hogar.
-      </p>
+      <p>{{ t('quienes_2') }}</p>
+      <br>
+      <img src="../../Images/logos/foto-home.jpeg" alt="foto-home" class="imagen-home" />
+      <br>
+      <p>{{ t('quienes_3') }}</p>
+      <br>
+      <p>{{ t('quienes_4') }}</p>
       <br>
       <div class="cta-container">
-        <RouterLink to="/gato"><button class="cta-button">Ver gatos en adopción</button></RouterLink>
+        <RouterLink to="/gato">
+          <button class="cta-button">{{ t('ver_gatos') }}</button>
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -135,7 +128,6 @@ import { RouterLink } from 'vue-router'
   }
 }
 
-/* Responsive styles */
 @media (min-width: 1010px) {
   .page-container {
     padding: 0 $espacio-extra-grande;
@@ -199,5 +191,4 @@ import { RouterLink } from 'vue-router'
     font-size: 0.9rem;
   }
 }
-
 </style>
