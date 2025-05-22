@@ -4,7 +4,7 @@
       <v-row justify="center">
         <v-col cols="12" sm="10" md="9" lg="8">
           <v-sheet rounded="lg" elevation="1" class="pa-0 mb-4">
-            <div class="faq-title text-center py-3">Preguntas Frecuentes (FAQ)</div>
+            <div class="faq-title text-center py-3">{{ t('faq_titulo') }}</div>
             <v-divider></v-divider>
             
             <div class="px-2 py-1">
@@ -144,44 +144,48 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useI18n } from "@/stores/useI18n";
 
-const faq = ref([
+const { t } = useI18n();
+
+// Usar computed para que las traducciones se actualicen cuando cambie el idioma
+const faq = computed(() => [
   {
-    titulo: "Sobre la plataforma",
+    titulo: t('faq_plataforma'),
     preguntas: [
-      { pregunta: "¿Qué es esta página?", respuesta: "Es una plataforma que reúne a todas las protectoras de Zaragoza para facilitar la adopción responsable de gatos." },
-      { pregunta: "¿Cómo funciona la web?", respuesta: "Puedes ver los gatos en adopción, conocer más sobre ellos y contactar con la protectora responsable para iniciar el proceso de adopción." },
-      { pregunta: "¿La web pertenece a una protectora específica?", respuesta: "No, la plataforma centraliza información de varias protectoras de Zaragoza para que sea más fácil encontrar gatos en adopción." },
+      { pregunta: t('faq_que_es'), respuesta: t('faq_que_es_respuesta') },
+      { pregunta: t('faq_como_funciona'), respuesta: t('faq_como_funciona_respuesta') },
+      { pregunta: t('faq_pertenece'), respuesta: t('faq_pertenece_respuesta') },
     ],
   },
   {
-    titulo: "Sobre el proceso de adopción",
+    titulo: t('faq_adopcion'),
     preguntas: [
-      { pregunta: "¿Cómo puedo adoptar un gato?", respuesta: "Selecciona el gato que te interesa, contacta con la protectora correspondiente y sigue los pasos que ellos te indiquen." },
-      { pregunta: "¿Cuánto cuesta adoptar un gato?", respuesta: "Depende de cada protectora. Algunas piden una donación para cubrir gastos veterinarios como vacunas, desparasitación y esterilización." },
-      { pregunta: "¿Cuáles son los requisitos para adoptar?", respuesta: "Cada protectora tiene sus requisitos, pero generalmente incluyen ser mayor de edad, tener un entorno adecuado para el gato y comprometerse a su bienestar." },
-      { pregunta: "¿Puedo adoptar si vivo fuera de Zaragoza?", respuesta: "Algunas protectoras permiten adopciones fuera de la ciudad, pero puede haber requisitos adicionales como una visita previa al hogar." },
-      { pregunta: "¿Puedo adoptar si ya tengo otros animales?", respuesta: "Sí, pero la protectora evaluará si el gato es compatible con otros animales en el hogar." },
+      { pregunta: t('faq_como_adoptar'), respuesta: t('faq_como_adoptar_respuesta') },
+      { pregunta: t('faq_coste'), respuesta: t('faq_coste_respuesta') },
+      { pregunta: t('faq_requisitos'), respuesta: t('faq_requisitos_respuesta') },
+      { pregunta: t('faq_fuera'), respuesta: t('faq_fuera_respuesta') },
+      { pregunta: t('faq_otros_animales'), respuesta: t('faq_otros_animales_respuesta') },
     ],
   },
   {
-    titulo: "Sobre los gatos",
+    titulo: t('faq_gatos'),
     preguntas: [
-      { pregunta: "¿Los gatos están vacunados y esterilizados?", respuesta: "La mayoría de las protectoras entregan a los gatos vacunados, desparasitados y esterilizados (o con compromiso de esterilización si son muy jóvenes)." },
-      { pregunta: "¿Puedo conocer al gato antes de adoptarlo?", respuesta: "Sí, la protectora te indicará cómo y dónde conocer al gato en persona." },
-      { pregunta: "¿Qué pasa si el gato no se adapta a mi hogar?", respuesta: "Las protectoras suelen ofrecer asesoramiento y un periodo de adaptación. En caso extremo, podrían aceptar la devolución del gato para buscarle otra familia." },
-      { pregunta: "¿Hay gatos sociables y otros más independientes?", respuesta: "Sí, cada gato tiene una personalidad única. Puedes preguntar a la protectora por el temperamento del gato antes de adoptarlo." },
+      { pregunta: t('faq_vacunados'), respuesta: t('faq_vacunados_respuesta') },
+      { pregunta: t('faq_conocer'), respuesta: t('faq_conocer_respuesta') },
+      { pregunta: t('faq_adaptacion'), respuesta: t('faq_adaptacion_respuesta') },
+      { pregunta: t('faq_personalidad'), respuesta: t('faq_personalidad_respuesta') },
     ],
   },
   {
-    titulo: "Sobre la web y su uso",
+    titulo: t('faq_web'),
     preguntas: [
-      { pregunta: "¿Cómo puedo contactar con una protectora?", respuesta: "En la ficha de cada gato encontrarás un botón para contactar con la protectora correspondiente." },
-      { pregunta: "¿Por qué algunos gatos desaparecen de la lista?", respuesta: "Porque han sido adoptados o ya no están disponibles." },
-      { pregunta: "¿Puedo hacerme voluntario en una protectora?", respuesta: "Sí, muchas protectoras buscan voluntarios. Contacta directamente con ellas para más información." },
-      { pregunta: "¿Puedo hacer una donación a la web o a las protectoras?", respuesta: "La web no gestiona donaciones, pero cada protectora puede aceptar ayuda económica o en especie (alimento, arena, etc.)." },
-      { pregunta: "¿Cómo puedo reportar un problema en la web?", respuesta: "Si encuentras un error o tienes sugerencias, puedes enviarnos un email a info@adopcioneszaragoza.com." },
+      { pregunta: t('faq_contacto'), respuesta: t('faq_contacto_respuesta') },
+      { pregunta: t('faq_desaparecen'), respuesta: t('faq_desaparecen_respuesta') },
+      { pregunta: t('faq_voluntario'), respuesta: t('faq_voluntario_respuesta') },
+      { pregunta: t('faq_donacion'), respuesta: t('faq_donacion_respuesta') },
+      { pregunta: t('faq_problema'), respuesta: t('faq_problema_respuesta') },
     ],
   },
 ]);

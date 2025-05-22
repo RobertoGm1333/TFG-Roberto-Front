@@ -11,6 +11,7 @@ interface TranslationParams {
   [key: string]: string | number;
 }
 
+// Establecer el idioma por defecto como español si no hay ninguno guardado
 const idioma = ref<Idioma>((localStorage.getItem('idioma') as Idioma) || 'es')
 
 const traducciones: Traducciones = {
@@ -103,7 +104,55 @@ const traducciones: Traducciones = {
     ver_solicitudes: "Ver todas mis solicitudes",
     rellenar_solicitud: "Rellenar solicitud de adopción",
     protectora: "Protectora",
-    no_disponible: "No disponible"
+    no_disponible: "No disponible",
+    // FAQ
+    faq_titulo: "Preguntas Frecuentes (FAQ)",
+    faq_plataforma: "Sobre la plataforma",
+    faq_adopcion: "Sobre el proceso de adopción",
+    faq_gatos: "Sobre los gatos",
+    faq_web: "Sobre la web y su uso",
+    
+    // FAQ - Sobre la plataforma
+    faq_que_es: "¿Qué es esta página?",
+    faq_que_es_respuesta: "Es una plataforma que reúne a todas las protectoras de Zaragoza para facilitar la adopción responsable de gatos.",
+    faq_como_funciona: "¿Cómo funciona la web?",
+    faq_como_funciona_respuesta: "Puedes ver los gatos en adopción, conocer más sobre ellos y contactar con la protectora responsable para iniciar el proceso de adopción.",
+    faq_pertenece: "¿La web pertenece a una protectora específica?",
+    faq_pertenece_respuesta: "No, la plataforma centraliza información de varias protectoras de Zaragoza para que sea más fácil encontrar gatos en adopción.",
+
+    // FAQ - Sobre el proceso de adopción
+    faq_como_adoptar: "¿Cómo puedo adoptar un gato?",
+    faq_como_adoptar_respuesta: "Selecciona el gato que te interesa, contacta con la protectora correspondiente y sigue los pasos que ellos te indiquen.",
+    faq_coste: "¿Cuánto cuesta adoptar un gato?",
+    faq_coste_respuesta: "Depende de cada protectora. Algunas piden una donación para cubrir gastos veterinarios como vacunas, desparasitación y esterilización.",
+    faq_requisitos: "¿Cuáles son los requisitos para adoptar?",
+    faq_requisitos_respuesta: "Cada protectora tiene sus requisitos, pero generalmente incluyen ser mayor de edad, tener un entorno adecuado para el gato y comprometerse a su bienestar.",
+    faq_fuera: "¿Puedo adoptar si vivo fuera de Zaragoza?",
+    faq_fuera_respuesta: "Algunas protectoras permiten adopciones fuera de la ciudad, pero puede haber requisitos adicionales como una visita previa al hogar.",
+    faq_otros_animales: "¿Puedo adoptar si ya tengo otros animales?",
+    faq_otros_animales_respuesta: "Sí, pero la protectora evaluará si el gato es compatible con otros animales en el hogar.",
+
+    // FAQ - Sobre los gatos
+    faq_vacunados: "¿Los gatos están vacunados y esterilizados?",
+    faq_vacunados_respuesta: "La mayoría de las protectoras entregan a los gatos vacunados, desparasitados y esterilizados (o con compromiso de esterilización si son muy jóvenes).",
+    faq_conocer: "¿Puedo conocer al gato antes de adoptarlo?",
+    faq_conocer_respuesta: "Sí, la protectora te indicará cómo y dónde conocer al gato en persona.",
+    faq_adaptacion: "¿Qué pasa si el gato no se adapta a mi hogar?",
+    faq_adaptacion_respuesta: "Las protectoras suelen ofrecer asesoramiento y un periodo de adaptación. En caso extremo, podrían aceptar la devolución del gato para buscarle otra familia.",
+    faq_personalidad: "¿Hay gatos sociables y otros más independientes?",
+    faq_personalidad_respuesta: "Sí, cada gato tiene una personalidad única. Puedes preguntar a la protectora por el temperamento del gato antes de adoptarlo.",
+
+    // FAQ - Sobre la web y su uso
+    faq_contacto: "¿Cómo puedo contactar con una protectora?",
+    faq_contacto_respuesta: "En la ficha de cada gato encontrarás un botón para contactar con la protectora correspondiente.",
+    faq_desaparecen: "¿Por qué algunos gatos desaparecen de la lista?",
+    faq_desaparecen_respuesta: "Porque han sido adoptados o ya no están disponibles.",
+    faq_voluntario: "¿Puedo hacerme voluntario en una protectora?",
+    faq_voluntario_respuesta: "Sí, muchas protectoras buscan voluntarios. Contacta directamente con ellas para más información.",
+    faq_donacion: "¿Puedo hacer una donación a la web o a las protectoras?",
+    faq_donacion_respuesta: "La web no gestiona donaciones, pero cada protectora puede aceptar ayuda económica o en especie (alimento, arena, etc.).",
+    faq_problema: "¿Cómo puedo reportar un problema en la web?",
+    faq_problema_respuesta: "Si encuentras un error o tienes sugerencias, puedes enviarnos un email a info@adopcioneszaragoza.com.",
   },
   en: {
     // Home
@@ -194,7 +243,55 @@ const traducciones: Traducciones = {
     ver_solicitudes: "View all my applications",
     rellenar_solicitud: "Fill adoption application",
     protectora: "Shelter",
-    no_disponible: "Not available"
+    no_disponible: "Not available",
+    // FAQ
+    faq_titulo: "Frequently Asked Questions (FAQ)",
+    faq_plataforma: "About the platform",
+    faq_adopcion: "About the adoption process",
+    faq_gatos: "About the cats",
+    faq_web: "About the website and its use",
+    
+    // FAQ - About the platform
+    faq_que_es: "What is this website?",
+    faq_que_es_respuesta: "It's a platform that brings together all the shelters in Zaragoza to facilitate responsible cat adoption.",
+    faq_como_funciona: "How does the website work?",
+    faq_como_funciona_respuesta: "You can view cats available for adoption, learn more about them, and contact the responsible shelter to start the adoption process.",
+    faq_pertenece: "Does the website belong to a specific shelter?",
+    faq_pertenece_respuesta: "No, the platform centralizes information from various shelters in Zaragoza to make it easier to find cats for adoption.",
+
+    // FAQ - About the adoption process
+    faq_como_adoptar: "How can I adopt a cat?",
+    faq_como_adoptar_respuesta: "Select the cat you're interested in, contact the corresponding shelter, and follow their instructions.",
+    faq_coste: "How much does it cost to adopt a cat?",
+    faq_coste_respuesta: "It depends on each shelter. Some ask for a donation to cover veterinary expenses such as vaccines, deworming, and neutering.",
+    faq_requisitos: "What are the requirements for adopting?",
+    faq_requisitos_respuesta: "Each shelter has its requirements, but generally they include being of legal age, having a suitable environment for the cat, and committing to its well-being.",
+    faq_fuera: "Can I adopt if I live outside Zaragoza?",
+    faq_fuera_respuesta: "Some shelters allow adoptions outside the city, but there may be additional requirements such as a home visit.",
+    faq_otros_animales: "Can I adopt if I already have other pets?",
+    faq_otros_animales_respuesta: "Yes, but the shelter will evaluate if the cat is compatible with other pets in the home.",
+
+    // FAQ - About the cats
+    faq_vacunados: "Are the cats vaccinated and neutered?",
+    faq_vacunados_respuesta: "Most shelters deliver cats vaccinated, dewormed, and neutered (or with a commitment to neutering if they're very young).",
+    faq_conocer: "Can I meet the cat before adopting?",
+    faq_conocer_respuesta: "Yes, the shelter will tell you how and where to meet the cat in person.",
+    faq_adaptacion: "What if the cat doesn't adapt to my home?",
+    faq_adaptacion_respuesta: "Shelters usually offer guidance and an adaptation period. In extreme cases, they might accept returning the cat to find it another family.",
+    faq_personalidad: "Are there sociable cats and more independent ones?",
+    faq_personalidad_respuesta: "Yes, each cat has a unique personality. You can ask the shelter about the cat's temperament before adopting.",
+
+    // FAQ - About the website and its use
+    faq_contacto: "How can I contact a shelter?",
+    faq_contacto_respuesta: "On each cat's profile, you'll find a button to contact the corresponding shelter.",
+    faq_desaparecen: "Why do some cats disappear from the list?",
+    faq_desaparecen_respuesta: "Because they have been adopted or are no longer available.",
+    faq_voluntario: "Can I become a volunteer at a shelter?",
+    faq_voluntario_respuesta: "Yes, many shelters are looking for volunteers. Contact them directly for more information.",
+    faq_donacion: "Can I make a donation to the website or shelters?",
+    faq_donacion_respuesta: "The website doesn't handle donations, but each shelter can accept financial or in-kind help (food, litter, etc.).",
+    faq_problema: "How can I report a problem on the website?",
+    faq_problema_respuesta: "If you find an error or have suggestions, you can send us an email at info@adopcioneszaragoza.com.",
   }
 }
 
