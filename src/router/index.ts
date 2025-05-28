@@ -12,6 +12,7 @@ import AdminView from '../views/AdminView.vue'
 import GestionGatosView from '@/views/GestionGatosView.vue'
 import GestionProtectorasView from '../views/GestionProtectorasView.vue'
 import ConsejosExpertos from '@/views/ConsejosExpertosView.vue'
+import CondicionCorporal from '@/views/CondicionCorporalView.vue'
 import GestionUsuariosView from '../views/GestionUsuariosView.vue'
 import { useAutenticacion } from '@/stores/Autentificacion'
 
@@ -53,6 +54,11 @@ const router = createRouter({
       path: "/Consejos-Expertos",
       name: "Consejos-Expertos",
       component: ConsejosExpertos,
+    },
+    {
+      path: "/Condicion-Corporal",
+      name: "Condicion-Corporal",
+      component: CondicionCorporal,
     },
     {
       path: '/perfil',

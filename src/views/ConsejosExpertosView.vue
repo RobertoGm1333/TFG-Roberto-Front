@@ -8,7 +8,8 @@ const consejos = [
   {
     imagen: '../../Images/consejos/condicion-corporal.png',
     titulo: 'Condicion corporal en gatos',
-    descripcion: 'El impacto positivo de una nutrición adecuada está bien establecido en todos los animales. Una alimentación adaptada a la edad y necesidades nutricionales de cada gato, mejora su calidad de vida.'
+    descripcion: 'El impacto positivo de una nutrición adecuada está bien establecido en todos los animales. Una alimentación adaptada a la edad y necesidades nutricionales de cada gato, mejora su calidad de vida.',
+    ruta: '/condicion-corporal'
   },
   {
     imagen: '/Images/consejos/alimentacion.jpg',
@@ -54,6 +55,7 @@ const consejos = [
         :imagen="consejo.imagen"
         :titulo="consejo.titulo"
         :descripcion="consejo.descripcion"
+        :ruta="consejo.ruta"
       />
     </div>
   </div>
@@ -71,7 +73,6 @@ const consejos = [
   margin-bottom: $espacio-extra-grande;
 
   h1 {
-    font-family: $fuente-titulos;
     color: $color-principal;
     font-size: 2.5rem;
     margin-bottom: $espacio-mediano;

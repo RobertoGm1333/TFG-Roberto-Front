@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface ConsejoProps {
   imagen: string;
   titulo: string;
   descripcion: string;
+  ruta?: string;
 }
 
+const router = useRouter()
 const props = defineProps<ConsejoProps>()
+
+const navegarAConsejo = () => {
+  if (props.ruta) {
+    router.push(props.ruta)
+  }
+}
 </script>
 
 <template>
-  <v-card class="consejo-card" max-width="500">
+  <v-card class="consejo-card" max-width="500" @click="navegarAConsejo">
     <v-img class="consejo-card__image" :src="imagen" cover></v-img>
     <v-card-title class="consejo-card__title">{{ titulo }}</v-card-title>
     <v-card-text class="consejo-card__content">
@@ -50,7 +59,10 @@ const props = defineProps<ConsejoProps>()
   font-size: 1.5rem;
   color: $color-principal;
   margin-bottom: $espacio-pequeno;
-  font-family: $fuente-titulos;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.2;
+  padding: $espacio-pequeno $espacio-pequeno 0;
 }
 
 .consejo-card__content {
