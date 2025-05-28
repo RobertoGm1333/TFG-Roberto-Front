@@ -175,11 +175,27 @@ const doDrag = (event: MouseEvent) => {
       hasMoved.value = true
     }
 
-    transform.value = {
-      ...transform.value,
-      x: event.clientX - startPosition.value.x,
-      y: event.clientY - startPosition.value.y
+    // Obtener el contenedor y la imagen
+    const container = event.currentTarget as HTMLElement
+    const image = container.querySelector('.zoomed-image') as HTMLElement
+
+    if (container && image) {
+      // Calcular los límites basados en el tamaño de la imagen y el zoom
+      const imageRect = image.getBoundingClientRect()
+      const maxX = (imageRect.width * (transform.value.scale - 1)) / 2
+      const maxY = (imageRect.height * (transform.value.scale - 1)) / 2
+
+      // Calcular la nueva posición limitada
+      const newX = event.clientX - startPosition.value.x
+      const newY = event.clientY - startPosition.value.y
+
+      transform.value = {
+        ...transform.value,
+        x: Math.max(Math.min(newX, maxX), -maxX),
+        y: Math.max(Math.min(newY, maxY), -maxY)
+      }
     }
+
     event.preventDefault() // Prevenir comportamiento por defecto
   } else if (isDragging.value) {
     // Si el botón no está presionado pero estábamos arrastrando, detener
