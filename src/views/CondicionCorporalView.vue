@@ -2,47 +2,85 @@
   <div class="condicion-corporal-view">
     <!-- Banner section -->
     <div class="banner" :style="{ backgroundImage: 'url(../../Images/consejos/background-banner.png)' }">
-      <h1>La condición corporal en perros y gatos</h1>
+      <h1>La condición corporal en gatos</h1>
     </div>
 
     <!-- Content section -->
     <div class="content">
       <div class="content-container">
-        <img src="../../Images/consejos/condicion-corporal.png" alt="Condición corporal en mascotas" class="main-image" />
+        <img 
+          src="../../Images/consejos/condicion-corporal.png" 
+          alt="Condición corporal en mascotas" 
+          class="main-image" 
+          @click="showZoomDialog = true"
+        />
+
+        <!-- Dialog para imagen ampliada -->
+        <v-dialog
+          v-model="showZoomDialog"
+          max-width="90vw"
+          max-height="90vh"
+          :persistent="false"
+          :scrim="true"
+          @update:model-value="closeDialog"
+        >
+          <div class="zoom-overlay" @click="closeDialog">
+            <div class="zoom-container" @click.stop>
+              <v-btn
+                icon
+                @click="closeDialog"
+                class="close-button"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <div 
+                class="image-wrapper"
+                @mousedown="startDrag"
+                @mousemove="doDrag"
+                @mouseup="stopDrag"
+                @mouseleave="stopDrag"
+                @click="handleImageClick"
+              >
+                <img 
+                  src="../../Images/consejos/condicion-corporal.png" 
+                  alt="Condición corporal en mascotas" 
+                  class="zoomed-image"
+                  :class="{ 
+                    'can-zoom': !isZoomedIn,
+                    'is-dragging': isDragging
+                  }"
+                  :style="{
+                    transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
+                    cursor: isZoomedIn ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
+                  }"
+                  @dragstart.prevent
+                />
+              </div>
+            </div>
+          </div>
+        </v-dialog>
         
         <div class="text-content">
           <section class="content-section">
-            <p class="destacado">
-              El impacto positivo de una nutrición adecuada está bien establecido en los gatos.
-            </p>
             <p>
-              Una alimentación adaptada a la edad y necesidades nutricionales de cada gato mejora su calidad de vida y forma parte esencial de su cuidado diario. Además, una dieta apropiada durante todas las etapas de la vida puede ayudar a prevenir enfermedades asociadas con la alimentación y a manejar otras.
+              El impacto positivo de una nutrición adecuada está bien establecido en los gatos. Una alimentación adaptada a la edad y necesidades nutricionales de cada gato mejora su calidad de vida y forma parte esencial de su cuidado diario. Además, una dieta apropiada durante todas las etapas de la vida puede ayudar a prevenir enfermedades asociadas con la alimentación y a manejar otras.
             </p>
           </section>
 
           <section class="content-section">
-            <p class="destacado">
-              Un gato sano es un gato feliz y menos propenso a problemas de salud.
-            </p>
             <p>
-              Si tiene sobrepeso, será menos capaz de disfrutar del juego y el movimiento, y tendrá mayor riesgo de desarrollar problemas articulares. También aumenta la posibilidad de padecer diabetes tipo 2, enfermedades hepáticas, intolerancia al ejercicio o alteraciones cardiovasculares.
+              Un gato sano es un gato feliz y menos propenso a problemas de salud. Si tiene sobrepeso, será menos capaz de disfrutar del juego y el movimiento, y tendrá mayor riesgo de desarrollar problemas articulares. También aumenta la posibilidad de padecer diabetes tipo 2, enfermedades hepáticas, intolerancia al ejercicio o alteraciones cardiovasculares.
             </p>
           </section>
 
           <section class="content-section">
-            <p class="destacado">
-              Evaluar el estado nutricional de nuestro gato es clave para tomar decisiones acertadas.
-            </p>
             <p>
-              Para saber si nuestro gato tiene una condición corporal ideal y un peso adecuado, debemos fijarnos en algunos aspectos físicos. Las guías de puntuación corporal de organizaciones como la WSAVA (World Small Animal Veterinary Association) o la AAHA (American Animal Hospital Association) pueden ser de gran ayuda.
-            </p>
-            <p>
-              Estas guías combinan la observación y la palpación para evaluar la condición corporal.
+              Evaluar el estado nutricional de nuestro gato es clave para tomar decisiones acertadas. Para saber si nuestro gato tiene una condición corporal ideal y un peso adecuado, debemos fijarnos en algunos aspectos físicos. Las guías de puntuación corporal de organizaciones como la WSAVA (World Small Animal Veterinary Association) o la AAHA (American Animal Hospital Association) pueden ser de gran ayuda.
             </p>
           </section>
 
           <section class="content-section">
-            <h2>En gatos con una condición corporal ideal:</h2>
+            <p>En gatos con una condición corporal ideal:</p>
             <ul>
               <li>Se pueden palpar las costillas con facilidad, sin exceso de grasa que las cubra.</li>
               <li>Desde arriba, se observa una cintura definida, similar a una forma de "reloj de arena".</li>
@@ -51,10 +89,7 @@
           </section>
 
           <section class="content-section">
-            <p class="destacado">
-              Es importante estar atentos a las variaciones de peso del gato.
-            </p>
-            <p>Si notamos que empieza a ganar peso, se pueden tomar estas medidas:</p>
+            <p>Es importante estar atentos a las variaciones de peso del gato. Si notamos que empieza a ganar peso, se pueden tomar estas medidas:</p>
             <ul>
               <li>Ajustar la cantidad diaria de alimento y limitar las golosinas.</li>
               <li>Optar por un alimento menos calórico, si es necesario.</li>
@@ -64,20 +99,21 @@
           </section>
 
           <section class="content-section">
-            <p class="destacado">
-              Un gato con sobrepeso no es un gato sano.
-            </p>
             <p>
-              La obesidad reduce su esperanza y calidad de vida. Consulta siempre con tu veterinario para mejorar su condición corporal y garantizar su bienestar.
+              Un gato con sobrepeso no es un gato sano. La obesidad reduce su esperanza y calidad de vida. Consulta siempre con tu veterinario para mejorar su condición corporal y garantizar su bienestar.
             </p>
           </section>
 
           <section class="content-section">
-            <h2>Recursos adicionales</h2>
             <p>Puedes consultar estas guías oficiales para orientación adicional:</p>
-            <ul>
-              <li>Puntuación de estado muscular (WSAVA)</li>
-            </ul>
+            <a 
+              href="../../Images/consejos/condicion-corporal.pdf" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="wsava-link"
+            >
+              Puntuación de estado muscular (WSAVA)
+            </a>
           </section>
         </div>
       </div>
@@ -86,7 +122,92 @@
 </template>
 
 <script setup lang="ts">
-// Component logic can be added here if needed
+import { ref } from 'vue'
+
+const showZoomDialog = ref(false)
+const isZoomedIn = ref(false)
+const transform = ref({ x: 0, y: 0, scale: 1 })
+const isDragging = ref(false)
+const startPosition = ref({ x: 0, y: 0 })
+const hasMoved = ref(false)
+
+const handleImageClick = (event: MouseEvent) => {
+  // Si estábamos arrastrando, no consideramos esto como un click
+  if (hasMoved.value) {
+    hasMoved.value = false
+    return
+  }
+
+  // Si no está zoomeado, hacer zoom
+  if (!isZoomedIn.value) {
+    const rect = (event.target as HTMLElement).getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    
+    const centerX = (x / rect.width) * 100
+    const centerY = (y / rect.height) * 100
+    
+    transform.value = {
+      x: (50 - centerX) * 2,
+      y: (50 - centerY) * 2,
+      scale: 2.5
+    }
+    isZoomedIn.value = true
+  } else {
+    // Si está zoomeado y es un click sin arrastre, resetear zoom
+    resetZoom()
+  }
+}
+
+const startDrag = (event: MouseEvent) => {
+  if (isZoomedIn.value && event.buttons === 1) { // Verificar que el botón izquierdo está presionado
+    isDragging.value = true
+    hasMoved.value = false
+    startPosition.value = {
+      x: event.clientX - transform.value.x,
+      y: event.clientY - transform.value.y
+    }
+    event.preventDefault() // Prevenir comportamiento por defecto
+  }
+}
+
+const doDrag = (event: MouseEvent) => {
+  if (isDragging.value && isZoomedIn.value && event.buttons === 1) { // Solo si el botón está presionado
+    const deltaX = Math.abs(event.clientX - (startPosition.value.x + transform.value.x))
+    const deltaY = Math.abs(event.clientY - (startPosition.value.y + transform.value.y))
+    
+    if (deltaX > 5 || deltaY > 5) {
+      hasMoved.value = true
+    }
+
+    transform.value = {
+      ...transform.value,
+      x: event.clientX - startPosition.value.x,
+      y: event.clientY - startPosition.value.y
+    }
+    event.preventDefault() // Prevenir comportamiento por defecto
+  } else if (isDragging.value) {
+    // Si el botón no está presionado pero estábamos arrastrando, detener
+    stopDrag()
+  }
+}
+
+const stopDrag = () => {
+  isDragging.value = false
+  // No resetear la posición, solo detener el arrastre
+}
+
+const resetZoom = () => {
+  transform.value = { x: 0, y: 0, scale: 1 }
+  isZoomedIn.value = false
+  isDragging.value = false
+  hasMoved.value = false
+}
+
+const closeDialog = () => {
+  showZoomDialog.value = false
+  resetZoom()
+}
 </script>
 
 <style scoped lang="scss">
@@ -128,26 +249,37 @@
 }
 
 .content {
-  padding: 40px 20px;
+  padding: 40px 0;
   background-color: #f8f9fa;
 }
 
 .content-container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
 }
 
 .main-image {
   width: 100%;
-  max-width: 800px;
-  height: auto;
-  margin: 0 auto 40px;
+  max-width: none;
+  height: 400px;
+  margin: 0 0 40px;
   display: block;
+  object-fit: cover;
+  object-position: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
 }
 
 .text-content {
-  max-width: 800px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
+  padding: 0 20px;
   color: #666;
   font-size: 1.1rem;
   line-height: 1.8;
@@ -155,6 +287,7 @@
 
 .content-section {
   margin-bottom: 2.5rem;
+  max-width: none;
 
   h2 {
     font-size: 1.4rem;
@@ -179,7 +312,7 @@
 
   ul {
     list-style-type: disc;
-    margin-left: 1.5rem;
+    margin-left: 2.5rem;
     margin-bottom: 1.5rem;
     color: #666;
 
@@ -188,6 +321,84 @@
       line-height: 1.8;
       padding-left: 0.5rem;
     }
+  }
+}
+
+.zoom-overlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.zoom-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.image-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  touch-action: none; // Prevenir gestos táctiles por defecto
+}
+
+.zoomed-image {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  width: auto;
+  height: auto;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+  user-select: none;
+  -webkit-user-drag: none;
+  
+  &.can-zoom:hover {
+    cursor: zoom-in;
+  }
+
+  &.is-dragging {
+    transition: none;
+    cursor: grabbing !important;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: white !important;
+}
+
+.wsava-link {
+  display: inline-block;
+  color: $color-principal;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 8px;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+
+  &:hover {
+    color: darken($color-principal, 10%);
+    background-color: rgba($color-principal, 0.1);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($color-principal, 0.3);
   }
 }
 
@@ -201,7 +412,11 @@
   }
 
   .content {
-    padding: 20px;
+    padding: 20px 0;
+  }
+
+  .text-content {
+    padding: 0 15px;
   }
 
   .content-section {
@@ -221,6 +436,19 @@
       font-size: 1rem;
     }
   }
+
+  .main-image {
+    height: 250px;
+  }
+
+  .close-button {
+    top: 8px;
+    right: 8px;
+  }
+
+  .zoom-overlay {
+    padding: 10px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -235,6 +463,19 @@
 
     h2, .destacado {
       color: #d0d0d0;
+    }
+  }
+
+  .wsava-link {
+    color: lighten($color-principal, 15%);
+
+    &:hover {
+      color: lighten($color-principal, 25%);
+      background-color: rgba(lighten($color-principal, 15%), 0.1);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(lighten($color-principal, 15%), 0.3);
     }
   }
 }
