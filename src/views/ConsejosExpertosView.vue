@@ -7,35 +7,35 @@ const { t } = useI18n()
 const consejos = [
   {
     imagen: '../../Images/consejos/condicion-corporal.png',
-    titulo: 'Condicion corporal en gatos',
-    descripcion: 'El impacto positivo de una nutrición adecuada está bien establecido en todos los animales. Una alimentación adaptada a la edad y necesidades nutricionales de cada gato, mejora su calidad de vida.',
+    titulo: t('consejo_condicion_titulo'),
+    descripcion: t('consejo_condicion_descripcion'),
     ruta: '/condicion-corporal'
   },
   {
     imagen: '../../Images/consejos/viaje-gato.png',
-    titulo: 'Consejos para viajar con gatos',
-    descripcion: 'Tener un animal de compañía no tiene porque suponer un problema a la hora de planificar un viaje de vacaciones. Eso sí, deben tenerse en cuenta',
+    titulo: t('consejo_viaje_titulo'),
+    descripcion: t('consejo_viaje_descripcion'),
     ruta: '/Viajar-Gatos'
   },
   {
     imagen: '/Images/consejos/comportamiento.jpg',
-    titulo: 'Entendiendo el comportamiento felino',
-    descripcion: 'Interpreta el lenguaje corporal de tu gato y aprende a reconocer sus necesidades. Consejos para una mejor comunicación con tu mascota.'
+    titulo: t('consejo_comportamiento_titulo'),
+    descripcion: t('consejo_comportamiento_descripcion')
   },
   {
     imagen: '/Images/consejos/salud.jpg',
-    titulo: 'Cuidados veterinarios esenciales',
-    descripcion: 'Calendario de vacunación, desparasitación y revisiones veterinarias. Aprende a detectar señales de alerta en la salud de tu gato.'
+    titulo: t('consejo_salud_titulo'),
+    descripcion: t('consejo_salud_descripcion')
   },
   {
     imagen: '/Images/consejos/juegos.jpg',
-    titulo: 'Juegos y ejercicios',
-    descripcion: 'Ideas para mantener a tu gato activo y entretenido. Descubre juguetes seguros y actividades que estimularán física y mentalmente a tu felino.'
+    titulo: t('consejo_juegos_titulo'),
+    descripcion: t('consejo_juegos_descripcion')
   },
   {
     imagen: '/Images/consejos/convivencia.jpg',
-    titulo: 'Convivencia con otros animales',
-    descripcion: 'Consejos prácticos para introducir un nuevo gato en un hogar con otras mascotas. Aprende a gestionar la convivencia de manera armoniosa.'
+    titulo: t('consejo_convivencia_titulo'),
+    descripcion: t('consejo_convivencia_descripcion')
   }
 ]
 </script>
@@ -45,7 +45,7 @@ const consejos = [
     <div class="consejos-header">
       <h1>{{ t('consejos_expertos') }}</h1>
       <p class="consejos-descripcion">
-        Nuestros expertos comparten su conocimiento para ayudarte a brindar la mejor vida posible a tu compañero felino.
+        {{ t('consejos_descripcion') }}
       </p>
     </div>
 

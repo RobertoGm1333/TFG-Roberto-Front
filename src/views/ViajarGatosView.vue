@@ -2,7 +2,7 @@
   <div class="viajar-gatos-view">
     <!-- Banner section -->
     <div class="banner" :style="{ backgroundImage: 'url(../../Images/consejos/background-banner.png)' }">
-      <h1>Consejos para viajar con gatos</h1>
+      <h1>{{ t('viajar_gatos_titulo') }}</h1>
     </div>
 
     <!-- Content section -->
@@ -43,7 +43,7 @@
               >
                 <img 
                   src="../../Images/consejos/viaje-gato.png" 
-                  alt="Viajar con gatos" 
+                  :alt="t('viajar_gatos_titulo')" 
                   class="zoomed-image"
                   :class="{ 
                     'can-zoom': !isZoomedIn,
@@ -62,50 +62,44 @@
         
         <div class="text-content">
           <section class="content-section">
-            <p>
-              Viajar con un gato puede ser una experiencia enriquecedora tanto para el dueño como para la mascota si se planifica adecuadamente. La clave está en la preparación y en conocer las necesidades específicas de nuestro felino durante el viaje.
-            </p>
+            <p>{{ t('viajar_gatos_p1') }}</p>
           </section>
 
           <section class="content-section">
-            <p>
-              Los gatos son animales territoriales y los cambios en su entorno pueden causarles estrés. Sin embargo, con la preparación adecuada y siguiendo algunas pautas básicas, podemos hacer que el viaje sea una experiencia positiva.
-            </p>
+            <p>{{ t('viajar_gatos_p2') }}</p>
           </section>
 
           <section class="content-section">
-            <p>Antes del viaje, es importante:</p>
+            <p>{{ t('viajar_gatos_antes_titulo') }}</p>
             <ul>
-              <li>Visitar al veterinario para asegurarse de que el gato está en buen estado de salud y tiene todas sus vacunas al día.</li>
-              <li>Preparar un transportín adecuado y acostumbrar al gato a él semanas antes del viaje.</li>
-              <li>Llevar la documentación necesaria: cartilla de vacunación, microchip y pasaporte si es necesario.</li>
-              <li>Preparar un kit de viaje con sus artículos esenciales: comida, agua, arena, juguetes familiares y medicamentos si los necesita.</li>
+              <li>{{ t('viajar_gatos_antes_1') }}</li>
+              <li>{{ t('viajar_gatos_antes_2') }}</li>
+              <li>{{ t('viajar_gatos_antes_3') }}</li>
+              <li>{{ t('viajar_gatos_antes_4') }}</li>
             </ul>
           </section>
 
           <section class="content-section">
-            <p>Durante el transporte:</p>
+            <p>{{ t('viajar_gatos_durante_titulo') }}</p>
             <ul>
-              <li>Mantener el transportín seguro y estable durante el viaje.</li>
-              <li>Evitar alimentar al gato justo antes del viaje para prevenir el mareo.</li>
-              <li>Hacer paradas cada 2-3 horas en viajes largos para ofrecer agua y acceso al arenero.</li>
-              <li>Mantener una temperatura adecuada y evitar la exposición directa al sol.</li>
+              <li>{{ t('viajar_gatos_durante_1') }}</li>
+              <li>{{ t('viajar_gatos_durante_2') }}</li>
+              <li>{{ t('viajar_gatos_durante_3') }}</li>
+              <li>{{ t('viajar_gatos_durante_4') }}</li>
             </ul>
           </section>
 
           <section class="content-section">
-            <p>En el destino:</p>
+            <p>{{ t('viajar_gatos_destino_titulo') }}</p>
             <ul>
-              <li>Preparar una habitación tranquila donde el gato pueda adaptarse gradualmente al nuevo entorno.</li>
-              <li>Mantener sus rutinas habituales de alimentación y juego en la medida de lo posible.</li>
-              <li>Proporcionar lugares elevados y escondites donde pueda sentirse seguro.</li>
+              <li>{{ t('viajar_gatos_destino_1') }}</li>
+              <li>{{ t('viajar_gatos_destino_2') }}</li>
+              <li>{{ t('viajar_gatos_destino_3') }}</li>
             </ul>
           </section>
 
           <section class="content-section">
-            <p>
-              Recuerda que cada gato es único y algunos pueden adaptarse mejor que otros a los viajes. Observa el comportamiento de tu gato y ajusta tus planes según sus necesidades específicas. Con paciencia y preparación, viajar con tu gato puede ser una experiencia positiva para ambos.
-            </p>
+            <p>{{ t('viajar_gatos_conclusion') }}</p>
           </section>
         </div>
       </div>
@@ -115,6 +109,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from '@/stores/useI18n'
+
+const { t } = useI18n()
 
 const showZoomDialog = ref(false)
 const isZoomedIn = ref(false)
@@ -263,18 +260,20 @@ const closeDialog = () => {
 }
 
 .main-image {
-  width: 100%;
-  max-width: none;
-  height: 400px;
-  margin: 0 0 40px;
+  width: auto;
+  max-width: 600px;
+  height: auto;
+  margin: 0 auto 40px;
   display: block;
-  object-fit: cover;
-  object-position: center;
   cursor: pointer;
   transition: opacity 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
     opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -409,7 +408,7 @@ const closeDialog = () => {
   }
 
   .main-image {
-    height: 250px;
+    max-width: 90%;
   }
 
   .close-button {
