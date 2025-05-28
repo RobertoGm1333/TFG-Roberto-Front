@@ -165,6 +165,7 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
         <nav>
           <RouterLink to="/gato">{{ t('gatos') }}</RouterLink>
           <RouterLink to="/protectoras">{{ t('protectoras') }}</RouterLink>
+          <RouterLink to="/consejos-expertos">{{ t('consejos_expertos') }}</RouterLink>
         </nav>
         <div class="usuario">
           <div class="idioma-selector" ref="idiomaMenuRef">
@@ -245,12 +246,17 @@ header {
 nav {
   display: flex;
   flex-direction: column;
-  width: 150px;
+  width: 200px;
   justify-content: center;
 
   a {
     white-space: nowrap;
     font-size: 0.95rem;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -432,16 +438,20 @@ canvas {
 
   .text {
     display: flex;
-    width: 610px;
+    width: 700px;
   }
 
   nav {
     flex-grow: 1;
-    width: 170px;
+    width: 300px;
     gap: $espacio-pequeno;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+
+    a {
+      margin-bottom: 0;
+    }
   }
 
   .usuario {
@@ -453,7 +463,6 @@ canvas {
 
 @media (min-width: 1010px) {
   header {
-    padding: 15px 150px;
     top: 0;
     left: 0;
     z-index: 1000;

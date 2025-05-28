@@ -11,6 +11,7 @@ import RegistrarseView from '@/views/RegistrarseView.vue'
 import AdminView from '../views/AdminView.vue'
 import GestionGatosView from '@/views/GestionGatosView.vue'
 import GestionProtectorasView from '../views/GestionProtectorasView.vue'
+import ConsejosExpertos from '@/views/ConsejosExpertosView.vue'
 import GestionUsuariosView from '../views/GestionUsuariosView.vue'
 import { useAutenticacion } from '@/stores/Autentificacion'
 
@@ -47,6 +48,11 @@ const router = createRouter({
       path: "/faq",
       name: "FAQ",
       component: FAQ,
+    },
+    {
+      path: "/Consejos-Expertos",
+      name: "Consejos-Expertos",
+      component: ConsejosExpertos,
     },
     {
       path: '/perfil',
