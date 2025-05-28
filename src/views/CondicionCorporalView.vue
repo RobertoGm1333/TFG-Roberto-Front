@@ -2,7 +2,7 @@
   <div class="condicion-corporal-view">
     <!-- Banner section -->
     <div class="banner" :style="{ backgroundImage: 'url(../../Images/consejos/background-banner.png)' }">
-      <h1>La condición corporal en gatos</h1>
+      <h1>{{ t('condicion_corporal_titulo') }}</h1>
     </div>
 
     <!-- Content section -->
@@ -62,57 +62,50 @@
         
         <div class="text-content">
           <section class="content-section">
-            <p>
-              El impacto positivo de una nutrición adecuada está bien establecido en los gatos. Una alimentación adaptada a la edad y necesidades nutricionales de cada gato mejora su calidad de vida y forma parte esencial de su cuidado diario. Además, una dieta apropiada durante todas las etapas de la vida puede ayudar a prevenir enfermedades asociadas con la alimentación y a manejar otras.
-            </p>
+            <p>{{ t('condicion_corporal_p1') }}</p>
           </section>
 
           <section class="content-section">
-            <p>
-              Un gato sano es un gato feliz y menos propenso a problemas de salud. Si tiene sobrepeso, será menos capaz de disfrutar del juego y el movimiento, y tendrá mayor riesgo de desarrollar problemas articulares. También aumenta la posibilidad de padecer diabetes tipo 2, enfermedades hepáticas, intolerancia al ejercicio o alteraciones cardiovasculares.
-            </p>
+            <p>{{ t('condicion_corporal_p2') }}</p>
           </section>
 
           <section class="content-section">
-            <p>
-              Evaluar el estado nutricional de nuestro gato es clave para tomar decisiones acertadas. Para saber si nuestro gato tiene una condición corporal ideal y un peso adecuado, debemos fijarnos en algunos aspectos físicos. Las guías de puntuación corporal de organizaciones como la WSAVA (World Small Animal Veterinary Association) o la AAHA (American Animal Hospital Association) pueden ser de gran ayuda.
-            </p>
+            <p>{{ t('condicion_corporal_p3') }}</p>
           </section>
 
           <section class="content-section">
-            <p>En gatos con una condición corporal ideal:</p>
+            <p>{{ t('condicion_corporal_ideal') }}</p>
             <ul>
-              <li>Se pueden palpar las costillas con facilidad, sin exceso de grasa que las cubra.</li>
-              <li>Desde arriba, se observa una cintura definida, similar a una forma de "reloj de arena".</li>
-              <li>Al tocar con una ligera presión, deben poder distinguirse las costillas, las vértebras lumbares y los huesos de la cadera y la escápula bajo una fina capa de grasa.</li>
+              <li>{{ t('condicion_corporal_punto1') }}</li>
+              <li>{{ t('condicion_corporal_punto2') }}</li>
+              <li>{{ t('condicion_corporal_punto3') }}</li>
             </ul>
           </section>
 
           <section class="content-section">
-            <p>Es importante estar atentos a las variaciones de peso del gato. Si notamos que empieza a ganar peso, se pueden tomar estas medidas:</p>
+            <p>{{ t('condicion_corporal_variaciones') }}</p>
+            <p>{{ t('condicion_corporal_medidas') }}</p>
             <ul>
-              <li>Ajustar la cantidad diaria de alimento y limitar las golosinas.</li>
-              <li>Optar por un alimento menos calórico, si es necesario.</li>
-              <li>Aumentar su actividad con juegos interactivos y sesiones de ejercicio en casa.</li>
-              <li>Visitar al veterinario para un control de peso y definir una pauta alimentaria personalizada.</li>
+              <li>{{ t('condicion_corporal_medida1') }}</li>
+              <li>{{ t('condicion_corporal_medida2') }}</li>
+              <li>{{ t('condicion_corporal_medida3') }}</li>
+              <li>{{ t('condicion_corporal_medida4') }}</li>
             </ul>
           </section>
 
           <section class="content-section">
-            <p>
-              Un gato con sobrepeso no es un gato sano. La obesidad reduce su esperanza y calidad de vida. Consulta siempre con tu veterinario para mejorar su condición corporal y garantizar su bienestar.
-            </p>
+            <p>{{ t('condicion_corporal_conclusion') }}</p>
           </section>
 
           <section class="content-section">
-            <p>Puedes consultar estas guías oficiales para orientación adicional:</p>
+            <p>{{ t('condicion_corporal_guias') }}</p>
             <a 
               href="../../Images/consejos/condicion-corporal.pdf" 
               target="_blank" 
               rel="noopener noreferrer" 
               class="wsava-link"
             >
-              Puntuación de estado muscular (WSAVA)
+              {{ t('condicion_corporal_wsava') }}
             </a>
           </section>
         </div>
@@ -123,7 +116,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from '@/stores/useI18n'
 
+const { t } = useI18n()
 const showZoomDialog = ref(false)
 const isZoomedIn = ref(false)
 const transform = ref({ x: 0, y: 0, scale: 1 })
@@ -148,9 +143,9 @@ const handleImageClick = (event: MouseEvent) => {
     const centerY = (y / rect.height) * 100
     
     transform.value = {
-      x: (50 - centerX) * 2,
-      y: (50 - centerY) * 2,
-      scale: 2.5
+      x: (50 - centerX) * 1.5,
+      y: (50 - centerY) * 1.5,
+      scale: 2
     }
     isZoomedIn.value = true
   } else {

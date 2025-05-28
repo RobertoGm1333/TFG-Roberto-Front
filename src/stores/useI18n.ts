@@ -219,6 +219,25 @@ const traducciones: Traducciones = {
     acepta_visita: "¿Acepta visita al hogar?",
     si: "Sí",
     no: "No",
+
+    // Condición Corporal
+    condicion_corporal_titulo: "La condición corporal en gatos",
+    condicion_corporal_p1: "El impacto positivo de una nutrición adecuada está bien establecido en los gatos. Una alimentación adaptada a la edad y necesidades nutricionales de cada gato mejora su calidad de vida y forma parte esencial de su cuidado diario. Además, una dieta apropiada durante todas las etapas de la vida puede ayudar a prevenir enfermedades asociadas con la alimentación y a manejar otras.",
+    condicion_corporal_p2: "Un gato sano es un gato feliz y menos propenso a problemas de salud. Si tiene sobrepeso, será menos capaz de disfrutar del juego y el movimiento, y tendrá mayor riesgo de desarrollar problemas articulares. También aumenta la posibilidad de padecer diabetes tipo 2, enfermedades hepáticas, intolerancia al ejercicio o alteraciones cardiovasculares.",
+    condicion_corporal_p3: "Evaluar el estado nutricional de nuestro gato es clave para tomar decisiones acertadas. Para saber si nuestro gato tiene una condición corporal ideal y un peso adecuado, debemos fijarnos en algunos aspectos físicos. Las guías de puntuación corporal de organizaciones como la WSAVA (World Small Animal Veterinary Association) o la AAHA (American Animal Hospital Association) pueden ser de gran ayuda.",
+    condicion_corporal_ideal: "En gatos con una condición corporal ideal:",
+    condicion_corporal_punto1: "Se pueden palpar las costillas con facilidad, sin exceso de grasa que las cubra.",
+    condicion_corporal_punto2: "Desde arriba, se observa una cintura definida, similar a una forma de \"reloj de arena\".",
+    condicion_corporal_punto3: "Al tocar con una ligera presión, deben poder distinguirse las costillas, las vértebras lumbares y los huesos de la cadera y la escápula bajo una fina capa de grasa.",
+    condicion_corporal_variaciones: "Es importante estar atentos a las variaciones de peso del gato.",
+    condicion_corporal_medidas: "Si notamos que empieza a ganar peso, se pueden tomar estas medidas:",
+    condicion_corporal_medida1: "Ajustar la cantidad diaria de alimento y limitar las golosinas.",
+    condicion_corporal_medida2: "Optar por un alimento menos calórico, si es necesario.",
+    condicion_corporal_medida3: "Aumentar su actividad con juegos interactivos y sesiones de ejercicio en casa.",
+    condicion_corporal_medida4: "Visitar al veterinario para un control de peso y definir una pauta alimentaria personalizada.",
+    condicion_corporal_conclusion: "Un gato con sobrepeso no es un gato sano. La obesidad reduce su esperanza y calidad de vida. Consulta siempre con tu veterinario para mejorar su condición corporal y garantizar su bienestar.",
+    condicion_corporal_guias: "Puedes consultar estas guías oficiales para orientación adicional:",
+    condicion_corporal_wsava: "Puntuación de estado muscular (WSAVA)",
   },
   en: {
     // Home
@@ -426,6 +445,25 @@ const traducciones: Traducciones = {
     acepta_visita: "Do you accept home visits?",
     si: "Yes",
     no: "No",
+
+    // Body Condition
+    condicion_corporal_titulo: "Body Condition in Cats",
+    condicion_corporal_p1: "The positive impact of proper nutrition is well established in cats. A diet adapted to each cat's age and nutritional needs improves their quality of life and is an essential part of their daily care. Additionally, an appropriate diet throughout all life stages can help prevent and manage diet-related diseases.",
+    condicion_corporal_p2: "A healthy cat is a happy cat and less prone to health problems. If overweight, they will be less able to enjoy play and movement, and will have a higher risk of developing joint problems. It also increases the possibility of developing type 2 diabetes, liver disease, exercise intolerance, or cardiovascular disorders.",
+    condicion_corporal_p3: "Evaluating our cat's nutritional status is key to making informed decisions. To know if our cat has an ideal body condition and appropriate weight, we must look at certain physical aspects. Body scoring guides from organizations like WSAVA (World Small Animal Veterinary Association) or AAHA (American Animal Hospital Association) can be very helpful.",
+    condicion_corporal_ideal: "In cats with an ideal body condition:",
+    condicion_corporal_punto1: "The ribs can be easily felt, without excess fat covering them.",
+    condicion_corporal_punto2: "From above, a defined waist is observed, similar to an \"hourglass\" shape.",
+    condicion_corporal_punto3: "When touching with light pressure, the ribs, lumbar vertebrae, and hip and shoulder bones should be distinguishable under a thin layer of fat.",
+    condicion_corporal_variaciones: "It's important to monitor changes in the cat's weight.",
+    condicion_corporal_medidas: "If we notice they're starting to gain weight, these measures can be taken:",
+    condicion_corporal_medida1: "Adjust daily food amount and limit treats.",
+    condicion_corporal_medida2: "Choose a lower-calorie food if necessary.",
+    condicion_corporal_medida3: "Increase activity with interactive games and exercise sessions at home.",
+    condicion_corporal_medida4: "Visit the veterinarian for weight monitoring and to define a personalized feeding plan.",
+    condicion_corporal_conclusion: "An overweight cat is not a healthy cat. Obesity reduces their life expectancy and quality of life. Always consult with your veterinarian to improve their body condition and ensure their well-being.",
+    condicion_corporal_guias: "You can consult these official guides for additional guidance:",
+    condicion_corporal_wsava: "Muscle Condition Score (WSAVA)",
   }
 }
 
