@@ -12,9 +12,10 @@ const consejos = [
     ruta: '/condicion-corporal'
   },
   {
-    imagen: '/Images/consejos/alimentacion.jpg',
-    titulo: 'Guía de alimentación felina',
-    descripcion: 'Descubre las claves de una dieta equilibrada para tu gato, incluyendo la frecuencia de alimentación adecuada y los alimentos que debes evitar.'
+    imagen: '../../Images/consejos/viaje-gato.png',
+    titulo: 'Consejos para viajar con gatos',
+    descripcion: 'Tener un animal de compañía no tiene porque suponer un problema a la hora de planificar un viaje de vacaciones. Eso sí, deben tenerse en cuenta',
+    ruta: '/Viajar-Gatos'
   },
   {
     imagen: '/Images/consejos/comportamiento.jpg',
