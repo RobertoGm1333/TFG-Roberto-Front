@@ -26,7 +26,8 @@ const consejos = computed(() => [
   {
     imagen: '../../Images/consejos/controlar-reproduccion.png',
     titulo: t('control_reproduccion_titulo'),
-    descripcion: t('control_reproduccion_descripcion')
+    descripcion: t('control_reproduccion_descripcion'),
+    ruta: '/control-reproduccion'
   },
   {
     imagen: '../../Images/consejos/presentacion-bebe.png',
