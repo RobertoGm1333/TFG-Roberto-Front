@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import ConsejoCard from '@/components/ConsejoCard.vue'
 import { useI18n } from '@/stores/useI18n'
+import { computed } from 'vue'
 
 const { t } = useI18n()
 
-const consejos = [
+const consejos = computed(() => [
   {
     imagen: '../../Images/consejos/condicion-corporal.png',
     titulo: t('consejo_condicion_titulo'),
@@ -19,25 +20,25 @@ const consejos = [
   },
   {
     imagen: '/Images/consejos/comportamiento.jpg',
-    titulo: t('consejo_comportamiento_titulo'),
-    descripcion: t('consejo_comportamiento_descripcion')
+    titulo: t('cuidado_basico_titulo'),
+    descripcion: t('cuidado_basico_descripcion')
   },
   {
-    imagen: '/Images/consejos/salud.jpg',
-    titulo: t('consejo_salud_titulo'),
-    descripcion: t('consejo_salud_descripcion')
+    imagen: '../../Images/consejos/controlar-reproduccion.png',
+    titulo: t('control_reproduccion_titulo'),
+    descripcion: t('control_reproduccion_descripcion')
   },
   {
-    imagen: '/Images/consejos/juegos.jpg',
-    titulo: t('consejo_juegos_titulo'),
-    descripcion: t('consejo_juegos_descripcion')
+    imagen: '../../Images/consejos/presentacion-bebe.png',
+    titulo: t('presentacion_bebe_titulo'),
+    descripcion: t('presentacion_bebe_descripcion')
   },
   {
-    imagen: '/Images/consejos/convivencia.jpg',
-    titulo: t('consejo_convivencia_titulo'),
-    descripcion: t('consejo_convivencia_descripcion')
+    imagen: '../../Images/consejos/otros-animales.png',
+    titulo: t('otros_animales_titulo'),
+    descripcion: t('otros_animales_descripcion')
   }
-]
+])
 </script>
 
 <template>
