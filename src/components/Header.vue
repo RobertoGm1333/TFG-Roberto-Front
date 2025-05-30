@@ -11,11 +11,14 @@ const Autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(Autenticacion);
 const mostrarMenu = ref(false);
 const mostrarIdiomaMenu = ref(false);
+const mostrarMenuHamburguesa = ref(false);
 const isHovering = ref(false);
 const offsets = ref([0, 0, 0]);
 const menuContainer = ref<HTMLElement | null>(null);
 const userIcon = ref<HTMLElement | null>(null);
 const idiomaMenuRef = ref<HTMLElement | null>(null);
+const menuHamburguesaRef = ref<HTMLElement | null>(null);
+const hamburguesaBtn = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   Autenticacion.cargarUsuarioDesdeLocalStorage();
@@ -51,12 +54,14 @@ onMounted(() => {
   document.addEventListener('click', (event) => {
     closeMenu(event);
     closeIdiomaMenu(event);
+    closeMenuHamburguesa(event);
   });
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', closeMenu);
   document.removeEventListener('click', closeIdiomaMenu);
+  document.removeEventListener('click', closeMenuHamburguesa);
 });
 
 const toggleMenu = () => {
@@ -65,6 +70,10 @@ const toggleMenu = () => {
 
 const toggleIdiomaMenu = () => {
   mostrarIdiomaMenu.value = !mostrarIdiomaMenu.value;
+};
+
+const toggleMenuHamburguesa = () => {
+  mostrarMenuHamburguesa.value = !mostrarMenuHamburguesa.value;
 };
 
 const closeMenu = (event: Event) => {
@@ -87,6 +96,22 @@ const closeIdiomaMenu = (event: Event) => {
   ) {
     mostrarIdiomaMenu.value = false;
   }
+};
+
+const closeMenuHamburguesa = (event: Event) => {
+  if (
+    mostrarMenuHamburguesa.value &&
+    menuHamburguesaRef.value &&
+    !menuHamburguesaRef.value.contains(event.target as Node) &&
+    hamburguesaBtn.value &&
+    !hamburguesaBtn.value.contains(event.target as Node)
+  ) {
+    mostrarMenuHamburguesa.value = false;
+  }
+};
+
+const cerrarMenuHamburguesa = () => {
+  mostrarMenuHamburguesa.value = false;
 };
 
 const cambiarIdiomaSeleccionado = (nuevoIdioma: 'es' | 'en') => {
@@ -162,11 +187,35 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
         </RouterLink>
       </div>
       <div class="text">
-        <nav>
+        <nav class="desktop-nav">
           <RouterLink to="/gato">{{ t('gatos') }}</RouterLink>
           <RouterLink to="/protectoras">{{ t('protectoras') }}</RouterLink>
           <RouterLink to="/consejos-expertos">{{ t('consejos_expertos') }}</RouterLink>
         </nav>
+        
+        <!-- Botón hamburguesa para móvil -->
+        <button 
+          class="menu-hamburguesa-btn" 
+          @click="toggleMenuHamburguesa"
+          ref="hamburguesaBtn"
+          :class="{ 'activo': mostrarMenuHamburguesa }"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Menú hamburguesa desplegable -->
+        <nav 
+          v-if="mostrarMenuHamburguesa" 
+          class="menu-hamburguesa" 
+          ref="menuHamburguesaRef"
+        >
+          <RouterLink to="/gato" @click="cerrarMenuHamburguesa">{{ t('gatos') }}</RouterLink>
+          <RouterLink to="/protectoras" @click="cerrarMenuHamburguesa">{{ t('protectoras') }}</RouterLink>
+          <RouterLink to="/consejos-expertos" @click="cerrarMenuHamburguesa">{{ t('consejos_expertos') }}</RouterLink>
+        </nav>
+
         <div class="usuario">
           <div class="idioma-selector" ref="idiomaMenuRef">
             <button @click="toggleIdiomaMenu" class="idioma-btn">
@@ -241,9 +290,10 @@ header {
 
 .text {
   width: 200px;
+  position: relative;
 }
 
-nav {
+.desktop-nav {
   display: flex;
   flex-direction: column;
   width: 200px;
@@ -256,6 +306,73 @@ nav {
 
     &:last-child {
       margin-bottom: 0;
+    }
+  }
+}
+
+.menu-hamburguesa-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+  
+  span {
+    width: 100%;
+    height: 3px;
+    background-color: #FF5500;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  &.activo {
+    span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    span:nth-child(2) {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    
+    span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+  }
+}
+
+.menu-hamburguesa {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1500;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  a {
+    padding: 12px 15px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.95rem;
+
+    &:hover {
+      background-color: rgba(255, 85, 0, 0.1);
     }
   }
 }
@@ -295,7 +412,7 @@ canvas {
     box-shadow: $sombra-contenedor;
     background: $color-blanco;
     padding: $espacio-mediano;
-    z-index: 3;
+    z-index: 1400;
 
     & .boton-1 {
       background-color: $color-principal;
@@ -370,7 +487,7 @@ canvas {
   border: $border-gris1;
   border-radius: $espacio-pequeno;
   box-shadow: $sombra-contenedor;
-  z-index: 1000;
+  z-index: 1300;
   margin-top: 5px;
   min-width: 100%;
 
@@ -429,6 +546,24 @@ canvas {
   .idioma-btn {
     color: whitesmoke;
   }
+
+  .menu-hamburguesa {
+    background: #272727;
+    border-color: #404040;
+    color: whitesmoke;
+
+    a {
+      color: whitesmoke;
+
+      &:hover {
+        background-color: rgba(255, 85, 0, 0.2);
+      }
+    }
+  }
+
+  .menu-hamburguesa-btn span {
+    background-color: #FF5500;
+  }
 }
 
 @media (min-width: 788px) {
@@ -441,7 +576,7 @@ canvas {
     width: 700px;
   }
 
-  nav {
+  .desktop-nav {
     flex-grow: 1;
     width: 300px;
     gap: $espacio-pequeno;
@@ -458,6 +593,14 @@ canvas {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
+  }
+
+  .menu-hamburguesa-btn {
+    display: none !important;
+  }
+
+  .menu-hamburguesa {
+    display: none !important;
   }
 }
 
@@ -477,7 +620,7 @@ canvas {
     height: 70px;
   }
 
-  nav {
+  .desktop-nav {
     gap: $espacio-grande;
     align-items: center;
   }
@@ -528,11 +671,22 @@ canvas {
     padding-top: 10px;
   }
 
-  nav {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+  .desktop-nav {
+    display: none;
+  }
+
+  .menu-hamburguesa-btn {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .menu-hamburguesa {
+    top: 40px;
+    bottom: auto;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .usuario {
@@ -540,7 +694,7 @@ canvas {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    padding-top: 5px;
+    padding-top: 45px;
 
     .idioma-selector {
       align-self: flex-start;
@@ -562,5 +716,4 @@ canvas {
     width: 80px !important;
     height: 80px !important;
   }
-}
-</style>
+}</style>
