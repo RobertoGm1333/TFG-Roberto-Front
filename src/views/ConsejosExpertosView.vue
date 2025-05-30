@@ -124,7 +124,7 @@ const consejos = computed(() => [
 
   .consejos-grid {
     grid-template-columns: 1fr;
-    padding: $espacio-pequeno;
+    padding: 10px;
   }
 }
 </style>

@@ -427,7 +427,7 @@ const closeDialog = () => {
   }
 
   .text-content {
-    padding: 0 15px;
+    padding: 0 25px;
   }
 
   .content-section {
