@@ -39,6 +39,10 @@
                 @mousemove="doDrag"
                 @mouseup="stopDrag"
                 @mouseleave="stopDrag"
+                @touchstart="startDrag"
+                @touchmove="doDrag"
+                @touchend="stopDrag"
+                @touchcancel="stopDrag"
                 @click="handleImageClick"
               >
                 <img 
@@ -126,7 +130,30 @@ const isDragging = ref(false)
 const startPosition = ref({ x: 0, y: 0 })
 const hasMoved = ref(false)
 
-const handleImageClick = (event: MouseEvent) => {
+// Función para obtener las coordenadas del evento (mouse o touch)
+const getEventCoordinates = (event: MouseEvent | TouchEvent) => {
+  if (event.type.startsWith('touch')) {
+    const touchEvent = event as TouchEvent
+    const touch = touchEvent.touches[0] || touchEvent.changedTouches[0]
+    return { x: touch.clientX, y: touch.clientY }
+  } else {
+    const mouseEvent = event as MouseEvent
+    return { x: mouseEvent.clientX, y: mouseEvent.clientY }
+  }
+}
+
+// Función para verificar si el evento está activo (botón presionado o touch activo)
+const isEventActive = (event: MouseEvent | TouchEvent) => {
+  if (event.type.startsWith('touch')) {
+    const touchEvent = event as TouchEvent
+    return touchEvent.touches.length > 0
+  } else {
+    const mouseEvent = event as MouseEvent
+    return mouseEvent.buttons === 1
+  }
+}
+
+const handleImageClick = (event: MouseEvent | TouchEvent) => {
   // Si estábamos arrastrando, no consideramos esto como un click
   if (hasMoved.value) {
     hasMoved.value = false
@@ -135,9 +162,10 @@ const handleImageClick = (event: MouseEvent) => {
 
   // Si no está zoomeado, hacer zoom
   if (!isZoomedIn.value) {
+    const coordinates = getEventCoordinates(event)
     const rect = (event.target as HTMLElement).getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
+    const x = coordinates.x - rect.left
+    const y = coordinates.y - rect.top
     
     const centerX = (x / rect.width) * 100
     const centerY = (y / rect.height) * 100
@@ -154,22 +182,26 @@ const handleImageClick = (event: MouseEvent) => {
   }
 }
 
-const startDrag = (event: MouseEvent) => {
-  if (isZoomedIn.value && event.buttons === 1) { // Verificar que el botón izquierdo está presionado
+const startDrag = (event: MouseEvent | TouchEvent) => {
+  if (isZoomedIn.value && isEventActive(event)) {
     isDragging.value = true
     hasMoved.value = false
+    
+    const coordinates = getEventCoordinates(event)
     startPosition.value = {
-      x: event.clientX - transform.value.x,
-      y: event.clientY - transform.value.y
+      x: coordinates.x - transform.value.x,
+      y: coordinates.y - transform.value.y
     }
+    
     event.preventDefault() // Prevenir comportamiento por defecto
   }
 }
 
-const doDrag = (event: MouseEvent) => {
-  if (isDragging.value && isZoomedIn.value && event.buttons === 1) { // Solo si el botón está presionado
-    const deltaX = Math.abs(event.clientX - (startPosition.value.x + transform.value.x))
-    const deltaY = Math.abs(event.clientY - (startPosition.value.y + transform.value.y))
+const doDrag = (event: MouseEvent | TouchEvent) => {
+  if (isDragging.value && isZoomedIn.value && isEventActive(event)) {
+    const coordinates = getEventCoordinates(event)
+    const deltaX = Math.abs(coordinates.x - (startPosition.value.x + transform.value.x))
+    const deltaY = Math.abs(coordinates.y - (startPosition.value.y + transform.value.y))
     
     if (deltaX > 5 || deltaY > 5) {
       hasMoved.value = true
@@ -186,8 +218,8 @@ const doDrag = (event: MouseEvent) => {
       const maxY = (imageRect.height * (transform.value.scale - 1)) / 2
 
       // Calcular la nueva posición limitada
-      const newX = event.clientX - startPosition.value.x
-      const newY = event.clientY - startPosition.value.y
+      const newX = coordinates.x - startPosition.value.x
+      const newY = coordinates.y - startPosition.value.y
 
       transform.value = {
         ...transform.value,
@@ -197,8 +229,8 @@ const doDrag = (event: MouseEvent) => {
     }
 
     event.preventDefault() // Prevenir comportamiento por defecto
-  } else if (isDragging.value) {
-    // Si el botón no está presionado pero estábamos arrastrando, detener
+  } else if (isDragging.value && !isEventActive(event)) {
+    // Si no hay interacción activa pero estábamos arrastrando, detener
     stopDrag()
   }
 }

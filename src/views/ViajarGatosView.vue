@@ -39,6 +39,9 @@
                 @mousemove="doDrag"
                 @mouseup="stopDrag"
                 @mouseleave="stopDrag"
+                @touchstart="startTouch"
+                @touchmove="doTouch"
+                @touchend="stopTouch"
                 @click="handleImageClick"
               >
                 <img 
@@ -120,16 +123,37 @@ const isDragging = ref(false)
 const startPosition = ref({ x: 0, y: 0 })
 const hasMoved = ref(false)
 
-const handleImageClick = (event: MouseEvent) => {
+// Función unificada para obtener coordenadas tanto de mouse como de touch
+const getEventCoordinates = (event: MouseEvent | TouchEvent) => {
+  if (event instanceof TouchEvent) {
+    return {
+      clientX: event.touches[0]?.clientX || event.changedTouches[0]?.clientX || 0,
+      clientY: event.touches[0]?.clientY || event.changedTouches[0]?.clientY || 0
+    }
+  }
+  return {
+    clientX: event.clientX,
+    clientY: event.clientY
+  }
+}
+
+// Función unificada para obtener el rect del target
+const getTargetRect = (event: MouseEvent | TouchEvent) => {
+  const target = event.target as HTMLElement
+  return target.getBoundingClientRect()
+}
+
+const handleImageClick = (event: MouseEvent | TouchEvent) => {
   if (hasMoved.value) {
     hasMoved.value = false
     return
   }
 
   if (!isZoomedIn.value) {
-    const rect = (event.target as HTMLElement).getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
+    const rect = getTargetRect(event)
+    const coords = getEventCoordinates(event)
+    const x = coords.clientX - rect.left
+    const y = coords.clientY - rect.top
     
     const centerX = (x / rect.width) * 100
     const centerY = (y / rect.height) * 100
@@ -157,43 +181,77 @@ const startDrag = (event: MouseEvent) => {
   }
 }
 
+// Nueva función para manejar touch start
+const startTouch = (event: TouchEvent) => {
+  if (isZoomedIn.value && event.touches.length === 1) {
+    isDragging.value = true
+    hasMoved.value = false
+    const coords = getEventCoordinates(event)
+    startPosition.value = {
+      x: coords.clientX - transform.value.x,
+      y: coords.clientY - transform.value.y
+    }
+    event.preventDefault()
+  }
+}
+
 const doDrag = (event: MouseEvent) => {
   if (isDragging.value && isZoomedIn.value && event.buttons === 1) {
-    const deltaX = Math.abs(event.clientX - (startPosition.value.x + transform.value.x))
-    const deltaY = Math.abs(event.clientY - (startPosition.value.y + transform.value.y))
-    
-    if (deltaX > 5 || deltaY > 5) {
-      hasMoved.value = true
-    }
-
-    // Obtener el contenedor y la imagen
-    const container = event.currentTarget as HTMLElement
-    const image = container.querySelector('.zoomed-image') as HTMLElement
-
-    if (container && image) {
-      // Calcular los límites basados en el tamaño de la imagen y el zoom
-      const imageRect = image.getBoundingClientRect()
-      const maxX = (imageRect.width * (transform.value.scale - 1)) / 2
-      const maxY = (imageRect.height * (transform.value.scale - 1)) / 2
-
-      // Calcular la nueva posición limitada
-      const newX = event.clientX - startPosition.value.x
-      const newY = event.clientY - startPosition.value.y
-
-      transform.value = {
-        ...transform.value,
-        x: Math.max(Math.min(newX, maxX), -maxX),
-        y: Math.max(Math.min(newY, maxY), -maxY)
-      }
-    }
-
+    performDrag(event, event.clientX, event.clientY)
     event.preventDefault()
   } else if (isDragging.value) {
     stopDrag()
   }
 }
 
+// Nueva función para manejar touch move
+const doTouch = (event: TouchEvent) => {
+  if (isDragging.value && isZoomedIn.value && event.touches.length === 1) {
+    const coords = getEventCoordinates(event)
+    performDrag(event, coords.clientX, coords.clientY)
+    event.preventDefault()
+  } else if (isDragging.value) {
+    stopTouch()
+  }
+}
+
+// Función unificada para realizar el arrastre
+const performDrag = (event: MouseEvent | TouchEvent, clientX: number, clientY: number) => {
+  const deltaX = Math.abs(clientX - (startPosition.value.x + transform.value.x))
+  const deltaY = Math.abs(clientY - (startPosition.value.y + transform.value.y))
+  
+  if (deltaX > 5 || deltaY > 5) {
+    hasMoved.value = true
+  }
+
+  // Obtener el contenedor y la imagen
+  const container = event.currentTarget as HTMLElement
+  const image = container.querySelector('.zoomed-image') as HTMLElement
+
+  if (container && image) {
+    // Calcular los límites basados en el tamaño de la imagen y el zoom
+    const imageRect = image.getBoundingClientRect()
+    const maxX = (imageRect.width * (transform.value.scale - 1)) / 2
+    const maxY = (imageRect.height * (transform.value.scale - 1)) / 2
+
+    // Calcular la nueva posición limitada
+    const newX = clientX - startPosition.value.x
+    const newY = clientY - startPosition.value.y
+
+    transform.value = {
+      ...transform.value,
+      x: Math.max(Math.min(newX, maxX), -maxX),
+      y: Math.max(Math.min(newY, maxY), -maxY)
+    }
+  }
+}
+
 const stopDrag = () => {
+  isDragging.value = false
+}
+
+// Nueva función para detener el touch
+const stopTouch = () => {
   isDragging.value = false
 }
 
