@@ -259,6 +259,26 @@ const traducciones: Traducciones = {
     viajar_gatos_destino_3: "Proporcionar lugares elevados y escondites donde pueda sentirse seguro.",
     viajar_gatos_conclusion: "Recuerda que cada gato es único y algunos pueden adaptarse mejor que otros a los viajes. Observa el comportamiento de tu gato y ajusta tus planes según sus necesidades específicas. Con paciencia y preparación, viajar con tu gato puede ser una experiencia positiva para ambos.",
 
+    // Condición Corporal
+    cuidado_basico_p1: "Tener un gato en casa es una experiencia increíble, pero también conlleva una responsabilidad. No se trata solo de darles comida y ya está. Los gatos tienen necesidades físicas, emocionales y ambientales que debemos cuidar para que estén sanos y contentos. Si estás pensando en adoptar uno o ya convives con alguno, estos son los cuidados básicos que deberías tener siempre en cuenta.",
+    cuidado_basico_alimentacion_titulo: "Alimentación y Agua.",
+    cuidado_basico_alimentacion_1: "Comida adecuada: Elige un alimento de calidad, adaptado a su edad (gatito, adulto o senior) y estado (esterilizado, con sobrepeso, etc.). Evita las dietas caseras sin supervisión veterinaria, ya que pueden carecer de nutrientes esenciales como la taurina.",
+    cuidado_basico_alimentacion_2: "Agua fresca siempre disponible: Los gatos son sensibles al agua estancada. Cámbiala a diario y considera usar fuentes de agua para estimular su consumo.",
+    cuidado_basico_higiene_titulo: "Higiene y Arenero.",
+    cuidado_basico_higiene_1: "Caja de arena limpia: Colócala en un lugar tranquilo y límpiala con regularidad. Algunos gatos prefieren areneros cubiertos, pero otros no; observa sus preferencias.",
+    cuidado_basico_higiene_2: "Cepillado regular: Especialmente en gatos de pelo largo, para evitar nudos y bolas de pelo. Durante las épocas de muda, aumenta la frecuencia del cepillado.",
+    cuidado_basico_entorno_seguro_titulo: "Entorno Seguro y Estimulante.",
+    cuidado_basico_entorno_seguro_1: "Espacios verticales y escondites: Proporciona rascadores, estanterías o muebles donde pueda trepar y observar su entorno.",
+    cuidado_basico_entorno_seguro_2: "Juguetes y enriquecimiento: Ofrece juguetes variados y cambia su disposición regularmente para mantener su interés.",
+    cuidado_basico_salud_titulo: "Salud y Veterinario.",
+    cuidado_basico_salud_1: "Revisiones periódicas: Lleva a tu gato al veterinario al menos una vez al año para chequeos generales y vacunaciones.",
+    cuidado_basico_salud_2: "Desparasitación y vacunas: Sigue el calendario recomendado por tu veterinario para prevenir enfermedades comunes.",
+    cuidado_basico_salud_3: "Esterilización o castración: Es una decisión responsable que ayuda a prevenir camadas no deseadas, reduce el riesgo de enfermedades como infecciones uterinas o tumores mamarios en hembras, y disminuye el marcaje o conductas territoriales en machos. Además, muchos gatos esterilizados viven más y con mejor calidad de vida.",
+    cuidado_basico_seguridad_titulo: "Seguridad en el Hogar",
+    cuidado_basico_seguridad_1: "Evita peligros: Asegura ventanas y balcones para prevenir caídas. Guarda productos tóxicos y objetos pequeños que pueda ingerir.",
+    cuidado_basico_seguridad_2: "Plantas seguras: Algunas plantas son tóxicas para los gatos; infórmate y retira las peligrosas de su alcance.",
+    cuidado_basico_conclusion: "Con estos cuidados básicos, tu gato tendrá una vida saludable y feliz a tu lado. Si necesitas más información o asesoramiento específico, no dudes en consultar con un veterinario o especialista en comportamiento felino.",
+
     // Presentación de un bebé a tu gato
     presentacion_bebe_p1: "La llegada de un bebé a casa cambia muchas cosas, y eso incluye la vida de nuestro gato. Los gatos son muy sensibles a los cambios, así que si queremos que se adapten bien, lo mejor es prepararlo todo con tiempo y con sentido común.",
     presentacion_bebe_preparacion_p1: "Antes de que nazca el bebé, hay algunas cosas que podemos hacer:",

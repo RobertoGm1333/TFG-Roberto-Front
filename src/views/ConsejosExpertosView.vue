@@ -22,7 +22,7 @@ const consejos = computed(() => [
     imagen: '../../Images/consejos/cuidado-basico.jpg',
     titulo: t('cuidado_basico_titulo'),
     descripcion: t('cuidado_basico_descripcion'),
-    
+    ruta: '/cuidado-basico'
   },
   {
     imagen: '../../Images/consejos/controlar-reproduccion.png',

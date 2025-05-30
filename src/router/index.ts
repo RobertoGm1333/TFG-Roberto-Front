@@ -15,6 +15,7 @@ import ConsejosExpertos from '@/views/ConsejosExpertosView.vue'
 import CondicionCorporal from '@/views/CondicionCorporalView.vue'
 import PresentacionBebe from '@/views/PresentacionBebeView.vue'
 import ViajarGatos from '@/views/ViajarGatosView.vue'
+import CuidadoBasico from '@/views/CuidadoBasicoView.vue'
 import ControlReproduccion from '@/views/ControlReproduccionView.vue'
 import GestionUsuariosView from '../views/GestionUsuariosView.vue'
 import { useAutenticacion } from '@/stores/Autentificacion'
@@ -57,6 +58,11 @@ const router = createRouter({
       path: "/Consejos-Expertos",
       name: "Consejos-Expertos",
       component: ConsejosExpertos,
+    },
+    {
+      path: "/Cuidado-Basico",
+      name: "Cuidado-Basico",
+      component: CuidadoBasico,
     },
     {
       path: "/Condicion-Corporal",
