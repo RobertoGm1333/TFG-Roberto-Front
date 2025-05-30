@@ -39,7 +39,8 @@ const consejos = computed(() => [
   {
     imagen: '../../Images/consejos/otros-animales.png',
     titulo: t('otros_animales_titulo'),
-    descripcion: t('otros_animales_descripcion')
+    descripcion: t('otros_animales_descripcion'),
+    ruta: '/convivencia-animales'
   }
 ])
 </script>

@@ -2,15 +2,15 @@
     <div class="cuidado-basico-view">
       <!-- Banner section -->
       <div class="banner" :style="{ backgroundImage: 'url(../../Images/consejos/background-banner.png)' }">
-        <h1>{{ t('cuidado_basico_titulo') }}</h1>
+        <h1>{{ t('otros_animales_titulo') }}</h1>
       </div>
   
       <!-- Content section -->
       <div class="content">
         <div class="content-container">
           <img 
-            src="../../Images/consejos/cuidado-basico.jpg" 
-            alt="Consejos basicos de cuidado" 
+            src="../../Images/consejos/otros-animales.png" 
+            alt="otros_animales con otros animales" 
             class="main-image" 
             @click="showZoomDialog = true"
           />
@@ -42,7 +42,7 @@
                   @click="handleImageClick"
                 >
                   <img 
-                    src="../../Images/consejos/cuidado-basico.jpg" 
+                    src="../../Images/consejos/otros-animales.png" 
                     alt="Cuidado básico en mascotas" 
                     class="zoomed-image"
                     :class="{ 
@@ -62,53 +62,36 @@
           
           <div class="text-content">
             <section class="content-section">
-              <p>{{ t('cuidado_basico_p1') }}</p>
+              <p>{{ t('otros_animales_p1') }}</p>
+              <p>{{ t('otros_animales_p2') }}</p>
             </section>
     
             <section class="content-section">
-              <p class="destacado">{{ t('cuidado_basico_alimentacion_titulo') }}</p>
-              <ul>
-                <li>{{ t('cuidado_basico_alimentacion_1') }}</li>
-                <li>{{ t('cuidado_basico_alimentacion_2') }}</li>
-              </ul>
+              <p class="destacado">{{ t('otros_animales_posible_titulo') }}</p>
+            <p>{{ t('otros_animales_posible_p') }}</p>
             </section>
 
             <section class="content-section">
-              <p class="destacado">{{ t('cuidado_basico_higiene_titulo') }}</p>
-              <ul>
-                <li>{{ t('cuidado_basico_higiene_1') }}</li>
-                <li>{{ t('cuidado_basico_higiene_2') }}</li>
-              </ul>
+              <p class="destacado">{{ t('otros_animales_presentaciones_titulo') }}</p>
+              <p>{{ t('otros_animales_presentaciones_p') }}</p>
             </section>
 
             <section class="content-section">
-              <p class="destacado">{{ t('cuidado_basico_entorno_seguro_titulo') }}</p>
-              <ul>
-                <li>{{ t('cuidado_basico_entorno_seguro_1') }}</li>
-                <li>{{ t('cuidado_basico_entorno_seguro_2') }}</li>
-              </ul>
+              <p class="destacado">{{ t('otros_animales_rutinas_titulo') }}</p>
+              <p>{{ t('otros_animales_rutinas_p') }}</p>
             </section>
 
             <section class="content-section">
-              <p class="destacado">{{ t('cuidado_basico_salud_titulo') }}</p>
-              <ul>
-                <li>{{ t('cuidado_basico_salud_1') }}</li>
-                <li>{{ t('cuidado_basico_salud_2') }}</li>
-                <li>{{ t('cuidado_basico_salud_3') }}</li>
-              </ul>
+              <p class="destacado">{{ t('otros_animales_senales_mal_titulo') }}</p>
+              <p>{{ t('otros_animales_senales_mal_p') }}</p>
             </section>
-              
-            <section class="content-section">
-              <p class="destacado">{{ t('cuidado_basico_seguridad_titulo') }}</p>
-              <ul>
-                <li>{{ t('cuidado_basico_seguridad_1') }}</li>
-                <li>{{ t('cuidado_basico_seguridad_2') }}</li>
-              </ul>
-            </section>
-  
 
             <section class="content-section">
-              <p >{{ t('cuidado_basico_conclusion') }}</p>
+              <p class="destacado">{{ t('otros_animales_no_funciona_titulo') }}</p>
+              <p>{{ t('otros_animales_no_funciona_p') }}</p>
+            </section>
+            <section class="content-section">
+              <p >{{ t('otros_animales_conclusion') }}</p>
             </section>
           </div>
         </div>

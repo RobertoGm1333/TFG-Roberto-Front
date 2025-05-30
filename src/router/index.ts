@@ -16,6 +16,7 @@ import CondicionCorporal from '@/views/CondicionCorporalView.vue'
 import PresentacionBebe from '@/views/PresentacionBebeView.vue'
 import ViajarGatos from '@/views/ViajarGatosView.vue'
 import CuidadoBasico from '@/views/CuidadoBasicoView.vue'
+import ConvivenciaAnimales from '@/views/ConvivenciaAnimalesView.vue'
 import ControlReproduccion from '@/views/ControlReproduccionView.vue'
 import GestionUsuariosView from '../views/GestionUsuariosView.vue'
 import { useAutenticacion } from '@/stores/Autentificacion'
@@ -83,6 +84,11 @@ const router = createRouter({
       path: "/Control-Reproduccion",
       name: "Control-Reproduccion",
       component: ControlReproduccion,
+    },
+    {
+      path: "/Convivencia-Animales",
+      name: "Convivencia-Animales",
+      component: ConvivenciaAnimales,
     },
     {
       path: '/perfil',

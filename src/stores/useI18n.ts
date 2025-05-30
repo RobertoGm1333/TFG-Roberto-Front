@@ -302,6 +302,21 @@ const traducciones: Traducciones = {
     presentacion_bebe_cosas_evitar_4: "Permitir que acceda a la cuna sin control. No por miedo, sino por seguridad e higiene. Es mejor tener barreras o mosquiteras y ofrecerle otros espacios cómodos.",
     presentacion_bebe_conclusion: "Cada gato es un mundo. Algunos se adaptan rápido y otros necesitan más tiempo. Lo importante es no agobiarlo, respetar su espacio y tener paciencia. Si se hace bien, tu gato puede convivir sin problema con el bebé y formar parte de esta nueva etapa en familia.",
 
+    // Convivencia con otros animales
+    otros_animales_p1: "Tener varios animales en casa puede ser muy enriquecedor, pero también requiere paciencia y estrategia, sobre todo si uno de ellos es un gato. Los felinos son animales de costumbres y no siempre aceptan bien compartir su espacio, especialmente si no se hace una introducción adecuada.",
+    otros_animales_p2: "Cada caso es único y dependerá del carácter del gato y del otro animal (sea otro gato, un perro, un conejo, etc.). Lo importante es no forzar nada, respetar los tiempos y hacer las cosas poco a poco.",
+    otros_animales_posible_titulo: "¿Pueden convivir los gatos con otros animales?",
+    otros_animales_posible_p: "Sí, pero no siempre es fácil. Los gatos son territoriales y no todos aceptan de buenas a primeras compartir espacio con otro animal, ya sea un perro, otro gato o cualquier especie. La clave está en hacerlo todo poco a poco, sin forzar, y respetando los tiempos de cada uno. No se trata solo de que se toleren, sino de crear una convivencia tranquila y sin estrés.",
+    otros_animales_presentaciones_titulo: "Cómo hacer las presentaciones",
+    otros_animales_presentaciones_p: "Las presentaciones deben ser graduales. Empieza dejando que se huelan a través de una puerta cerrada o usando mantas con su olor. Luego, haz encuentros breves con supervisión, sin contacto directo al principio. Usa premios y refuerzos positivos si ambos animales se mantienen tranquilos. No los juntes de golpe ni los pongas frente a frente sin preparación.",
+    otros_animales_rutinas_titulo: "Espacio y rutinas para cada uno",
+    otros_animales_rutinas_p: "Durante los primeros días (o semanas), cada animal debe tener su propio espacio: su cama, su comida, su zona tranquila. En el caso de los gatos, el arenero debe estar en un sitio al que solo él tenga acceso. Esto evita conflictos y le da al gato seguridad. Además, mantener sus rutinas habituales (horarios de comida, juego, descanso) le ayuda a adaptarse mejor.",
+    otros_animales_senales_mal_titulo: "Señales de que algo va mal",
+    otros_animales_senales_mal_p: "Bufidos, esconderse, mirar fijamente al otro animal con la cola baja, o agresividad directa son señales de que el gato está incómodo. Si ves alguna de estas actitudes, separa a los animales y vuelve a intentarlo más adelante. La adaptación puede tardar días o semanas, y cada gato tiene su ritmo. No todos terminarán siendo amigos, pero al menos deben poder coexistir sin tensión.",
+    otros_animales_no_funciona_titulo: "Si la convivencia no funciona",
+    otros_animales_no_funciona_p: "Si después de varios intentos sigue habiendo tensión o peleas, lo mejor es pedir ayuda a un veterinario o a un especialista en comportamiento felino. A veces, solo hace falta ajustar el entorno o la forma de presentar a los animales. Y en otras ocasiones, simplemente hay que aceptar que no todos los gatos quieren compartir su casa. Lo importante es no forzar algo que claramente no está funcionando.",
+    otros_animales_conclusion: "En conclusión, convivir con varios animales es posible, pero requiere paciencia, observación y respeto. No todos los gatos reaccionan igual, y forzar la relación casi nunca da buen resultado. Si haces las cosas con calma y cuidando los detalles, puedes conseguir una convivencia estable y sin estrés para todos. Y si algo se complica, pedir ayuda profesional a tiempo puede marcar la diferencia.",
+
     // Consejos Expertos
     consejos_descripcion: "Nuestros expertos comparten su conocimiento para ayudarte a brindar la mejor vida posible a tu compañero felino.",
     consejo_condicion_titulo: "Condición corporal en gatos",
@@ -615,6 +630,20 @@ const traducciones: Traducciones = {
     cuidado_basico_seguridad_2: "Safe plants: Some plants are toxic to cats; do your research and remove harmful ones from their reach.",
     cuidado_basico_conclusion: "With these basic care tips, your cat can enjoy a healthy and happy life by your side. If you need more information or specific advice, don’t hesitate to consult a vet or feline behavior expert.",
 
+    // Convivencia con otros animales
+    otros_animales_p1: "Having multiple animals at home can be very rewarding, but it also requires patience and strategy, especially if one of them is a cat. Cats are creatures of habit and don't always accept sharing their space, particularly if the introduction isn't done properly.",
+    otros_animales_p2: "Each case is unique and depends on the personality of the cat and the other animal (whether it's another cat, a dog, a rabbit, etc.). The key is not to force anything, respect their timing, and take things step by step.",
+    otros_animales_posible_titulo: "Can cats live with other animals?",
+    otros_animales_posible_p: "Yes, but it’s not always easy. Cats are territorial and not all of them are okay with sharing space with another animal right away, whether it's a dog, another cat, or any other species. The key is to go slowly, without forcing things, and respecting each animal's pace. It's not just about tolerating each other — the goal is to create a calm and stress-free coexistence.",
+    otros_animales_presentaciones_titulo: "How to do introductions",
+    otros_animales_presentaciones_p: "Introductions should be gradual. Start by letting them smell each other through a closed door or using blankets with their scent. Then move on to short, supervised meetings, without direct contact at first. Use treats and positive reinforcement if both animals remain calm. Don’t put them face-to-face without preparation.",
+    otros_animales_rutinas_titulo: "Space and routines for each one",
+    otros_animales_rutinas_p: "In the first days (or weeks), each animal should have its own space: bed, food, and a quiet area. For cats, the litter box should be in a spot that only they can access. This helps avoid conflict and gives the cat a sense of security. Also, keeping their usual routines (feeding, playtime, rest) helps them adapt better.",
+    otros_animales_senales_mal_titulo: "Signs that something may be worng",
+    otros_animales_senales_mal_p: "Hissing, hiding, staring at the other animal with a lowered tail, or direct aggression are signs the cat is uncomfortable. If you notice any of these behaviors, separate the animals and try again later. Adaptation can take days or weeks, and every cat has its own pace. Not all will become friends, but they should at least be able to coexist peacefully.",
+    otros_animales_no_funciona_titulo: "If coexistence doesn't work",
+    otros_animales_no_funciona_p: "If after several attempts there’s still tension or fights, it’s best to get help from a vet or a feline behavior specialist. Sometimes you just need to adjust the environment or how the introductions are done. And other times, you have to accept that not all cats want to share their home. What matters is not forcing something that clearly isn’t working.",
+    otros_animales_conclusion: "In conclusion, living with multiple animals is possible, but it takes patience, observation, and respect. Not all cats react the same way, and forcing the relationship almost never works. If you go slowly and pay attention to the details, you can achieve stable and stress-free coexistence. And if things get complicated, asking for professional help early can make all the difference.",
 
     // Traveling with cats
     viajar_gatos_titulo: "Tips for Traveling with Cats",
