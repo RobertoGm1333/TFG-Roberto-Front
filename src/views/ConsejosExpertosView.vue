@@ -16,12 +16,13 @@ const consejos = computed(() => [
     imagen: '../../Images/consejos/viaje-gato.png',
     titulo: t('consejo_viaje_titulo'),
     descripcion: t('consejo_viaje_descripcion'),
-    ruta: '/Viajar-Gatos'
+    ruta: '/viajar-gatos'
   },
   {
     imagen: '../../Images/consejos/cuidado-basico.jpg',
     titulo: t('cuidado_basico_titulo'),
-    descripcion: t('cuidado_basico_descripcion')
+    descripcion: t('cuidado_basico_descripcion'),
+    
   },
   {
     imagen: '../../Images/consejos/controlar-reproduccion.png',
@@ -32,7 +33,8 @@ const consejos = computed(() => [
   {
     imagen: '../../Images/consejos/presentacion-bebe.png',
     titulo: t('presentacion_bebe_titulo'),
-    descripcion: t('presentacion_bebe_descripcion')
+    descripcion: t('presentacion_bebe_descripcion'),
+    ruta: '/presentacion-bebe'
   },
   {
     imagen: '../../Images/consejos/otros-animales.png',

@@ -13,6 +13,7 @@ import GestionGatosView from '@/views/GestionGatosView.vue'
 import GestionProtectorasView from '../views/GestionProtectorasView.vue'
 import ConsejosExpertos from '@/views/ConsejosExpertosView.vue'
 import CondicionCorporal from '@/views/CondicionCorporalView.vue'
+import PresentacionBebe from '@/views/PresentacionBebeView.vue'
 import ViajarGatos from '@/views/ViajarGatosView.vue'
 import ControlReproduccion from '@/views/ControlReproduccionView.vue'
 import GestionUsuariosView from '../views/GestionUsuariosView.vue'
@@ -61,6 +62,11 @@ const router = createRouter({
       path: "/Condicion-Corporal",
       name: "Condicion-Corporal",
       component: CondicionCorporal,
+    },
+    {
+      path: "/Presentacion-Bebe",
+      name: "Presentacion-Bebe",
+      component: PresentacionBebe,
     },
     {
       path: "/Viajar-Gatos",
