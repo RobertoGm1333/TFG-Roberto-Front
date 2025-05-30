@@ -259,7 +259,7 @@ const traducciones: Traducciones = {
     viajar_gatos_destino_3: "Proporcionar lugares elevados y escondites donde pueda sentirse seguro.",
     viajar_gatos_conclusion: "Recuerda que cada gato es único y algunos pueden adaptarse mejor que otros a los viajes. Observa el comportamiento de tu gato y ajusta tus planes según sus necesidades específicas. Con paciencia y preparación, viajar con tu gato puede ser una experiencia positiva para ambos.",
 
-    // Condición Corporal
+    // Cuidado Básico
     cuidado_basico_p1: "Tener un gato en casa es una experiencia increíble, pero también conlleva una responsabilidad. No se trata solo de darles comida y ya está. Los gatos tienen necesidades físicas, emocionales y ambientales que debemos cuidar para que estén sanos y contentos. Si estás pensando en adoptar uno o ya convives con alguno, estos son los cuidados básicos que deberías tener siempre en cuenta.",
     cuidado_basico_alimentacion_titulo: "Alimentación y Agua.",
     cuidado_basico_alimentacion_1: "Comida adecuada: Elige un alimento de calidad, adaptado a su edad (gatito, adulto o senior) y estado (esterilizado, con sobrepeso, etc.). Evita las dietas caseras sin supervisión veterinaria, ya que pueden carecer de nutrientes esenciales como la taurina.",
@@ -594,6 +594,27 @@ const traducciones: Traducciones = {
     presentacion_bebe_cosas_evitar_3: "If we aisle the feline completly it can feel moved out or confused.",
     presentacion_bebe_cosas_evitar_4: "Let it access the crib without any regulations. Not because of fear, rather because of safe and hygine reasons. Its better to have barriers or offer it other comfortable corners.",
     presentacion_bebe_conclusion: "Every cat is a whole different world. Some adapt quick and others need more time. The most important thing to do is not to oversaturate it, respect it's space and have patience. If it goes well, your cat can coexist no problem with the baby and form part of this new stage in the family.",
+
+    // Basic Care
+    cuidado_basico_p1: "Having a cat at home is an amazing experience, but it also comes with responsibility. It’s not just about feeding them and that’s it. Cats have physical, emotional, and environmental needs that we must take care of to keep them healthy and happy. If you're thinking of adopting one or already live with one, these are the basic care tips you should always keep in mind.",
+    cuidado_basico_alimentacion_titulo: "Food and Water.",
+    cuidado_basico_alimentacion_1: "Proper food: Choose a high-quality food, appropriate for their age (kitten, adult, or senior) and condition (neutered, overweight, etc.). Avoid homemade diets without veterinary supervision, as they may lack essential nutrients like taurine.",
+    cuidado_basico_alimentacion_2: "Fresh water always available: Cats are sensitive to stagnant water. Change it daily and consider using water fountains to encourage drinking.",
+    cuidado_basico_higiene_titulo: "Hygiene and Litter Box.",
+    cuidado_basico_higiene_1: "Clean litter box: Place it in a quiet spot and clean it regularly. Some cats prefer covered litter boxes, but others don’t — observe their preferences.",
+    cuidado_basico_higiene_2: "Regular brushing: Especially for long-haired cats, to avoid tangles and hairballs. During shedding seasons, increase the frequency of brushing.",
+    cuidado_basico_entorno_seguro_titulo: "Safe and Stimulating Environment.",
+    cuidado_basico_entorno_seguro_1: "Vertical spaces and hiding spots: Provide scratching posts, shelves, or furniture where they can climb and observe their surroundings.",
+    cuidado_basico_entorno_seguro_2: "Toys and enrichment: Offer a variety of toys and change their placement regularly to keep them engaged.",
+    cuidado_basico_salud_titulo: "Health and Vet.",
+    cuidado_basico_salud_1: "Regular check-ups: Take your cat to the vet at least once a year for general exams and vaccinations.",
+    cuidado_basico_salud_2: "Deworming and vaccines: Follow the schedule recommended by your vet to prevent common diseases.",
+    cuidado_basico_salud_3: "Spaying or neutering: It’s a responsible choice that helps prevent unwanted litters, reduces the risk of illnesses like uterine infections or mammary tumors in females, and lowers marking or territorial behavior in males. Also, many neutered cats live longer and healthier lives.",
+    cuidado_basico_seguridad_titulo: "Home Safety",
+    cuidado_basico_seguridad_1: "Avoid dangers: Secure windows and balconies to prevent falls. Store toxic products and small items they might swallow.",
+    cuidado_basico_seguridad_2: "Safe plants: Some plants are toxic to cats; do your research and remove harmful ones from their reach.",
+    cuidado_basico_conclusion: "With these basic care tips, your cat can enjoy a healthy and happy life by your side. If you need more information or specific advice, don’t hesitate to consult a vet or feline behavior expert.",
+
 
     // Traveling with cats
     viajar_gatos_titulo: "Tips for Traveling with Cats",
