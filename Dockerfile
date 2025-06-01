@@ -1,26 +1,25 @@
-# Build stage
-FROM node:20-alpine as build-stage
+# Version de node que si furula
+FROM node:18 as construccion
 
-# Set working directory
 WORKDIR /app
 
-# Copy 
+# Pillo archivos del json
+COPY package*.json ./
+
+# Instalo dependencias
+RUN npm i
+
+# Copio todos los archivos de la raiz (primer punto) al directorio actual (segundo punto),
 COPY . .
 
-# Install dependencies
-RUN npm install
+# Modo build porque sino no tira
+RUN npm run build 
 
-# Build the app sin comprobación de tipos
-RUN npm run build-only
+# Etapa de producción,
+FROM nginx:alpine as produccion
 
-# Production stage
-FROM nginx:stable-alpine as production-stage
-
-# Copy built files from build stage to nginx serve directory
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-# Expose port 80
+# Puerto de la derecha en el docker run, cuando se le añada certificado ssl habrá q cambiarlo al 443,
 EXPOSE 80
 
-# Start nginx
+# Comando para iniciar el nginx,
 CMD ["nginx", "-g", "daemon off;"]
