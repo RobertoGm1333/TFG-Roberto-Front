@@ -44,7 +44,7 @@
                 @touchend="stopDrag"
                 @touchcancel="stopDrag"
                 @click="handleImageClick"
-              >
+              > 
                 <img 
                   src="../../Images/consejos/condicion-corporal.png" 
                   alt="Condición corporal en mascotas" 
