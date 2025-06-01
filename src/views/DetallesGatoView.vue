@@ -78,7 +78,7 @@ const obtenerGato = async () => {
   solicitudesGato.value = [];
 
   const id = Number(route.params.id);
-
+ 
   if (gatosStore.gatos.length === 0) {
     await gatosStore.fetchGato();
   }
