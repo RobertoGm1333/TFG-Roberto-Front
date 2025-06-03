@@ -61,7 +61,7 @@ const { t } = useI18n()
   justify-content: center;
   font-size: 3.5rem;
   font-weight: bold;
-  color: #ddd;
+  color: #9a9a9a;
   gap: $espacio-pequeno;
 }
 
@@ -126,6 +126,10 @@ const { t } = useI18n()
     background: rgba(255, 85, 0, 0.1);
     color: $color-blanco;
   }
+  .logo-container {
+  color: #ddd;
+}
+
 }
 
 @media (min-width: 1010px) {

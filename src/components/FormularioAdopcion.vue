@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useAutenticacion } from '@/stores/Autentificacion';
 import { useSolicitudesAdopcionStore } from '@/stores/solicitudesAdopcion';
 
@@ -29,12 +29,16 @@ onBeforeUnmount(() => {
 const autenticacion = useAutenticacion();
 const solicitudesStore = useSolicitudesAdopcionStore();
 
+// Estado del wizard
+const pasoActual = ref(1);
+const totalPasos = 4;
+
 const reglas = {
   required: (v: any) => !!v || 'Este campo es obligatorio',
   numero: (v: number) => v > 0 || 'El número debe ser positivo',
-  email: (v: string) => /.+@.+\\..+/.test(v) || 'El email debe ser válido',
-  telefono: (v: string) => /^\\d{9}$/.test(v) || 'El teléfono debe tener 9 dígitos',
-  soloNumeros: (v: string) => !v || /^\\d+$/.test(v) || 'Solo se permiten números'
+  email: (v: string) => /.+@.+\..+/.test(v) || 'El email debe ser válido',
+  telefono: (v: string) => /^\d{9}$/.test(v) || 'El teléfono debe tener 9 dígitos',
+  soloNumeros: (v: string) => !v || /^\d+$/.test(v) || 'Solo se permiten números'
 };
 
 // Valores por defecto para los campos
@@ -68,6 +72,110 @@ const form = ref<any>(null);
 const enviando = ref(false);
 const error = ref('');
 
+// Títulos de los pasos
+const titulosPasos = [
+  'Información Personal',
+  'Información de Vivienda',
+  'Experiencia con Mascotas',
+  'Compromiso y Responsabilidad'
+];
+
+// Computed para mostrar el progreso
+const progreso = computed(() => (pasoActual.value / totalPasos) * 100);
+
+// Funciones de navegación
+async function siguientePaso() {
+  const valido = await validarPasoActual();
+  if (valido && pasoActual.value < totalPasos) {
+    pasoActual.value++;
+  }
+}
+
+function pasoAnterior() {
+  if (pasoActual.value > 1) {
+    pasoActual.value--;
+  }
+}
+
+function irAPaso(paso: number) {
+  if (paso >= 1 && paso <= totalPasos) {
+    pasoActual.value = paso;
+  }
+}
+
+// Validación por pasos
+async function validarPasoActual(): Promise<boolean> {
+  if (!form.value) return false;
+  
+  error.value = '';
+  
+  // Validar campos específicos según el paso actual
+  const camposValidar = getCamposPorPaso(pasoActual.value);
+  let valid = true;
+  
+  // Verificar manualmente los campos requeridos del paso actual
+  for (const campo of camposValidar) {
+    if (campo.required && !validarCampo(campo.key, campo.validator)) {
+      valid = false;
+      break;
+    }
+  }
+  
+  if (!valid) {
+    error.value = 'Por favor, completa todos los campos obligatorios de este paso';
+    // Hacer scroll al primer error
+    setTimeout(() => {
+      const firstError = document.querySelector('.v-input.error');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
+  
+  return valid;
+}
+
+function getCamposPorPaso(paso: number) {
+  const camposPorPaso = {
+    1: [
+      { key: 'nombreCompleto', required: true, validator: (v: any) => !!v },
+      { key: 'edad', required: true, validator: (v: any) => !!v && v > 17 },
+      { key: 'direccion', required: true, validator: (v: any) => !!v },
+      { key: 'dni', required: true, validator: (v: any) => !!v && /^[0-9]{8}[A-Z]$|^[XYZ][0-9]{7}[A-Z]$/.test(v) },
+      { key: 'telefono', required: true, validator: (v: any) => !!v && /^[0-9]{9}$/.test(v) },
+      { key: 'email', required: true, validator: (v: any) => !!v && /.+@.+\..+/.test(v) }
+    ],
+    2: [
+      { key: 'tipoVivienda', required: true, validator: (v: any) => !!v },
+      { key: 'propiedadAlquiler', required: true, validator: (v: any) => !!v },
+      { key: 'permiteAnimales', required: true, validator: (v: any) => v === true },
+      { key: 'numeroPersonas', required: true, validator: (v: any) => !!v }
+    ],
+    3: [
+      { key: 'experienciaGatos', required: true, validator: (v: any) => v !== null },
+      { key: 'tieneOtrosAnimales', required: true, validator: (v: any) => v !== null },
+      { key: 'cortarUnas', required: true, validator: (v: any) => v !== null },
+      { key: 'animalesVacunadosEsterilizados', required: true, validator: (v: any) => v !== null },
+      { key: 'historialMascotas', required: true, validator: (v: any) => !!v }
+    ],
+    4: [
+      { key: 'motivacionAdopcion', required: true, validator: (v: any) => !!v },
+      { key: 'problemasComportamiento', required: true, validator: (v: any) => !!v },
+      { key: 'enfermedadesCostosas', required: true, validator: (v: any) => !!v },
+      { key: 'vacaciones', required: true, validator: (v: any) => !!v },
+      { key: 'seguimientoPostAdopcion', required: true, validator: (v: any) => v === true },
+      { key: 'visitaHogar', required: true, validator: (v: any) => v === true }
+    ]
+  };
+  
+  return camposPorPaso[paso as keyof typeof camposPorPaso] || [];
+}
+
+function validarCampo(key: string, validator: (v: any) => boolean): boolean {
+  const valor = formulario.value[key as keyof typeof formulario.value];
+  return validator(valor);
+}
+
 async function enviarSolicitud() {
   console.log("Iniciando envío de solicitud...");
   
@@ -76,15 +184,21 @@ async function enviarSolicitud() {
     return;
   }
 
-  const { valid } = await form.value.validate();
-  
-  if (!valid) {
-    error.value = 'Por favor, completa todos los campos obligatorios marcados en rojo';
-    // Hacer scroll al primer error
-    const firstError = document.querySelector('.v-input.error');
-    if (firstError) {
-      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Validar todos los pasos antes de enviar
+  let todosLospassosValidos = true;
+  for (let i = 1; i <= totalPasos; i++) {
+    const campos = getCamposPorPaso(i);
+    for (const campo of campos) {
+      if (campo.required && !validarCampo(campo.key, campo.validator)) {
+        todosLospassosValidos = false;
+        break;
+      }
     }
+    if (!todosLospassosValidos) break;
+  }
+
+  if (!todosLospassosValidos) {
+    error.value = 'Hay campos obligatorios sin completar. Revisa todos los pasos.';
     return;
   }
 
@@ -152,21 +266,52 @@ async function enviarSolicitud() {
 </script>
 
 <template>
-  <v-card class="formulario-adopcion">
-    <v-card-title class="formulario-adopcion__titulo">
+  <v-card class="formulario-adopcion-wizard">
+    <v-card-title class="formulario-adopcion-wizard__titulo">
       Solicitud de Adopción para {{ nombreGato }}
     </v-card-title>
 
-    <v-card-text class="formulario-adopcion__contenido">
+    <!-- Indicador de progreso -->
+    <div class="formulario-adopcion-wizard__progreso">
+      <v-progress-linear
+        :model-value="progreso"
+        color="primary"
+        height="4"
+        class="mb-4"
+      ></v-progress-linear>
+      
+      <!-- Stepper horizontal -->
+      <div class="formulario-adopcion-wizard__stepper">
+        <div 
+          v-for="(titulo, index) in titulosPasos" 
+          :key="index"
+          class="formulario-adopcion-wizard__step"
+          :class="{ 
+            'formulario-adopcion-wizard__step--active': pasoActual === index + 1,
+            'formulario-adopcion-wizard__step--completed': pasoActual > index + 1
+          }"
+          @click="irAPaso(index + 1)"
+        >
+          <div class="formulario-adopcion-wizard__step-number">
+            <v-icon v-if="pasoActual > index + 1" size="small">mdi-check</v-icon>
+            <span v-else>{{ index + 1 }}</span>
+          </div>
+          <span class="formulario-adopcion-wizard__step-title">{{ titulo }}</span>
+        </div>
+      </div>
+    </div>
+
+    <v-card-text class="formulario-adopcion-wizard__contenido">
       <v-form 
         ref="form"
-        @submit.prevent="enviarSolicitud"
-        class="formulario-adopcion__form"
+        @submit.prevent="pasoActual === totalPasos ? enviarSolicitud() : siguientePaso()"
+        class="formulario-adopcion-wizard__form"
         validate-on="submit"
       >
-        <!-- Información Personal -->
-        <div class="formulario-adopcion__seccion">
-          <h3>Información Personal</h3>
+        <!-- Paso 1: Información Personal -->
+        <div v-if="pasoActual === 1" class="formulario-adopcion-wizard__paso">
+          <h3 class="formulario-adopcion-wizard__paso-titulo">{{ titulosPasos[0] }}</h3>
+          
           <v-row>
             <v-col cols="12" sm="6">
               <v-text-field
@@ -241,9 +386,10 @@ async function enviarSolicitud() {
           </v-row>
         </div>
 
-        <!-- Información de Vivienda -->
-        <div class="formulario-adopcion__seccion">
-          <h3>Información de Vivienda</h3>
+        <!-- Paso 2: Información de Vivienda -->
+        <div v-if="pasoActual === 2" class="formulario-adopcion-wizard__paso">
+          <h3 class="formulario-adopcion-wizard__paso-titulo">{{ titulosPasos[1] }}</h3>
+          
           <v-row>
             <v-col cols="12" sm="6">
               <v-select
@@ -302,9 +448,9 @@ async function enviarSolicitud() {
           </v-row>
         </div>
 
-        <!-- Experiencia con Mascotas -->
-        <div class="formulario-adopcion__seccion">
-          <h3>Experiencia con Mascotas</h3>
+        <!-- Paso 3: Experiencia con Mascotas -->
+        <div v-if="pasoActual === 3" class="formulario-adopcion-wizard__paso">
+          <h3 class="formulario-adopcion-wizard__paso-titulo">{{ titulosPasos[2] }}</h3>
 
           <v-checkbox
             v-model="formulario.experienciaGatos"
@@ -342,9 +488,9 @@ async function enviarSolicitud() {
           ></v-textarea>
         </div>
 
-        <!-- Compromiso y Responsabilidad -->
-        <div class="formulario-adopcion__seccion">
-          <h3>Compromiso y Responsabilidad</h3>
+        <!-- Paso 4: Compromiso y Responsabilidad -->
+        <div v-if="pasoActual === 4" class="formulario-adopcion-wizard__paso">
+          <h3 class="formulario-adopcion-wizard__paso-titulo">{{ titulosPasos[3] }}</h3>
 
           <v-textarea
             v-model="formulario.motivacionAdopcion"
@@ -389,23 +535,48 @@ async function enviarSolicitud() {
           ></v-checkbox>
         </div>
 
-        <!-- Botones de acción -->
-        <div class="formulario-adopcion__acciones">
-          <v-btn
-            color="error"
-            variant="outlined"
-            @click="emit('cancel')"
-            :disabled="enviando"
-          >
-            Cancelar
-          </v-btn>
-          <v-btn
-            color="primary"
-            type="submit"
-            :loading="enviando"
-          >
-            Enviar solicitud
-          </v-btn>
+        <!-- Botones de navegación -->
+        <div class="formulario-adopcion-wizard__navegacion">
+          <div class="formulario-adopcion-wizard__navegacion-left">
+            <v-btn
+              color="error"
+              variant="outlined"
+              @click="emit('cancel')"
+              :disabled="enviando"
+            >
+              Cancelar
+            </v-btn>
+          </div>
+          
+          <div class="formulario-adopcion-wizard__navegacion-right">
+            <v-btn
+              v-if="pasoActual > 1"
+              variant="outlined"
+              @click="pasoAnterior"
+              :disabled="enviando"
+              class="mr-2"
+            >
+              Anterior
+            </v-btn>
+            
+            <v-btn
+              v-if="pasoActual < totalPasos"
+              color="primary"
+              @click="siguientePaso"
+              :disabled="enviando"
+            >
+              Siguiente
+            </v-btn>
+            
+            <v-btn
+              v-if="pasoActual === totalPasos"
+              color="success"
+              @click="enviarSolicitud"
+              :loading="enviando"
+            >
+              Enviar solicitud
+            </v-btn>
+          </div>
         </div>
 
         <v-alert
@@ -423,7 +594,7 @@ async function enviarSolicitud() {
 </template>
 
 <style scoped lang="scss">
-.formulario-adopcion {
+.formulario-adopcion-wizard {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -439,6 +610,93 @@ async function enviarSolicitud() {
     z-index: 1;
   }
 
+  &__progreso {
+    padding: 16px 20px 8px;
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  &__stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    gap: 8px;
+    
+    @media (max-width: 768px) {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+  }
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px 4px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 0;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &--active {
+      .formulario-adopcion-wizard__step-number {
+        background-color: $color-principal;
+        color: white;
+        border-color: $color-principal;
+      }
+      
+      .formulario-adopcion-wizard__step-title {
+        color: $color-principal;
+        font-weight: 600;
+      }
+    }
+
+    &--completed {
+      .formulario-adopcion-wizard__step-number {
+        background-color: #4caf50;
+        color: white;
+        border-color: #4caf50;
+      }
+      
+      .formulario-adopcion-wizard__step-title {
+        color: #4caf50;
+      }
+    }
+  }
+
+  &__step-number {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: white;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+  }
+
+  &__step-title {
+    font-size: 11px;
+    text-align: center;
+    color: #666;
+    line-height: 1.2;
+    word-break: break-word;
+    
+    @media (max-width: 768px) {
+      font-size: 10px;
+    }
+  }
+
   &__contenido {
     flex: 1;
     overflow-y: auto;
@@ -448,33 +706,42 @@ async function enviarSolicitud() {
   &__form {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    height: 100%;
   }
 
-  &__seccion {
+  &__paso {
+    flex: 1;
     background: #f8f8f8;
-    padding: 20px;
-    border-radius: 8px;
-    
-    h3 {
-      color: $color-principal;
-      font-size: 1.1rem;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid $color-principal;
-    }
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
   }
 
-  &__acciones {
+  &__paso-titulo {
+    color: $color-principal;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid $color-principal;
+    font-weight: 600;
+  }
+
+  &__navegacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    margin-top: auto;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    background: white;
     position: sticky;
     bottom: 0;
-    background: white;
-    padding: 16px 0;
+  }
+
+  &__navegacion-left,
+  &__navegacion-right {
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    gap: 8px;
   }
 
   :deep(.v-input.error) {
@@ -503,18 +770,63 @@ async function enviarSolicitud() {
 }
 
 @media (prefers-color-scheme: dark) {
-  .formulario-adopcion {
+  .formulario-adopcion-wizard {
     background: #272727;
     color: white;
 
-    &__seccion {
+    &__progreso {
+      background: #272727;
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+    }
+
+    &__paso {
       background: #1e1e1e;
     }
 
-    &__acciones {
+    &__navegacion {
       background: #272727;
       border-top-color: rgba(255, 255, 255, 0.12);
     }
+
+    &__step {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.04);
+      }
+    }
+
+    &__step-number {
+      background-color: #272727;
+      border-color: #555;
+    }
+
+    &__step-title {
+      color: #ccc;
+    }
   }
 }
-</style> 
+
+@media (max-width: 480px) {
+  .formulario-adopcion-wizard {
+    &__step-title {
+      display: none;
+    }
+    
+    &__step-number {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+    }
+    
+    &__navegacion {
+      flex-direction: column;
+      gap: 12px;
+      
+      &-left,
+      &-right {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+</style>
