@@ -716,4 +716,4 @@ canvas {
     width: 80px !important;
     height: 80px !important;
   }
-}</style>
+}</style> 
