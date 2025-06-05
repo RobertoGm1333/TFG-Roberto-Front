@@ -273,9 +273,9 @@ watch(() => route.params.id, obtenerGato);
             <div class="text-center Formcontainer">
               <v-btn
                 color="primary"
-                size="large"
+                size="small"
                 @click="dialogoFormulario = true"
-                class="mb-4"
+                class="mb-4 Formcontainer"
               >
                 {{ t('rellenar_solicitud') }}
               </v-btn>
@@ -634,6 +634,7 @@ body {
   border-color: $color-principal !important;
 }
 
+
 .formulario-dialog {
   display: flex;
   flex-direction: column;
@@ -641,6 +642,7 @@ body {
   margin: 0;
   overflow-y: auto;  /* Habilitar scroll solo vertical */
   max-width: 600px;  /* Limitar el ancho del formulario */
+  padding: 16px;
 
   :deep(.v-card) {
     border-radius: 0;
@@ -775,6 +777,16 @@ body {
     padding: 0;
     width: 100%;  /* Asegurar que las columnas no excedan el ancho */
   }
+
+  /* Ajustes para imágenes de gatos */
+  .FotoDetallesGato {
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  .titulo-detalles {
+    font-size: 1.2rem;  /* Reducir tamaño de título en móviles */
+  }
 }
 
 @media (min-width: 1010px) {
@@ -786,6 +798,7 @@ body {
     width: auto;
     padding: 12px 24px;  /* Aumentar tamaño en pantallas grandes */
   }
+  
 }
 
 .protectora-admin__tabla {
@@ -822,6 +835,9 @@ body {
       padding-right: 16px !important;
     }
   }
+  .Formcontainer {
+  font-size: small;
+}
 }
 
 .protectora-admin__dialogo {
@@ -927,6 +943,8 @@ body {
     }
   }
 }
+
+
 
 
 </style>
