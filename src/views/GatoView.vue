@@ -17,6 +17,8 @@ const actualizarFiltros = (filtros) => {
   edadMin.value = filtros.edadMin
   edadMax.value = filtros.edadMax
   razaSeleccionada.value = filtros.razaSeleccionada
+  // Al aplicar filtros, volvemos a la página 1
+  paginaActual.value = 1
 }
 
 // Gatos filtrados como propiedad computada
@@ -31,6 +33,27 @@ const gatosFiltrados = computed(() => {
     
     return visible && edadEnRango && razaCoincide
   })
+})
+
+// Paginación
+const gatosPorPagina = 12
+const paginaActual = ref(1)
+
+// Función para obtener los gatos de la página actual
+const gatosPaginados = computed(() => {
+  const startIndex = (paginaActual.value - 1) * gatosPorPagina
+  const endIndex = paginaActual.value * gatosPorPagina
+  return gatosFiltrados.value.slice(startIndex, endIndex)
+})
+
+// Cambiar página
+const cambiarPagina = (pagina) => {
+  paginaActual.value = pagina
+}
+
+// Calcular el total de páginas
+const totalPaginas = computed(() => {
+  return Math.ceil(gatosFiltrados.value.length / gatosPorPagina)
 })
 </script>
 
@@ -54,9 +77,22 @@ const gatosFiltrados = computed(() => {
       </v-col>
       
       <!-- Mostrar los gatos filtrados -->
-      <v-col v-for="gato in gatosFiltrados" :key="gato.id_Gato" cols="12" sm="6" md="4" lg="3">
+      <v-col v-for="gato in gatosPaginados" :key="gato.id_Gato" cols="12" sm="6" md="4" lg="3">
         <GatoCard :gato="gato" style="object-fit: cover;"/>
       </v-col>
+    </v-row>
+
+    <!-- Paginación -->
+    <v-row justify="center" class="my-4">
+      <v-btn @click="cambiarPagina(paginaActual - 1)" :disabled="paginaActual === 1">
+        Anterior
+      </v-btn>
+      
+      <span class="mx-2">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      
+      <v-btn @click="cambiarPagina(paginaActual + 1)" :disabled="paginaActual === totalPaginas">
+        Siguiente
+      </v-btn>
     </v-row>
   </v-container>
 </template>
@@ -91,7 +127,5 @@ const gatosFiltrados = computed(() => {
   .v-row + .v-row {
   padding-left: 0%;
   }
-
 }
-
 </style>

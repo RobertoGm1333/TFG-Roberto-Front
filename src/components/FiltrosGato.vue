@@ -24,6 +24,10 @@ const razasDisponibles = [
   'Naranja y negro',
   'Blanco y pardo',
   'Negro',
+  'Carey',
+  'Naranja',
+  'Naranja y blanco',
+  'Tricolor',
   'Siames'
 ]
 
