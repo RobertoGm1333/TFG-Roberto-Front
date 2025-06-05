@@ -13,7 +13,7 @@ const autenticacion = useAutenticacion();
 const { usuario } = storeToRefs(autenticacion);
 const gatosStore = usegatosStore();
 const gatosDeseados = computed(() => gatosStore.gatosDeseados);
-const { t } = useI18n();
+const { t, idioma } = useI18n();  // Obtener el idioma actual del store
 
 const mensaje = ref("");
 const esDeseado = ref(false);
@@ -76,7 +76,6 @@ const agregarADeseados = async () => {
   }
 };
 
-
 const eliminarDeDeseados = async () => {
   if (!autenticacion.usuario) {
     mensaje.value = "Debes iniciar sesión para eliminar de deseados";
@@ -109,13 +108,25 @@ const eliminarDeDeseados = async () => {
     <v-card-text>
       <p><strong>{{ t('sexo') }}:</strong> {{ gato.sexo }}</p>
       <p><strong>{{ t('protectora') }}:</strong> {{ protectora?.nombre_Protectora || t('no_disponible') }}</p>
-      <p><strong>{{ t('descripcion') }}:</strong> {{ gato.descripcion_Gato }}</p>
+
+      <!-- Mostrar la descripción en español o en inglés -->
+      <p><strong>{{ t('descripcion') }}:</strong> 
+        <template v-if="idioma === 'en'">
+          {{ gato.descripcion_Gato_En }}
+        </template>
+        <template v-else>
+          {{ gato.descripcion_Gato }}
+        </template>
+      </p>
     </v-card-text>
+
     <v-card-actions>
       <v-btn v-if="usuario" color="green" @click="agregarADeseados" :disabled="esDeseado">{{ t('añadir_deseados') }}</v-btn>
       <v-btn v-if="usuario" color="red" @click="eliminarDeDeseados" :disabled="!esDeseado">{{ t('eliminar_deseados') }}</v-btn>
     </v-card-actions>
+
     <p v-if="mensaje" class="gato-card__mensaje">{{ mensaje }}</p>
+
     <v-card-actions>
       <v-btn color="#FF5500" to="/gato">{{ t('volver_gatos') }}</v-btn>
       <v-btn color="green" :href="`mailto:${protectora?.correo_Protectora}`" :disabled="!protectora?.correo_Protectora">

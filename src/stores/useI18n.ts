@@ -434,7 +434,7 @@ const traducciones: Traducciones = {
     // Footer
     desarrollado_por: "Developed with ❤️ by",
     derechos_reservados: "All rights reserved.",
-    preguntas_frecuentes: "FAQ",
+    preguntas_frecuentes: "Frequent Asked Questions",
     footer_info: "This platform brings together all the shelters in Zaragoza to facilitate responsible animal adoption.",
     hola: "Hello",
     conoceme: "Hi! I'm {nombre}! Meet me! 🐾",

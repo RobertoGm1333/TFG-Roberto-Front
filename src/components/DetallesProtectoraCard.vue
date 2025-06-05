@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
 import type ProtectoraDto from '@/stores/dtos/protectoras.dto';
 import { useI18n } from '@/stores/useI18n';
 
-const { t } = useI18n();
+const { t, idioma } = useI18n(); // Obtener el idioma actual del store
 const props = defineProps<{
   protectora: ProtectoraDto
 }>();
@@ -33,7 +34,15 @@ const props = defineProps<{
 
       <div class="description-section">
         <h3>{{ t('protectora_descripcion') }}</h3>
-        <p>{{ protectora.descripcion_Protectora }}</p>
+        <p>
+          <!-- Verifica específicamente español e inglés con más claridad -->
+          <template v-if="idioma === 'en'">
+            {{ protectora.descripcion_Protectora_En }}
+          </template>
+          <template v-else>
+            {{ protectora.descripcion_Protectora }}
+          </template>
+        </p>
       </div>
 
       <div class="map-section" v-if="protectora.ubicacion">
@@ -183,4 +192,4 @@ const props = defineProps<{
     padding-bottom: 35%;
   }
 }
-</style> 
+</style>
