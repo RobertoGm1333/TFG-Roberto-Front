@@ -186,7 +186,8 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
           <canvas id="pawCanvas"></canvas>
         </RouterLink>
       </div>
-      <div class="text">
+      
+      <div class="header-content">
         <nav class="desktop-nav">
           <RouterLink to="/gato">{{ t('gatos') }}</RouterLink>
           <RouterLink to="/protectoras">{{ t('protectoras') }}</RouterLink>
@@ -216,7 +217,8 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
           <RouterLink to="/consejos-expertos" @click="cerrarMenuHamburguesa">{{ t('consejos_expertos') }}</RouterLink>
         </nav>
 
-        <div class="usuario">
+        <div class="usuario-section">
+          <!-- Selector de idioma -->
           <div class="idioma-selector" ref="idiomaMenuRef">
             <button @click="toggleIdiomaMenu" class="idioma-btn">
               <img 
@@ -253,27 +255,67 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
               </button>
             </div>
           </div>
-          <template v-if="!usuario">
-            <RouterLink to="/iniciar-sesion">{{ t('iniciar_sesion') }}</RouterLink>
-            <RouterLink to="/registrarse">{{ t('registrarse') }}</RouterLink>
-          </template>
-          <template v-else>
-            <div class="usuario-menu">
-              <svg @click="toggleMenu" ref="userIcon" width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#3B2F2F" stroke-width="2" class="circulo-usuario" />
-                <path d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20" stroke="#3B2F2F" stroke-width="2" class="cuerpo-usuario" />
-              </svg>
-              <div v-if="mostrarMenu" ref="menuContainer" class="datos-usuario">
-                <p>{{ t('hola') }} {{ usuario.nombre }}</p>
-                <RouterLink to="/perfil" class="boton-1"><span>{{ t('mi_perfil') }}</span></RouterLink>
-                <RouterLink to="/deseados" class="boton-2"><span>❤️ {{ t('deseados') }}</span></RouterLink>
-                <RouterLink to="/solicitudes" class="boton-2"><span>📋 {{ t('solicitudes') }}</span></RouterLink>
-                <RouterLink v-if="usuario.rol === 'admin'" to="/admin" class="admin-boton">{{ t('panel_admin') }}</RouterLink>
-                <RouterLink v-if="usuario.rol === 'protectora'" to="/protectora-admin" class="admin-boton">{{ t('panel_protectora') }}</RouterLink>
-                <RouterLink to="/"><button class="logout-btn" @click="Autenticacion.cerrarSesion">{{ t('cerrar_sesion') }}</button></RouterLink>
+
+          <!-- Usuario -->
+          <div class="usuario">
+            <template v-if="!usuario">
+              <RouterLink to="/iniciar-sesion" class="auth-link">{{ t('iniciar_sesion') }}</RouterLink>
+              <RouterLink to="/registrarse" class="auth-link">{{ t('registrarse') }}</RouterLink>
+            </template>
+            <template v-else>
+              <div class="usuario-menu">
+                <div class="usuario-trigger" @click="toggleMenu" ref="userIcon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#3B2F2F" stroke-width="2" class="circulo-usuario" />
+                    <path d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20" stroke="#3B2F2F" stroke-width="2" class="cuerpo-usuario" />
+                  </svg>
+                  <span class="usuario-nombre">{{ usuario.nombre }}</span>
+                </div>
+                
+                <div v-if="mostrarMenu" ref="menuContainer" class="datos-usuario">
+                  <div class="usuario-info">
+                    <p class="saludo">{{ t('hola') }} {{ usuario.nombre }}!</p>
+                  </div>
+                  
+                  <div class="menu-options">
+                    <RouterLink to="/perfil" class="menu-option primary">
+                      <span class="icon">👤</span>
+                      <span>{{ t('mi_perfil') }}</span>
+                    </RouterLink>
+                    
+                    <RouterLink to="/deseados" class="menu-option">
+                      <span class="icon">❤️</span>
+                      <span>{{ t('deseados') }}</span>
+                    </RouterLink>
+                    
+                    <RouterLink to="/solicitudes" class="menu-option">
+                      <span class="icon">📋</span>
+                      <span>{{ t('solicitudes') }}</span>
+                    </RouterLink>
+                    
+                    <RouterLink v-if="usuario.rol === 'admin'" to="/admin" class="menu-option admin">
+                      <span class="icon">⚙️</span>
+                      <span>{{ t('panel_admin') }}</span>
+                    </RouterLink>
+                    
+                    <RouterLink v-if="usuario.rol === 'protectora'" to="/protectora-admin" class="menu-option admin">
+                      <span class="icon">🏠</span>
+                      <span>{{ t('panel_protectora') }}</span>
+                    </RouterLink>
+                  </div>
+                  
+                  <div class="menu-footer">
+                    <RouterLink to="/">
+                      <button class="logout-btn" @click="Autenticacion.cerrarSesion">
+                        <span class="icon">🚪</span>
+                        <span>{{ t('cerrar_sesion') }}</span>
+                      </button>
+                    </RouterLink>
+                  </div>
+                </div>
               </div>
-            </div>
-          </template>
+            </template>
+          </div>
         </div>
       </div>
     </header>
@@ -283,35 +325,51 @@ function resetPaw(ctx: CanvasRenderingContext2D) {
 <style scoped lang="scss">
 header {
   font-family: $fuente-titulos;
-  @include center-flex;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: $espacio-mediano 15px;
   width: 100%;
+  min-height: 80px;
+  background: transparent;
+  position: relative;
 }
 
-.text {
-  width: 200px;
+.logo-container {
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  margin-left: 20px;
   position: relative;
 }
 
 .desktop-nav {
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-  justify-content: center;
+  display: none;
+  flex-direction: row;
+  gap: $espacio-mediano;
+  align-items: center;
 
   a {
     white-space: nowrap;
     font-size: 0.95rem;
-    margin-bottom: 8px;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 
-    &:last-child {
-      margin-bottom: 0;
+    &:hover {
+      background-color: rgba(255, 85, 0, 0.1);
     }
   }
 }
 
 .menu-hamburguesa-btn {
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: space-around;
   width: 30px;
@@ -349,19 +407,19 @@ header {
 
 .menu-hamburguesa {
   position: absolute;
-  bottom: 100%;
+  top: 100%;
   left: 0;
   right: 0;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1500;
   padding: 15px;
-  margin-bottom: 10px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
 
   a {
     padding: 12px 15px;
@@ -377,69 +435,11 @@ header {
   }
 }
 
-canvas {
-  display: block;
-  width: 80px;
-  height: 80px;
-}
-
-.usuario {
+.usuario-section {
   display: flex;
   align-items: center;
   gap: 15px;
-
-  a {
-    white-space: nowrap;
-    font-size: 0.95rem;
-  }
-}
-
-.usuario-menu {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-
-  .datos-usuario {
-    position: absolute;
-    left: -60px;
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    border: $border-gris1;
-    border-radius: $espacio-pequeno;
-    box-shadow: $sombra-contenedor;
-    background: $color-blanco;
-    padding: $espacio-mediano;
-    z-index: 1400;
-
-    & .boton-1 {
-      background-color: $color-principal;
-      color: $color-blanco;
-      margin: 15px 0;
-      padding: $espacio-mediano 15px;
-      border-radius: $espacio-mediano;
-    }
-
-    & .boton-2 {
-      background-color: $color-principal;
-      color: $color-blanco;
-      margin-bottom: $espacio-mediano;
-      padding: $espacio-mediano 15px;
-      border-radius: $espacio-mediano;
-    }
-  }
-}
-
-.logout-btn {
-  margin-top: $espacio-pequeno;
-  background: $color-rojo;
-  color: $color-blanco;
-  border: none;
-  padding: $espacio-pequeno $espacio-mediano;
-  cursor: pointer;
-  border-radius: $espacio-pequeno;
 }
 
 .idioma-selector {
@@ -448,107 +448,304 @@ canvas {
 }
 
 .idioma-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 85, 0, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
   cursor: pointer;
-  padding: 5px 10px;
-  margin-right: 15px;
-  transition: transform 0.2s;
   display: flex;
   align-items: center;
-  gap: 5px;
-  border-radius: $espacio-pequeno;
-  background-color: rgba(255, 255, 255, 0.1);
+  gap: 6px;
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: scale(1.05);
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 85, 0, 0.1);
+    transform: scale(1.02);
   }
 
   .bandera {
-    width: 20px;
-    height: 15px;
+    width: 18px;
+    height: 13px;
     object-fit: cover;
     border-radius: 2px;
   }
 
   .idioma-texto {
-    font-size: 0.9rem;
-    font-weight: bold;
+    font-size: 0.85rem;
+    font-weight: 600;
   }
 }
 
 .idioma-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px);
   left: 0;
   background: white;
-  border: $border-gris1;
-  border-radius: $espacio-pequeno;
-  box-shadow: $sombra-contenedor;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1300;
-  margin-top: 5px;
   min-width: 100%;
+  overflow: hidden;
 
   .idioma-opcion {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     width: 100%;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border: none;
     background: none;
     cursor: pointer;
     transition: background-color 0.2s;
+    font-size: 0.85rem;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(255, 85, 0, 0.1);
     }
 
     .bandera {
-      width: 20px;
-      height: 15px;
+      width: 18px;
+      height: 13px;
       object-fit: cover;
       border-radius: 2px;
     }
 
     .idioma-texto {
-      font-size: 0.9rem;
-      font-weight: bold;
+      font-weight: 600;
     }
   }
 }
 
+.usuario {
+  position: relative;
+}
+
+.auth-link {
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba(255, 85, 0, 0.1);
+  }
+}
+
+.usuario-menu {
+  position: relative;
+}
+
+.usuario-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 85, 0, 0.1);
+  }
+}
+
+.usuario-nombre {
+  font-size: 0.9rem;
+  font-weight: 500;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.datos-usuario {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 250px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1400;
+  overflow: hidden;
+  animation: fadeInDown 0.2s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.usuario-info {
+  padding: 20px 20px 15px;
+  background: linear-gradient(135deg, #FF5500, #ff6b1a);
+  color: white;
+  text-align: center;
+
+  .saludo {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+}
+
+.menu-options {
+  padding: 10px 0;
+}
+
+.menu-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+
+  .icon {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background-color: rgba(255, 85, 0, 0.08);
+    color: #FF5500;
+  }
+
+  &.primary {
+    background-color: rgba(255, 85, 0, 0.1);
+    color: #FF5500;
+    font-weight: 500;
+  }
+
+  &.admin {
+    border-top: 1px solid #f0f0f0;
+    color: #007bff;
+
+    &:hover {
+      background-color: rgba(0, 123, 255, 0.08);
+    }
+  }
+}
+
+.menu-footer {
+  padding: 10px 20px 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  .icon {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+  }
+}
+
+canvas {
+  display: block;
+  width: 80px;
+  height: 80px;
+}
+
+// Dark mode
 @media (prefers-color-scheme: dark) {
   .datos-usuario {
-    color: black;
+    background: #2d2d2d;
+    border-color: #404040;
+    color: whitesmoke;
   }
-  .usuario-menu circle {
-    stroke: #ddd;
+
+  .usuario-info {
+    background: linear-gradient(135deg, #FF5500, #ff6b1a);
   }
-  .usuario-menu path {
-    stroke: #ddd;
+
+  .menu-option {
+    color: whitesmoke;
+
+    &:hover {
+      background-color: rgba(255, 85, 0, 0.15);
+      color: #ff6b1a;
+    }
+
+    &.primary {
+      background-color: rgba(255, 85, 0, 0.2);
+      color: #ff6b1a;
+    }
+
+    &.admin {
+      border-color: #505050;
+      color: #4dabf7;
+
+      &:hover {
+        background-color: rgba(77, 171, 247, 0.15);
+      }
+    }
   }
+
+  .menu-footer {
+    border-color: #505050;
+  }
+
+  .usuario-menu svg {
+    .circulo-usuario {
+      stroke: #ddd;
+    }
+    .cuerpo-usuario {
+      stroke: #ddd;
+    }
+  }
+
   .idioma-menu {
-    background: #272727;
+    background: #2d2d2d;
     border-color: #404040;
 
     .idioma-opcion {
       color: whitesmoke;
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 85, 0, 0.15);
       }
     }
   }
 
   .idioma-btn {
     color: whitesmoke;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 85, 0, 0.4);
   }
 
   .menu-hamburguesa {
-    background: #272727;
+    background: #2d2d2d;
     border-color: #404040;
     color: whitesmoke;
 
@@ -556,43 +753,26 @@ canvas {
       color: whitesmoke;
 
       &:hover {
-        background-color: rgba(255, 85, 0, 0.2);
+        background-color: rgba(255, 85, 0, 0.15);
       }
     }
   }
-
-  .menu-hamburguesa-btn span {
-    background-color: #FF5500;
-  }
 }
 
-@media (min-width: 788px) {
+// Responsive
+@media (min-width: 768px) {
   header {
     padding: 15px $espacio-extra-grande;
   }
 
-  .text {
-    display: flex;
-    width: 700px;
+  .header-content {
+    margin-left: 40px;
   }
 
   .desktop-nav {
-    flex-grow: 1;
-    width: 300px;
-    gap: $espacio-pequeno;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-
-    a {
-      margin-bottom: 0;
-    }
-  }
-
-  .usuario {
     display: flex;
-    justify-content: flex-end;
-    gap: 15px;
+    flex: 1;
+    justify-content: flex-start;
   }
 
   .menu-hamburguesa-btn {
@@ -602,118 +782,52 @@ canvas {
   .menu-hamburguesa {
     display: none !important;
   }
-}
 
-@media (min-width: 1010px) {
-  header {
-    top: 0;
-    left: 0;
-    z-index: 1000;
+  .usuario-section {
+    gap: 20px;
   }
 
-  .text {
-    width: 1310px;
+  .usuario-nombre {
+    max-width: 120px;
   }
 
-  svg {
-    width: 70px;
-    height: 70px;
-  }
-
-  .desktop-nav {
-    gap: $espacio-grande;
-    align-items: center;
-  }
-
-  .usuario {
-    gap: $espacio-grande;
-  }
-}
-
-@media (min-width: 768px) {
-  .idioma-btn .bandera,
-  .idioma-menu .idioma-opcion .bandera {
-    width: 24px;
-    height: 18px;
+  .datos-usuario {
+    width: 280px;
   }
 }
 
 @media (min-width: 1024px) {
-  .idioma-btn .bandera,
-  .idioma-menu .idioma-opcion .bandera {
-    width: 28px;
-    height: 21px;
-  }
-}
-
-@media (max-width: 787px) {
   header {
-    display: flex;
-    justify-content: space-between;
-    padding: $espacio-mediano 15px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
   }
 
-  .logo-container {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 5px;
-
-    canvas {
-      width: 85px !important;
-      height: 85px !important;
-    }
-  }
-
-  .text {
-    width: 50%;
-    padding-top: 10px;
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
   }
 
   .desktop-nav {
-    display: none;
+    gap: $espacio-grande;
   }
 
-  .menu-hamburguesa-btn {
-    display: flex;
-    position: absolute;
-    top: 0;
-    left: 0;
+  .usuario-section {
+    gap: 25px;
   }
 
-  .menu-hamburguesa {
-    top: 40px;
-    bottom: auto;
-    margin-top: 0;
-    margin-bottom: 0;
+  canvas {
+    width: 90px;
+    height: 90px;
   }
 
-  .usuario {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding-top: 45px;
-
-    .idioma-selector {
-      align-self: flex-start;
-    }
-
-    .usuario-menu {
-      align-self: flex-start;
-
-      .datos-usuario {
-        left: 0;
-      }
+  @media (prefers-color-scheme: dark) {
+    header {
+      background: rgba(24,24,24,255);
     }
   }
 }
-
-// Para pantallas aún más pequeñas, mantener un tamaño mínimo
-@media (max-width: 375px) {
-  .logo-container canvas {
-    width: 80px !important;
-    height: 80px !important;
-  }
-}</style>
+</style>

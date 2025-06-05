@@ -145,7 +145,7 @@ const eliminarDeDeseados = async () => {
 
 @media (min-width: 620px) {
   .CardGatoDetalles {
-    width: 50%;
+    width: 40%;
   }
 
   .v-card-actions {

@@ -270,7 +270,7 @@ watch(() => route.params.id, obtenerGato);
 
           <!-- Botón para mostrar el formulario -->
           <template v-else>
-            <div class="text-center">
+            <div class="text-center Formcontainer">
               <v-btn
                 color="primary"
                 size="large"
@@ -600,21 +600,27 @@ watch(() => route.params.id, obtenerGato);
 </template>
 
 <style scoped lang="scss">
+body {
+  overflow-x: hidden;  /* Prevenir el desbordamiento horizontal */
+}
+
 .ContainerDetallesGatos {
   display: flex;
   justify-content: center;
   padding: 0;
+  overflow-x: hidden;  /* Asegurarse de que no haya desbordamiento */
 }
 
 .titulo-detalles {
-  margin-bottom: 20px;
+  margin-bottom: 10px;  /* Reducir margen para pantallas pequeñas */
   text-align: center;
   color: $color-principal;
+  font-size: 1.5rem;  /* Ajuste para pantallas pequeñas */
 }
 
 .v-col-12 {
-  flex: 0 0 125%;
-  max-width: 125%;
+  flex: 0 0 100%;  /* Ajuste para dispositivos móviles */
+  max-width: 100%;  /* Asegurarse de que no se exceda el ancho */
 }
 
 :deep(.v-alert.info) {
@@ -631,9 +637,11 @@ watch(() => route.params.id, obtenerGato);
 .formulario-dialog {
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 80vh;
   margin: 0;
-  
+  overflow-y: auto;  /* Habilitar scroll solo vertical */
+  max-width: 600px;  /* Limitar el ancho del formulario */
+
   :deep(.v-card) {
     border-radius: 0;
     box-shadow: none;
@@ -647,15 +655,15 @@ watch(() => route.params.id, obtenerGato);
   &__titulo {
     background-color: $color-principal;
     color: $color-blanco;
-    padding: 16px 20px;
-    font-size: 1.2rem;
+    padding: 12px 16px;
+    font-size: 1.1rem;
     position: sticky;
     top: 0;
     z-index: 1;
   }
 
   &__contenido {
-    padding: 24px 20px;
+    padding: 16px;
 
     h3 {
       color: $color-principal;
@@ -756,15 +764,30 @@ watch(() => route.params.id, obtenerGato);
     height: 100vh;
     margin: 0;
   }
+
+  .v-btn.primary {
+    width: 100%;  /* Botón de ancho completo en móviles */
+    padding: 10px 20px;  /* Reducir padding */
+    font-size: 0.9rem;  /* Ajustar texto */
+  }
+
+  .v-col-12 {
+    padding: 0;
+    width: 100%;  /* Asegurar que las columnas no excedan el ancho */
+  }
 }
 
 @media (min-width: 1010px) {
   .v-container {
     margin-top: 105px;
   }
+
+  .v-btn.primary {
+    width: auto;
+    padding: 12px 24px;  /* Aumentar tamaño en pantallas grandes */
+  }
 }
 
-// --- ESTILOS UNIFICADOS CON ADMIN PROTECTORA ---
 .protectora-admin__tabla {
   width: 100%;
   background-color: $color-blanco;
@@ -904,4 +927,6 @@ watch(() => route.params.id, obtenerGato);
     }
   }
 }
+
+
 </style>
