@@ -35,6 +35,10 @@ const traducciones: Traducciones = {
     panel_admin: "Panel de Admin",
     panel_protectora: "Panel de Protectora",
     cerrar_sesion: "Cerrar Sesión",
+    anterior: "Anterior",
+    siguiente: "Siguiente",
+    pagina: "Página",
+    de: "de",
 
     // Formularios
     email: "Correo electrónico",
@@ -381,6 +385,10 @@ const traducciones: Traducciones = {
     panel_admin: "Admin Panel",
     panel_protectora: "Shelter Panel",
     cerrar_sesion: "Logout",
+    anterior: "Previous",
+    siguiente: "Next",
+    pagina: "Page",
+    de: "of",
 
     // Forms
     email: "Email",

@@ -3,19 +3,22 @@ import { usegatosStore } from '@/stores/gatos'
 import GatoCard from '@/components/GatoCard.vue'
 import FiltrosGato from '@/components/FiltrosGato.vue'
 import { computed, ref } from 'vue'
+import { useI18n } from '@/stores/useI18n'
 
 const store = usegatosStore()
 
 store.fetchGato()
 
-const edadMin = ref(1)
-const edadMax = ref(15)
+const { t } = useI18n()
+
+const edadMinima = ref(1)
+const edadMaxima = ref(15)
 const razaSeleccionada = ref('')
 
 // Función para actualizar los filtros desde el componente hijo
 const actualizarFiltros = (filtros) => {
-  edadMin.value = filtros.edadMin
-  edadMax.value = filtros.edadMax
+  edadMinima.value = filtros.edadMin
+  edadMaxima.value = filtros.edadMax
   razaSeleccionada.value = filtros.razaSeleccionada
   // Al aplicar filtros, volvemos a la página 1
   paginaActual.value = 1
@@ -26,7 +29,7 @@ const gatosFiltrados = computed(() => {
   return store.gatos.filter(gato => {
     const visible = gato.visible === true
     // Filtrar por edad
-    const edadEnRango = gato.edad >= edadMin.value && gato.edad <= edadMax.value
+    const edadEnRango = gato.edad >= edadMinima.value && gato.edad <= edadMaxima.value
     
     // Filtrar por raza (si hay una seleccionada)
     const razaCoincide = razaSeleccionada.value === '' || gato.raza === razaSeleccionada.value
@@ -85,13 +88,13 @@ const totalPaginas = computed(() => {
     <!-- Paginación -->
     <v-row justify="center" class="my-4">
       <v-btn @click="cambiarPagina(paginaActual - 1)" :disabled="paginaActual === 1">
-        Anterior
+        {{ t('anterior') }}
       </v-btn>
       
-      <span class="mx-2">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <span class="mx-2">{{ t('pagina') }} {{ paginaActual }} {{ t('de') }} {{ totalPaginas }}</span>
       
       <v-btn @click="cambiarPagina(paginaActual + 1)" :disabled="paginaActual === totalPaginas">
-        Siguiente
+        {{ t('siguiente') }}
       </v-btn>
     </v-row>
   </v-container>
