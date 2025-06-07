@@ -26,7 +26,8 @@ const gato = ref<any>({
   edad: 0,
   sexo: '',
   esterilizado: false,
-  descripcion_Gato: '',
+  descripcion_Gato: '', // Descripción en español
+  descripcion_Gato_En: '', // Descripción en inglés
   imagen_Gato: '',
   id_Protectora: null,
   visible: true
@@ -170,7 +171,8 @@ function abrirFormulario() {
     edad: 0,
     sexo: '',
     esterilizado: false,
-    descripcion_Gato: '',
+    descripcion_Gato: '', // Descripción en español
+    descripcion_Gato_En: '', // Descripción en inglés
     imagen_Gato: '',
     id_Protectora: idProtectora.value,
     visible: true
@@ -300,14 +302,7 @@ function getEstadoColor(estado: string) {
         <h2 class="protectora-admin__subtitulo">Solicitudes de Adopción</h2>
         <div class="protectora-admin__tabla-container">
           <v-data-table
-            :headers="[
-              { title: 'ID', key: 'id_Solicitud', align: 'start' },
-              { title: 'Gato', key: 'id_Gato' },
-              { title: 'Solicitante', key: 'id_Usuario' },
-              { title: 'Estado', key: 'estado' },
-              { title: 'Fecha', key: 'fecha_Solicitud' },
-              { title: 'Acciones', key: 'actions', sortable: false, align: 'end' }
-            ]"
+            :headers="[ { title: 'ID', key: 'id_Solicitud', align: 'start' }, { title: 'Gato', key: 'id_Gato' }, { title: 'Solicitante', key: 'id_Usuario' }, { title: 'Estado', key: 'estado' }, { title: 'Fecha', key: 'fecha_Solicitud' }, { title: 'Acciones', key: 'actions', sortable: false, align: 'end' } ]"
             :items="solicitudes"
             class="elevation-1 protectora-admin__tabla mt-4"
             :class="{'protectora-admin__tabla--mobile': $vuetify.display.smAndDown}"
@@ -590,11 +585,7 @@ function getEstadoColor(estado: string) {
                       <h3 class="mb-4 mt-6">Gestión de la Solicitud</h3>
                       <v-select
                         v-model="nuevoEstado"
-                        :items="[
-                          { value: 'pendiente', text: 'Pendiente' },
-                          { value: 'aprobada', text: 'Aprobar solicitud' },
-                          { value: 'rechazada', text: 'Rechazar solicitud' }
-                        ]"
+                        :items="[ { value: 'pendiente', text: 'Pendiente' }, { value: 'aprobada', text: 'Aprobar solicitud' }, { value: 'rechazada', text: 'Rechazar solicitud' } ]"
                         item-title="text"
                         item-value="value"
                         label="Nuevo Estado"
@@ -638,7 +629,7 @@ function getEstadoColor(estado: string) {
         </div>
       </v-col>
     </v-row>
-
+  
     <!-- Formulario de creación/edición -->
     <v-dialog v-model="mostrarDialogo" max-width="600px">
       <v-card class="protectora-admin__dialogo">
@@ -670,7 +661,12 @@ function getEstadoColor(estado: string) {
             <v-checkbox v-model="gato.esterilizado" label="Esterilizado" />
             <v-textarea
               v-model="gato.descripcion_Gato"
-              label="Descripción"
+              label="Descripción en Español"
+              :rules="[v => !!v || 'Campo obligatorio']"
+            />
+            <v-textarea
+              v-model="gato.descripcion_Gato_En"
+              label="Descripción en Inglés"
               :rules="[v => !!v || 'Campo obligatorio']"
             />
             <v-text-field
@@ -706,9 +702,8 @@ function getEstadoColor(estado: string) {
     </v-dialog>
   </v-container>
 </template>
-
   
-  <style scoped lang="scss">
+<style scoped lang="scss">
 .protectora-admin {
   width: 100%;
   margin: 0 auto;

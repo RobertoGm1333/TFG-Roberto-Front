@@ -21,7 +21,8 @@ const protectora = ref({
   imagen_Protectora: "",
   id_Usuario: 0,
   ubicacion: "",
-  descripcion_Protectora: ""
+  descripcion_Protectora: "",
+  descripcion_Protectora_En: "" // Descripción en inglés añadida
 });
 
 const formularioProtectora = ref();
@@ -62,7 +63,8 @@ function abrirFormulario() {
     imagen_Protectora: "",
     id_Usuario: 0,
     ubicacion: "",
-    descripcion_Protectora: ""
+    descripcion_Protectora: "",
+    descripcion_Protectora_En: "" // Inicializando el campo en inglés
   };
   mostrarDialogo.value = true;
 }
@@ -256,7 +258,13 @@ async function confirmarEliminacion() {
             />
             <v-textarea
               v-model="protectora.descripcion_Protectora"
-              label="Descripción"
+              label="Descripción en español"
+              rows="3"
+              variant="outlined"
+            />
+            <v-textarea
+              v-model="protectora.descripcion_Protectora_En"
+              label="Descripción en inglés"
               rows="3"
               variant="outlined"
             />

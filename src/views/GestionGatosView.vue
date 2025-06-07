@@ -18,7 +18,8 @@ const gato = ref({
   edad: 0,
   sexo: "",
   esterilizado: false,
-  descripcion_Gato: "",
+  descripcion_Gato: "", // Descripción en español
+  descripcion_Gato_En: "", // Descripción en inglés
   imagen_Gato: "",
   id_Protectora: 0,
   visible: true
@@ -61,7 +62,8 @@ function abrirFormulario() {
     edad: 0,
     sexo: "",
     esterilizado: false,
-    descripcion_Gato: "",
+    descripcion_Gato: "", // Descripción en español
+    descripcion_Gato_En: "", // Descripción en inglés
     imagen_Gato: "",
     id_Protectora: 0,
     visible: true
@@ -249,7 +251,15 @@ async function confirmarEliminacion() {
             </v-row>
             <v-textarea
               v-model="gato.descripcion_Gato"
-              label="Descripción"
+              label="Descripción en Español"
+              :rules="[v => !!v || 'Campo obligatorio']"
+              rows="3"
+              variant="outlined"
+              class="mb-4"
+            />
+            <v-textarea
+              v-model="gato.descripcion_Gato_En"
+              label="Descripción en Inglés"
               :rules="[v => !!v || 'Campo obligatorio']"
               rows="3"
               variant="outlined"
